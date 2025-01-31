@@ -10,7 +10,7 @@ import Testimonials from "@/components/landing/testimonials";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-background text-foreground w-full">
+    <div className="min-h-screen w-full relative mx-auto">
       <Header />
       <main>
         <Hero />
@@ -22,6 +22,6 @@ export default function Home() {
         <CTA />
       </main>
       <Footer />
-    </main>
+    </div>
   );
 }

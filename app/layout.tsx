@@ -1,12 +1,20 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Rajdhani } from "next/font/google";
 import "./globals.css";
-
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/theme-provider";
 
+// Configure Rajdhani for headings
+const rajdhani = Rajdhani({
+  subsets: ["latin"],
+  weight: ["500", "700"], // Use 500 for medium, 700 for bold
+  variable: "--font-heading", // CSS variable name
+});
+
+// Configure Inter for body
 const inter = Inter({
   subsets: ["latin"],
+  variable: "--font-body", // CSS variable name
 });
 
 export const metadata: Metadata = {
@@ -14,7 +22,7 @@ export const metadata: Metadata = {
     template: "%s - D3 Resume Builder",
     absolute: "D3 Resume Builder",
   },
-  description: "AI Resume builder is the easiet way to create a pro resume",
+  description: "AI Resume builder is the easiest way to create a pro resume",
 };
 
 export default function RootLayout({
@@ -25,7 +33,9 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
-        <body className={`${inter.className} antialiased`}>
+        <body
+          className={`${inter.variable} ${rajdhani.variable} font-sans antialiased`}
+        >
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
