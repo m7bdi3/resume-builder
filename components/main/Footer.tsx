@@ -3,8 +3,10 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 import { steps } from "./steps";
 import { FileUser, PenLine } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface Props {
+  isSaving: boolean;
   currentStep: string;
   setCurrentStep: (step: string) => void;
   showSmResumePreview: boolean;
@@ -12,6 +14,7 @@ interface Props {
 }
 
 export const Footer = ({
+  isSaving,
   currentStep,
   setCurrentStep,
   showSmResumePreview,
@@ -60,7 +63,14 @@ export const Footer = ({
           <Button asChild>
             <Link href={"/resumes"}>Close</Link>
           </Button>
-          <p className="text-muted-foreground opacity-0">Saving...</p>
+          <p
+            className={cn(
+              "text-muted-foreground opacity-0",
+              isSaving && "opacity-100"
+            )}
+          >
+            Saving...
+          </p>
         </div>
       </div>
     </footer>

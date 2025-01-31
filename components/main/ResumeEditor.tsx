@@ -7,6 +7,8 @@ import { Footer } from "./Footer";
 import { ResumeValues } from "@/lib/validation";
 import { PreviewSection } from "./PreviewSection";
 import { cn } from "@/lib/utils";
+import { useAutoSaveResume } from "@/hooks/useAutoSaveResume";
+import { useUnloadWarning } from "@/hooks/useUnloadWarning";
 
 export const ResumeEditor = () => {
   const searchParams = useSearchParams();
@@ -14,6 +16,9 @@ export const ResumeEditor = () => {
   const [resumeData, setResumeData] = useState<ResumeValues>({});
 
   const [showSmResumePreview, setShowResumePreview] = useState(false);
+
+  const { isSaving, hasUnsavedChanges } = useAutoSaveResume(resumeData);
+  useUnloadWarning(hasUnsavedChanges);
 
   const currentStep = searchParams.get("step") || steps[0].key;
 
@@ -62,6 +67,7 @@ export const ResumeEditor = () => {
         </div>
       </main>
       <Footer
+        isSaving={isSaving}
         currentStep={currentStep}
         setCurrentStep={setStep}
         setShowResumePreview={setShowResumePreview}
