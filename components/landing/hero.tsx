@@ -11,9 +11,9 @@ export default function Hero() {
       <div className="absolute inset-0 bg-gradient-radial from-primary/60 via-transparent to-transparent z-10" />
 
       {/* Dynamic background elements */}
-      <div className="absolute -right-16 bottom-0 size-96 bg-primary/20 blur-3xl rounded-full z-10 " />
+      <div className="absolute -right-16 bottom-0 size-96 bg-primary/20 blur-3xl rounded-full z-10" />
       <div className="absolute -inset-12 size-96 bg-primary/40 blur-3xl rounded-full z-10" />
-      <div className="absolute size-[800px] bg-primary/20 blur-3xl rounded-full z-10 " />
+      <div className="absolute size-[800px] bg-primary/20 blur-3xl rounded-full z-10" />
 
       <div className="container mx-auto relative z-10 px-4 mt-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
@@ -29,14 +29,10 @@ export default function Hero() {
                 </span>
               </h1>
 
-              <div className="h-[3px] w-3/4 bg-gradient-to-r from-primary to-primary/30 mt-6 mx-auto md:mx-0 origin-left scale-x-0" />
+              <div className="h-[3px] w-3/4 bg-gradient-to-r from-primary to-primary/30 mt-6 mx-auto md:mx-0 origin-left " />
 
               <p className="text-xl md:text-2xl text-muted-foreground max-w-[600px] leading-relaxed mt-8 text-center md:text-start">
-                AI-powered resume builder with real-time ATS scoring and
-                <span className="px-2 py-1 ml-2 bg-primary/10 rounded-md border border-primary/20 inline-flex items-center gap-2">
-                  <span className="w-2 h-2 bg-primary rounded-full " />
-                  HR-approved templates
-                </span>
+                AI-powered resume builder with real-time ATS scoring.
               </p>
             </div>
 
