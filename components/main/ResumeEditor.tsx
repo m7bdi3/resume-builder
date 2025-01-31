@@ -5,11 +5,15 @@ import { steps } from "./steps";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { Footer } from "./Footer";
 import { ResumeValues } from "@/lib/validation";
+import { PreviewSection } from "./PreviewSection";
+import { cn } from "@/lib/utils";
 
 export const ResumeEditor = () => {
   const searchParams = useSearchParams();
 
   const [resumeData, setResumeData] = useState<ResumeValues>({});
+
+  const [showSmResumePreview, setShowResumePreview] = useState(false);
 
   const currentStep = searchParams.get("step") || steps[0].key;
 
@@ -35,7 +39,12 @@ export const ResumeEditor = () => {
       </header>
       <main className="relative grow">
         <div className="absolute bottom-0 top-0 flex w-full">
-          <div className="w-full md:w-1/2 p-3 overflow-y-auto space-y-6">
+          <div
+            className={cn(
+              "w-full md:w-1/2 p-3 overflow-y-auto space-y-6 md:block",
+              showSmResumePreview && "hidden"
+            )}
+          >
             <Breadcrumbs currentStep={currentStep} setCurrentStep={setStep} />
             {FormComponent && (
               <FormComponent
@@ -45,12 +54,19 @@ export const ResumeEditor = () => {
             )}
           </div>
           <div className="grow md:border-r" />
-          <div className="hidden w-1/2 md:flex">
-            <pre>{JSON.stringify(resumeData, null, 2)}</pre>
-          </div>
+          <PreviewSection
+            resumeData={resumeData}
+            setResumeData={setResumeData}
+            className={cn(showSmResumePreview && "flex")}
+          />
         </div>
       </main>
-      <Footer currentStep={currentStep} setCurrentStep={setStep} />
+      <Footer
+        currentStep={currentStep}
+        setCurrentStep={setStep}
+        setShowResumePreview={setShowResumePreview}
+        showSmResumePreview={showSmResumePreview}
+      />
     </div>
   );
 };

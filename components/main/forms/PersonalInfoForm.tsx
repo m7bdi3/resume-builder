@@ -1,5 +1,5 @@
 import { personalInfoSchema, PersonalInfoValues } from "@/lib/validation";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { EditorFormProps } from "@/lib/types";
+import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
 
 export const PersonalInfoForm = ({
   resumeData,
@@ -42,6 +44,8 @@ export const PersonalInfoForm = ({
     return unsubscribe;
   }, [form, resumeData, setResumeData]);
 
+  const imgInputRef = useRef<HTMLInputElement>(null);
+
   return (
     <div className="max-w-xl mx-auto space-y-6">
       <div className="space-y-1.5 text-center">
@@ -56,17 +60,33 @@ export const PersonalInfoForm = ({
             render={({ field: { value, ...fieldValues } }) => (
               <FormItem>
                 <FormLabel>Your Photo</FormLabel>
-                <FormControl>
-                  <Input
-                    {...fieldValues}
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      fieldValues.onChange(file);
+                <div className="flex items-center gap-2">
+                  <FormControl>
+                    <Input
+                      {...fieldValues}
+                      type="file"
+                      ref={imgInputRef}
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        fieldValues.onChange(file);
+                      }}
+                    />
+                  </FormControl>
+                  <Button
+                    type="button"
+                    variant={"secondary"}
+                    size={"icon"}
+                    onClick={() => {
+                      fieldValues.onChange(null);
+                      if (imgInputRef.current) {
+                        imgInputRef.current.value = "";
+                      }
                     }}
-                  />
-                </FormControl>
+                  >
+                    <Trash2 />
+                  </Button>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
