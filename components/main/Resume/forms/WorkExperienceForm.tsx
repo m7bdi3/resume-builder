@@ -12,7 +12,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { ResumeFormWrapper } from "./ResumeFormWrapper";
+import { ResumeFormWrapper } from "@/components/main/Resume/forms/ResumeFormWrapper";
 
 export const WorkExperienceForm = ({
   resumeData,

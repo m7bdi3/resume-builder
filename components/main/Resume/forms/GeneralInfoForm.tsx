@@ -10,7 +10,7 @@ import {
   FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ResumeFormWrapper } from "./ResumeFormWrapper";
+import { ResumeFormWrapper } from "@/components/main/Resume/forms/ResumeFormWrapper";
 
 export const GeneralInfoForm = ({
   resumeData,

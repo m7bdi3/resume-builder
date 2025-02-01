@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import { ResumeFormWrapper } from "./ResumeFormWrapper";
+import { ResumeFormWrapper } from "@/components/main/Resume/forms/ResumeFormWrapper";
 
 export const PersonalInfoForm = ({
   resumeData,

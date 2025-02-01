@@ -9,7 +9,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { ResumeFormWrapper } from "./ResumeFormWrapper";
+import { ResumeFormWrapper } from "@/components/main/Resume/forms/ResumeFormWrapper";
 
 export const SummaryForm = ({ resumeData, setResumeData }: EditorFormProps) => {
   const form = useResumeForm<SummarySchemaValues>(
