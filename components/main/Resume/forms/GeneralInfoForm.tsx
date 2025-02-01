@@ -1,16 +1,8 @@
 import { generalInfoSchema, type GeneralInfoValues } from "@/lib/validation";
 import { useResumeForm } from "@/hooks/useResumeForm";
 import type { EditorFormProps } from "@/lib/types";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  FormDescription,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { ResumeFormWrapper } from "@/components/main/Resume/forms/ResumeFormWrapper";
+import { RepeatedFormField } from "./RepeatedFormField";
 
 export const GeneralInfoForm = ({
   resumeData,
@@ -31,32 +23,22 @@ export const GeneralInfoForm = ({
       description="This will not appear on your resume."
       form={form}
     >
-      <FormField
-        control={form.control}
+      <RepeatedFormField
         name="title"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Project name</FormLabel>
-            <FormControl>
-              <Input {...field} placeholder="My cool resume" autoFocus />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
+        form={form}
+        label="Project name"
+        inputType="input"
+        placeholder="My cool resume"
+        autoFocus
       />
-      <FormField
-        control={form.control}
+      <RepeatedFormField
         name="description"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Description</FormLabel>
-            <FormControl>
-              <Input {...field} placeholder="A resume for my next job." />
-            </FormControl>
-            <FormDescription>Describe what this resume is for.</FormDescription>
-            <FormMessage />
-          </FormItem>
-        )}
+        form={form}
+        label="Description"
+        inputType="input"
+        placeholder="A resume for my next job."
+        autoFocus
+        description="Describe what this resume is for."
       />
     </ResumeFormWrapper>
   );

@@ -1,18 +1,11 @@
 import type { UseFormReturn } from "react-hook-form";
 import type { EducatonSchemaValues } from "@/lib/validation";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { GripHorizontal, Trash2Icon } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
+import { RepeatedFormField } from "./RepeatedFormField";
 
 interface EducationItemProps {
   id: string;
@@ -56,66 +49,40 @@ export const EducationItem = ({
           {...listeners}
         />
       </div>
-      <FormField
-        control={form.control}
+
+      <RepeatedFormField
         name={`educations.${index}.degree`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Degree</FormLabel>
-            <FormControl>
-              <Input {...field} autoFocus />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
+        form={form}
+        label="Degree"
+        inputType="input"
+        autoFocus
       />
-      <FormField
-        control={form.control}
+
+      <RepeatedFormField
         name={`educations.${index}.school`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>School</FormLabel>
-            <FormControl>
-              <Input {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
+        form={form}
+        label="School"
+        inputType="input"
+        autoFocus={false}
       />
       <div className="grid grid-cols-2 gap-3">
-        <FormField
-          control={form.control}
+        <RepeatedFormField
           name={`educations.${index}.startDate`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Start date</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  type="date"
-                  value={field.value?.slice(0, 10)}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          form={form}
+          label="Start date"
+          inputType="input"
+          type="date"
+          autoFocus={false}
+          isDate
         />
-        <FormField
-          control={form.control}
+        <RepeatedFormField
           name={`educations.${index}.endDate`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>End date</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  type="date"
-                  value={field.value?.slice(0, 10)}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          form={form}
+          label="End date"
+          inputType="input"
+          type="date"
+          autoFocus={false}
+          isDate
         />
       </div>
       <Button variant="destructive" type="button" onClick={() => remove(index)}>

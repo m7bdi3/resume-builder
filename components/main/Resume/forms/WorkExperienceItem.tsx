@@ -1,24 +1,17 @@
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
 
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { FormDescription } from "@/components/ui/form";
 import { WorkExperienceValues } from "@/lib/validation";
 import { Button } from "@/components/ui/button";
 import { GripHorizontal, Trash2Icon } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
 
 import { useSortable } from "@dnd-kit/sortable";
 
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
+import { RepeatedFormField } from "./RepeatedFormField";
+
 interface workExperienceProps {
   id: string;
   form: UseFormReturn<WorkExperienceValues>;
@@ -60,84 +53,53 @@ export const WorkExperienceItem = ({
           {...listeners}
         />
       </div>
-      <FormField
-        control={form.control}
+
+      <RepeatedFormField
         name={`workExperience.${index}.position`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Job title</FormLabel>
-            <FormControl>
-              <Input {...field} autoFocus />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
+        form={form}
+        label="Job title"
+        inputType="input"
+        autoFocus
       />
-      <FormField
-        control={form.control}
+
+      <RepeatedFormField
         name={`workExperience.${index}.company`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Company</FormLabel>
-            <FormControl>
-              <Input {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
+        form={form}
+        label="Company"
+        inputType="input"
+        autoFocus={false}
       />
       <div className="grid grid-cols-2 gap-3">
-        <FormField
-          control={form.control}
+        <RepeatedFormField
           name={`workExperience.${index}.startDate`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Start date</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  type="date"
-                  value={field.value?.slice(0, 10)}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          form={form}
+          label="Start date"
+          inputType="input"
+          type="date"
+          autoFocus={false}
+          isDate
         />
-        <FormField
-          control={form.control}
+        <RepeatedFormField
           name={`workExperience.${index}.endDate`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>End date</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  type="date"
-                  value={field.value?.slice(0, 10)}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          form={form}
+          label="End date"
+          inputType="input"
+          type="date"
+          autoFocus={false}
+          isDate
         />
       </div>
       <FormDescription>
         Leave <span className="font-semibold">end date</span> empty if you are
         still working here.
       </FormDescription>
-      <FormField
-        control={form.control}
+
+      <RepeatedFormField
         name={`workExperience.${index}.description`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Description</FormLabel>
-            <FormControl>
-              <Textarea {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
+        form={form}
+        label="Description"
+        inputType="textarea"
+        autoFocus={false}
       />
       <Button
         variant={"destructive"}
