@@ -1,8 +1,8 @@
 import { ResumeValues } from "@/lib/validation";
 import React from "react";
 import { ResumePreview } from "./ResumePreview";
-import { ColorPicker } from "./ColorPicker";
-import { BorderStyleButton } from "./BorderStyleButton";
+import { ColorPicker } from "../ColorPicker";
+import { BorderStyleButton } from "../BorderStyleButton";
 import { cn } from "@/lib/utils";
 
 interface Props {

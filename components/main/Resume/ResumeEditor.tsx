@@ -1,11 +1,12 @@
 "use client";
+
 import React, { useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { steps } from "./steps";
-import { Breadcrumbs } from "./Breadcrumbs";
-import { Footer } from "./Footer";
+import { steps } from "@/components/main/Resume/steps";
+import { Breadcrumbs } from "@/components/main/Resume/Breadcrumbs";
+import { Footer } from "@/components/main/Resume/Footer";
 import { ResumeValues } from "@/lib/validation";
-import { PreviewSection } from "./PreviewSection";
+import { PreviewSection } from "@/components/main/Resume/ResumePreview/PreviewSection";
 import { cn } from "@/lib/utils";
 import { useAutoSaveResume } from "@/hooks/useAutoSaveResume";
 import { useUnloadWarning } from "@/hooks/useUnloadWarning";
@@ -46,7 +47,7 @@ export const ResumeEditor = () => {
         <div className="absolute bottom-0 top-0 flex w-full">
           <div
             className={cn(
-              "w-full md:w-1/2 p-3 overflow-y-auto space-y-6 md:block",
+              "w-full md:w-1/2 p-3 overflow-y-auto space-y-6 md:block px-6",
               showSmResumePreview && "hidden"
             )}
           >

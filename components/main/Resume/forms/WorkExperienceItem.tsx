@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
-import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
+import { UseFormReturn } from "react-hook-form";
+
 import {
-  Form,
   FormControl,
   FormDescription,
   FormField,
@@ -11,133 +10,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { EditorFormProps } from "@/lib/types";
-import { workExperienceSchema, WorkExperienceValues } from "@/lib/validation";
+import { WorkExperienceValues } from "@/lib/validation";
 import { Button } from "@/components/ui/button";
 import { GripHorizontal, Trash2Icon } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 
-import {
-  closestCenter,
-  DndContext,
-  DragEndEvent,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { useSortable } from "@dnd-kit/sortable";
 
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
-export const WorkExperienceForm = ({
-  resumeData,
-  setResumeData,
-}: EditorFormProps) => {
-  const form = useForm<WorkExperienceValues>({
-    resolver: zodResolver(workExperienceSchema),
-    defaultValues: {
-      workExperience: resumeData.workExperience || [],
-    },
-  });
-
-  useEffect(() => {
-    const { unsubscribe } = form.watch(async (values) => {
-      const isValid = await form.trigger();
-      if (!isValid) return;
-      setResumeData({
-        ...resumeData,
-        workExperience:
-          values.workExperience?.filter((exp) => exp !== undefined) || [],
-      });
-    });
-    return unsubscribe;
-  }, [form, resumeData, setResumeData]);
-
-  const { fields, append, remove, move } = useFieldArray({
-    control: form.control,
-    name: "workExperience",
-  });
-
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id) {
-      const oldIndex = fields.findIndex((field) => field.id === active.id);
-      const newIndex = fields.findIndex((field) => field.id === over.id);
-      move(oldIndex, newIndex);
-
-      return arrayMove(fields, oldIndex, newIndex);
-    }
-  };
-
-  return (
-    <div className="max-w-xl mx-auto space-y-6">
-      <div className="space-y-1.5 text-center">
-        <h2 className="text-2xl font-semibold ">Work experiences</h2>
-        <p className="text-sm text-muted-foreground">Add as many as you like</p>
-      </div>
-      <Form {...form}>
-        <form className="space-y-3">
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-            modifiers={[restrictToVerticalAxis]}
-          >
-            <SortableContext
-              items={fields}
-              strategy={verticalListSortingStrategy}
-            >
-              {fields.map((field, index) => (
-                <WorkExperienceItem
-                  id={field.id}
-                  key={field.id}
-                  form={form}
-                  index={index}
-                  remove={remove}
-                />
-              ))}
-            </SortableContext>
-          </DndContext>
-          <div className="flex justify-center">
-            <Button
-              type="button"
-              onClick={() =>
-                append({
-                  position: "",
-                  company: "",
-                  startDate: "",
-                  endDate: "",
-                  description: "",
-                })
-              }
-            >
-              Add work experience
-            </Button>
-          </div>
-        </form>
-      </Form>
-    </div>
-  );
-};
-
 interface workExperienceProps {
   id: string;
   form: UseFormReturn<WorkExperienceValues>;
@@ -145,7 +26,7 @@ interface workExperienceProps {
   remove: (index: number) => void;
 }
 
-const WorkExperienceItem = ({
+export const WorkExperienceItem = ({
   id,
   form,
   index,

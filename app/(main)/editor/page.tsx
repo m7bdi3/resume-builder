@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { ResumeEditor } from "@/components/main/ResumeEditor";
+import { ResumeEditor } from "@/components/main/Resume/ResumeEditor";
 
 export const metdata: Metadata = {
   title: "Design your resume",

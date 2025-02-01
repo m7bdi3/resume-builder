@@ -1,5 +1,5 @@
 import { Circle, Square, Squircle } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 
 export const BorderStyles = {
   SQUARE: "square",

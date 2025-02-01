@@ -1,17 +1,9 @@
 import React from "react";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import Link from "next/link";
 import { steps } from "./steps";
 import { FileUser, PenLine } from "lucide-react";
-import { cn } from "@/lib/utils";
-
-interface Props {
-  isSaving: boolean;
-  currentStep: string;
-  setCurrentStep: (step: string) => void;
-  showSmResumePreview: boolean;
-  setShowResumePreview: (show: boolean) => void;
-}
+import { FooterProps } from "@/lib/types";
 
 export const Footer = ({
   isSaving,
@@ -19,7 +11,7 @@ export const Footer = ({
   setCurrentStep,
   showSmResumePreview,
   setShowResumePreview,
-}: Props) => {
+}: FooterProps) => {
   const previousStep = steps.find(
     (_, index) => steps[index + 1]?.key === currentStep
   )?.key;
@@ -61,16 +53,8 @@ export const Footer = ({
         </Button>
         <div className="flex items-center gap-3">
           <Button asChild>
-            <Link href={"/resumes"}>Close</Link>
+            <Link href={"/resumes"}>{isSaving ? "Saving..." : "Close"}</Link>
           </Button>
-          <p
-            className={cn(
-              "text-muted-foreground opacity-0",
-              isSaving && "opacity-100"
-            )}
-          >
-            Saving...
-          </p>
         </div>
       </div>
     </footer>
