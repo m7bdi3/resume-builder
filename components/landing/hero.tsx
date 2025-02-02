@@ -4,16 +4,16 @@ import { ChevronRight } from "lucide-react";
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden min-h-screen flex items-center justify-center">
+    <section className="absolute top-0 w-full overflow-hidden min-h-screen flex items-center justify-center">
       {/* Gradient layers with animation */}
       <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/50 to-background/0 z-10" />
       <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/40 z-10" />
       <div className="absolute inset-0 bg-gradient-radial from-primary/60 via-transparent to-transparent z-10" />
 
       {/* Dynamic background elements */}
-      <div className="absolute -right-16 bottom-0 size-96 bg-primary/20 blur-3xl rounded-full z-10" />
-      <div className="absolute -inset-12 size-96 bg-primary/40 blur-3xl rounded-full z-10" />
-      <div className="absolute size-[800px] bg-primary/20 blur-3xl rounded-full z-10" />
+      <div className="absolute right-0 bottom-0 size-96 bg-primary/20 blur-3xl rounded-full z-10" />
+      <div className="absolute inset-0 size-96 bg-primary/20 blur-3xl rounded-full z-10" />
+      <div className="absolute size-[900px] bg-primary/20 blur-3xl rounded-full z-10" />
 
       <div className="container mx-auto relative z-10 px-4 mt-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
