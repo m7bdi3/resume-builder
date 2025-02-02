@@ -4,7 +4,7 @@ import { ChevronRight } from "lucide-react";
 
 export default function Hero() {
   return (
-    <section className="absolute top-0 w-full overflow-hidden min-h-screen flex items-center justify-center">
+    <section className="relative overflow-hidden min-h-screen flex items-center justify-center">
       {/* Gradient layers with animation */}
       <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/50 to-background/0 z-10" />
       <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/40 z-10" />
@@ -20,7 +20,7 @@ export default function Hero() {
           {/* Text Content */}
           <div className="space-y-8 relative">
             <div className="relative text-center md:text-start">
-              <h1 className="text-5xl md:text-7xl xl:text-8xl font-bold tracking-tighter leading-[0.9] font-heading">
+              <h1 className="text-5xl lg:text-7xl xl:text-8xl font-bold tracking-tighter leading-[0.9] font-heading">
                 <span className="block bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
                   Craft Smart
                 </span>
@@ -29,9 +29,9 @@ export default function Hero() {
                 </span>
               </h1>
 
-              <div className="h-[3px] w-3/4 bg-gradient-to-r from-primary to-primary/30 mt-6 mx-auto md:mx-0 origin-left " />
+              <div className="h-[3px] w-3/4 bg-gradient-to-r from-primary to-primary/30 mt-2 mx-auto md:mx-0 origin-left " />
 
-              <p className="text-xl md:text-2xl text-muted-foreground max-w-[600px] leading-relaxed mt-8 text-center md:text-start">
+              <p className="text-lg lg:text-2xl text-muted-foreground max-w-[600px] leading-relaxed mt-8 text-center md:text-start">
                 AI-powered resume builder with real-time ATS scoring.
               </p>
             </div>
@@ -42,15 +42,15 @@ export default function Hero() {
                 <div className="flex gap-6 items-center justify-center md:justify-start flex-wrap">
                   <Button
                     size="lg"
-                    className="text-lg px-8 py-7 rounded-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-xl hover:shadow-primary/30 transition-all group"
+                    className="px-8 py-7 rounded-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-xl hover:shadow-primary/30 transition-all group"
                   >
-                    <span>Start Free Now</span>
+                    Start Free Now
                     <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Button>
                   <Button
                     variant="outline"
                     size="lg"
-                    className="text-lg px-8 py-7 rounded-full border-2 hover:bg-accent/20 hover:border-primary/50 hover:text-primary transition-all"
+                    className="px-8 py-7 rounded-full border-2 hover:bg-accent/20 hover:border-primary/50 hover:text-primary transition-all"
                   >
                     See Examples
                   </Button>

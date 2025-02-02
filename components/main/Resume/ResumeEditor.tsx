@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { steps } from "@/components/main/Resume/steps";
 import { Breadcrumbs } from "@/components/main/Resume/Breadcrumbs";
