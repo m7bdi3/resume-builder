@@ -8,13 +8,12 @@ interface Props {
 export const SectionHeader: React.FC<Props> = ({ title, colorHex }) => (
   <>
     <hr
-      className="border-2"
       style={{
         borderColor: colorHex,
       }}
     />
     <h2
-      className="text-lg font-semibold"
+      className="text-lg font-semibold mt-2"
       style={{
         color: colorHex,
       }}

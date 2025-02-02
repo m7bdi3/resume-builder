@@ -6,13 +6,13 @@ import {
 } from "@/lib/validation";
 import { Button } from "@/components/ui/button";
 import { useFieldArray } from "react-hook-form";
-import { WorkExperienceItem } from "./WorkExperienceItem";
 import { DndContext, type DragEndEvent } from "@dnd-kit/core";
 import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { ResumeFormWrapper } from "@/components/main/Resume/forms/ResumeFormWrapper";
+import { DraggableItem } from "./DraggableItem";
 
 export const WorkExperienceForm = ({
   resumeData,
@@ -50,12 +50,15 @@ export const WorkExperienceForm = ({
       <DndContext onDragEnd={handleDragEnd}>
         <SortableContext items={fields} strategy={verticalListSortingStrategy}>
           {fields.map((field, index) => (
-            <WorkExperienceItem
+            <DraggableItem
               key={field.id}
               id={field.id}
               form={form}
               index={index}
               remove={remove}
+              isEducation={false}
+              name="workExperience"
+              title="Work experience"
             />
           ))}
         </SortableContext>

@@ -36,7 +36,7 @@ export const ResumeEditor = () => {
 
   return (
     <div className="flex grow flex-col">
-      <header className="space-y-1.5 border-b px-3 py-5 text-center">
+      <header className="space-y-1.5 border-b px-3 py-5 text-center bg-primary/50 text-primary-foreground">
         <h1 className="text-2xl font-bold"> Design your resume</h1>
         <p className="text-sm text-muted-foreground">
           Follow the steps to create your resume, Your progress will be saved

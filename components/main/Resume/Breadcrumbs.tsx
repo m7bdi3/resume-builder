@@ -16,9 +16,9 @@ interface Props {
 
 export const Breadcrumbs = ({ currentStep, setCurrentStep }: Props) => {
   return (
-    <div className="flex justify-center items-center">
+    <div className="flex justify-center items-center w-full">
       <Breadcrumb>
-        <BreadcrumbList>
+        <BreadcrumbList className="flex items-center justify-center">
           {steps.map((step) => (
             <React.Fragment key={step.key}>
               <BreadcrumbItem>

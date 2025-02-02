@@ -1,29 +1,13 @@
 import { ResumeSectionProps } from "@/lib/types";
 
 export const SummarySection = ({ resumeData }: ResumeSectionProps) => {
-  const { summary, colorHex } = resumeData;
+  const { summary } = resumeData;
 
   if (!summary) return null;
 
   return (
-    <>
-      <hr
-        className="border-2"
-        style={{
-          borderColor: colorHex,
-        }}
-      />
-      <div className="space-y-3 break-inside-avoid">
-        <p
-          className="text-lg font-semibold"
-          style={{
-            color: colorHex,
-          }}
-        >
-          Professional profile
-        </p>
-        <div className="whitespace-pre-line text-sm">{summary}</div>
-      </div>
-    </>
+    <section className="mb-4">
+      <p className="text-sm leading-relaxed">{summary}</p>
+    </section>
   );
 };

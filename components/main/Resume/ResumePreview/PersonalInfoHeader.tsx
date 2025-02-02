@@ -35,7 +35,7 @@ export const PersonalInfoHeader: React.FC<Props> = ({ resumeData }) => {
   }, [img]);
 
   return (
-    <div className="flex items-center gap-6">
+    <header className="flex items-center gap-6 mb-4">
       {imgSrc && (
         <Image
           src={imgSrc || "/placeholder.svg"}
@@ -58,14 +58,19 @@ export const PersonalInfoHeader: React.FC<Props> = ({ resumeData }) => {
           <h1 className="text-3xl font-bold" style={{ color: colorHex }}>
             {firstName} {lastName}
           </h1>
-          <p className="font-medium" style={{ color: colorHex }}>
+          <h2 className="font-medium text-xl" style={{ color: colorHex }}>
             {jobTitle}
-          </p>
+          </h2>
         </div>
-        <p className="text-sm text-gray-500">
-          {[city, country, phone, email].filter(Boolean).join(" • ")}
-        </p>
+        <div className="text-sm text-gray-600">
+          {[city, country, phone, email].filter(Boolean).map((item, index) => (
+            <span key={index} className="mr-2">
+              {item}
+              {index < 3 && " •"}
+            </span>
+          ))}
+        </div>
       </div>
-    </div>
+    </header>
   );
 };

@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { ResumeSectionProps } from "@/lib/types";
 import { BorderStyles } from "../BorderStyleButton";
+import { SectionHeader } from "./SectionHeader";
 
 export const SkillsSection = ({ resumeData }: ResumeSectionProps) => {
   const { skills, colorHex, borderStyle } = resumeData;
@@ -8,27 +9,14 @@ export const SkillsSection = ({ resumeData }: ResumeSectionProps) => {
   if (!skills?.length) return null;
 
   return (
-    <>
-      <hr
-        className="border-2"
-        style={{
-          borderColor: colorHex,
-        }}
-      />
+    <section className="mb-4">
+      <SectionHeader title="Skills" colorHex={colorHex} />
       <div className="break-inside-avoid space-y-3">
-        <p
-          className="text-lg font-semibold"
-          style={{
-            color: colorHex,
-          }}
-        >
-          Skills
-        </p>
-        <div className="flex break-inside-avoid flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 print:gap-1">
           {skills.map((skill, index) => (
             <Badge
               key={index}
-              className="bg-black hover:bg-black text-white rounded-md"
+              className="text-white print:text-black print:bg-transparent print:border"
               style={{
                 backgroundColor: colorHex,
                 borderRadius:
@@ -44,6 +32,6 @@ export const SkillsSection = ({ resumeData }: ResumeSectionProps) => {
           ))}
         </div>
       </div>
-    </>
+    </section>
   );
 };

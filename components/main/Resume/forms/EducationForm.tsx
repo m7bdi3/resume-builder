@@ -3,13 +3,13 @@ import type { EditorFormProps } from "@/lib/types";
 import { educatonSchema, type EducatonSchemaValues } from "@/lib/validation";
 import { useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { EducationItem } from "./EducationItem";
 import { DndContext, type DragEndEvent } from "@dnd-kit/core";
 import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { ResumeFormWrapper } from "@/components/main/Resume/forms/ResumeFormWrapper";
+import { DraggableItem } from "./DraggableItem";
 
 export const EducationForm = ({
   resumeData,
@@ -47,12 +47,15 @@ export const EducationForm = ({
       <DndContext onDragEnd={handleDragEnd}>
         <SortableContext items={fields} strategy={verticalListSortingStrategy}>
           {fields.map((field, index) => (
-            <EducationItem
+            <DraggableItem
               key={field.id}
               id={field.id}
               form={form}
               index={index}
               remove={remove}
+              isEducation
+              name="educations"
+              title="Education"
             />
           ))}
         </SortableContext>
