@@ -2,13 +2,14 @@ import { useResumeForm } from "@/hooks/useResumeForm";
 import type { EditorFormProps } from "@/lib/types";
 import { summarySchema, type SummarySchemaValues } from "@/lib/validation";
 import { ResumeFormWrapper } from "@/components/main/Resume/forms/ResumeFormWrapper";
-import { RepeatedFormField } from "./RepeatedFormField";
+import { RepeatedFormField } from "@/components/main/Resume/forms/RepeatedFormField";
+import { summaryfieldsConfig } from "@/lib/forms";
 
 export const SummaryForm = ({ resumeData, setResumeData }: EditorFormProps) => {
   const form = useResumeForm<SummarySchemaValues>(
     summarySchema,
     {
-      summary: resumeData.summary || "",
+      summary: resumeData.summary ?? "",
     },
     { resumeData, setResumeData }
   );
@@ -19,14 +20,9 @@ export const SummaryForm = ({ resumeData, setResumeData }: EditorFormProps) => {
       description="What are you good at?"
       form={form}
     >
-      <RepeatedFormField
-        name="summary"
-        form={form}
-        label="Professional Summary"
-        inputType="textarea"
-        placeholder="A brief, engaging text about yourself"
-        autoFocus
-      />
+      {summaryfieldsConfig.map((config) => {
+        return <RepeatedFormField key={config.name} form={form} {...config} />;
+      })}
     </ResumeFormWrapper>
   );
 };

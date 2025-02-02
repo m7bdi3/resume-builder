@@ -2,7 +2,8 @@ import { generalInfoSchema, type GeneralInfoValues } from "@/lib/validation";
 import { useResumeForm } from "@/hooks/useResumeForm";
 import type { EditorFormProps } from "@/lib/types";
 import { ResumeFormWrapper } from "@/components/main/Resume/forms/ResumeFormWrapper";
-import { RepeatedFormField } from "./RepeatedFormField";
+import { RepeatedFormField } from "@/components/main/Resume/forms/RepeatedFormField";
+import { generalInfofieldsConfig } from "@/lib/forms";
 
 export const GeneralInfoForm = ({
   resumeData,
@@ -11,8 +12,8 @@ export const GeneralInfoForm = ({
   const form = useResumeForm<GeneralInfoValues>(
     generalInfoSchema,
     {
-      title: resumeData.title || "",
-      description: resumeData.description || "",
+      title: resumeData.title ?? "",
+      description: resumeData.description ?? "",
     },
     { resumeData, setResumeData }
   );
@@ -23,23 +24,9 @@ export const GeneralInfoForm = ({
       description="This will not appear on your resume."
       form={form}
     >
-      <RepeatedFormField
-        name="title"
-        form={form}
-        label="Project name"
-        inputType="input"
-        placeholder="My cool resume"
-        autoFocus
-      />
-      <RepeatedFormField
-        name="description"
-        form={form}
-        label="Description"
-        inputType="input"
-        placeholder="A resume for my next job."
-        autoFocus
-        description="Describe what this resume is for."
-      />
+      {generalInfofieldsConfig.map((config) => {
+        return <RepeatedFormField key={config.name} form={form} {...config} />;
+      })}
     </ResumeFormWrapper>
   );
 };

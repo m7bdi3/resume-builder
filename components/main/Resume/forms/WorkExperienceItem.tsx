@@ -10,7 +10,7 @@ import { useSortable } from "@dnd-kit/sortable";
 
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
-import { RepeatedFormField } from "./RepeatedFormField";
+import { RepeatedFormField } from "@/components/main/Resume/forms/RepeatedFormField";
 
 interface workExperienceProps {
   id: string;
