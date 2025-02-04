@@ -50,6 +50,9 @@ model WorkExperience {
   resumeId String
   resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("work_experience")
 }
 
@@ -64,5 +67,24 @@ model Education {
   resumeId String
   resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("education")
+}
+
+model UserSub {
+  id String @id @default(cuid())
+
+  userId                  String   @unique
+  stripeCustomeId         String   @unique
+  stripeSubscriptionId    String   @unique
+  stripePriceId           String
+  stripeCurrentPeriodEnd  DateTime
+  stripeCancelAtPeriodEnd Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_subs")
 }

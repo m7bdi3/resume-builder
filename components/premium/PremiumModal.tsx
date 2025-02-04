@@ -26,6 +26,7 @@ import { Check } from "lucide-react";
 import usePremiumModal from "@/hooks/usePremiumModal";
 import { useToast } from "@/hooks/use-toast";
 import { createCheckoutSession } from "@/actions/premium.actions";
+import { env } from "@/env";
 
 const premiumFeatures = ["AI tools", "Up to 3 resumes"];
 const premiumPlusFeatures = ["Infinite resumes", "Design Customizations"];
@@ -130,11 +131,7 @@ function Content({ className, handlePremiumClick, loading }: Props) {
           ))}
         </ul>
         <Button
-          onClick={() =>
-            handlePremiumClick(
-              process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY as string
-            )
-          }
+          onClick={() => handlePremiumClick(env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY)}
           disabled={loading}
         >
           Get Premium
@@ -153,9 +150,7 @@ function Content({ className, handlePremiumClick, loading }: Props) {
         </ul>
         <Button
           onClick={() =>
-            handlePremiumClick(
-              process.env.NEXT_PUBLIC_STRIPE_PRO_PLUS_MONTHLY as string
-            )
+            handlePremiumClick(env.NEXT_PUBLIC_STRIPE_PRO_PLUS_MONTHLY)
           }
           disabled={loading}
         >

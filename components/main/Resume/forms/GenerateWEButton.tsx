@@ -1,4 +1,5 @@
 import { generateWorkExperience } from "@/actions/ai.actions";
+import { useSubsLevel } from "@/app/(main)/SubsProvider";
 import { LoadingButton } from "@/components/LoadingButton";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +19,8 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import usePremiumModal from "@/hooks/usePremiumModal";
+import { canUseAiTools } from "@/lib/permissions";
 import {
   GenerateWorkExperienceInput,
   generateWorkExperienceSchema,
@@ -36,14 +39,21 @@ export const GenerateWorkExperienceButton = ({
   onWorkExperienceGenerated,
 }: Props) => {
   const [showInputDialog, setShowInputDialog] = useState(false);
+  const subLevel = useSubsLevel();
+  const { open, setOpen } = usePremiumModal();
 
   return (
     <>
       <Button
         variant={"outline"}
         type="button"
-        //TODO:BLOCK FOR NON PREMIUM
-        onClick={() => setShowInputDialog(!showInputDialog)}
+        onClick={() => {
+          if (!canUseAiTools(subLevel)) {
+            setOpen(!open);
+            return;
+          }
+          setShowInputDialog(!showInputDialog);
+        }}
       >
         <WandSparkles className="size-4" /> Smart Fill Ai
       </Button>

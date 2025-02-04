@@ -3,15 +3,29 @@ import { Color, ColorChangeHandler, TwitterPicker } from "react-color";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import { Button } from "../../ui/button";
 import { Palette } from "lucide-react";
+import { useSubsLevel } from "@/app/(main)/SubsProvider";
+import usePremiumModal from "@/hooks/usePremiumModal";
+import { canUseCustom } from "@/lib/permissions";
 
 interface Props {
   color: Color | undefined;
   onChange: ColorChangeHandler;
 }
 export const ColorPicker = ({ color, onChange }: Props) => {
+  const subLevel = useSubsLevel();
+  const { open, setOpen } = usePremiumModal();
   const [showPopOver, setShowPopOver] = useState(false);
   return (
-    <Popover open={showPopOver} onOpenChange={setShowPopOver}>
+    <Popover
+      open={showPopOver}
+      onOpenChange={() => {
+        if (!canUseCustom(subLevel)) {
+          setOpen(!open);
+          return;
+        }
+        setShowPopOver(!open);
+      }}
+    >
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}

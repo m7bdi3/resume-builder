@@ -1,6 +1,9 @@
 import { generateSummary } from "@/actions/ai.actions";
+import { useSubsLevel } from "@/app/(main)/SubsProvider";
 import { LoadingButton } from "@/components/LoadingButton";
 import { useToast } from "@/hooks/use-toast";
+import usePremiumModal from "@/hooks/usePremiumModal";
+import { canUseAiTools } from "@/lib/permissions";
 import { ResumeValues } from "@/lib/validation";
 import { WandSparkles } from "lucide-react";
 import { useState } from "react";
@@ -17,9 +20,14 @@ export const GenerateSummaryButton = ({
   const { toast } = useToast();
 
   const [loading, setLoading] = useState(false);
-  const handleClick = async () => {
-    //TODO : BLOCK FOR NONPREMIUM
+  const subLevel = useSubsLevel();
+  const { open, setOpen } = usePremiumModal();
 
+  const handleClick = async () => {
+    if (!canUseAiTools(subLevel)) {
+      setOpen(!open);
+      return;
+    }
     try {
       setLoading(true);
       const aiResponse = await generateSummary(resumeData);

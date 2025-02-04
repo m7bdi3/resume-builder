@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   description: "AI Resume builder is the easiest way to create a pro resume",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
