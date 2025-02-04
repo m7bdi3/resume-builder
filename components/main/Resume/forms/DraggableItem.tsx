@@ -66,9 +66,7 @@ export const DraggableItem = ({
         />
       </div>
 
-      {isEducation ? (
-        <></>
-      ) : (
+      {!isEducation && (
         <div className="flex justify-center items-center">
           <GenerateWorkExperienceButton
             onWorkExperienceGenerated={(exp) =>

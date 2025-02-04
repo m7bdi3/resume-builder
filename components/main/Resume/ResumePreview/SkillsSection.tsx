@@ -16,7 +16,7 @@ export const SkillsSection = ({ resumeData }: ResumeSectionProps) => {
           {skills.map((skill, index) => (
             <Badge
               key={index}
-              className="text-white print:text-black print:bg-transparent print:border"
+              className="text-white"
               style={{
                 backgroundColor: colorHex,
                 borderRadius:

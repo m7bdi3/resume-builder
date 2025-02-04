@@ -33,7 +33,7 @@ const premiumPlusFeatures = ["Infinite resumes", "Design Customizations"];
 
 export function PremiumModal() {
   const { open, setOpen } = usePremiumModal();
-  const isDesktop = useMedia("(min-width: 768px)");
+  const isDesktop = useMedia("(min-width: 768px)", false);
 
   const { toast } = useToast();
 
@@ -59,22 +59,27 @@ export function PremiumModal() {
     return (
       <Dialog
         open={open}
-        onOpenChange={(open) => {
+        onOpenChange={() => {
           if (!loading) {
-            setOpen(!open);
+            setOpen(false);
           }
         }}
       >
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="text-center">
-              Resume Builder Premium
+            <DialogTitle className="text-center text-2xl">
+              Unlock Premium Features
             </DialogTitle>
-            <DialogDescription className="text-center">
-              Get a premium subscription to unlock all features and templates.
+            <DialogDescription className="text-center text-base">
+              Upgrade your experience with powerful tools and customization
+              options.
             </DialogDescription>
           </DialogHeader>
-          <Content loading={loading} handlePremiumClick={handlePremiumClick} />
+          <Content
+            loading={loading}
+            handlePremiumClick={handlePremiumClick}
+            className="p-6"
+          />
         </DialogContent>
       </Dialog>
     );
@@ -83,27 +88,37 @@ export function PremiumModal() {
   return (
     <Drawer
       open={open}
-      onOpenChange={(open) => {
+      onOpenChange={() => {
         if (!loading) {
-          setOpen(!open);
+          setOpen(false);
         }
       }}
     >
       <DrawerContent>
         <DrawerHeader className="text-left">
-          <DrawerTitle>Resume Builder Premium</DrawerTitle>
+          <DrawerTitle>Unlock Premium Features</DrawerTitle>
           <DrawerDescription>
-            Get a premium subscription to unlock all features and templates.
+            Upgrade your experience with powerful tools and customization
+            options.
           </DrawerDescription>
         </DrawerHeader>
         <Content
-          className="px-4"
+          className="px-4 pb-6"
           loading={loading}
           handlePremiumClick={handlePremiumClick}
         />
-        <DrawerFooter className="pt-2">
+        <DrawerFooter className="pt-4">
           <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                if (!loading) {
+                  setOpen(false);
+                }
+              }}
+            >
+              Cancel
+            </Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
@@ -119,42 +134,57 @@ interface Props {
 
 function Content({ className, handlePremiumClick, loading }: Props) {
   return (
-    <div className={cn("flex", className)}>
-      <div className="flex w-1/2 flex-col space-y-5">
-        <h3 className="text-center text-lg font-bold">Premium </h3>
-        <ul className="list-inside space-y-2">
+    <div className={cn("grid gap-8 md:grid-cols-2", className)}>
+      <div className="flex flex-col gap-6 rounded-xl bg-card p-6 shadow-sm">
+        <div className="space-y-2">
+          <span className="rounded-full bg-primary/10 px-4 py-1 text-sm font-medium text-primary">
+            Premium
+          </span>
+          <h3 className="text-2xl font-bold">Essential Features</h3>
+        </div>
+        <ul className="space-y-3">
           {premiumFeatures.map((feature, index) => (
-            <li key={index} className="flex items-center gap-2">
-              <Check className="size-4 text-primary" />
-              {feature}
+            <li key={index} className="flex items-start gap-3">
+              <Check className="mt-1 size-4 shrink-0 text-primary" />
+              <span className="text-muted-foreground">{feature}</span>
             </li>
           ))}
         </ul>
         <Button
+          size="lg"
+          variant="secondary"
           onClick={() => handlePremiumClick(env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY)}
           disabled={loading}
+          className="mt-auto w-full"
         >
           Get Premium
         </Button>
       </div>
-      <div className="border-1 mx-6" />
-      <div className="flex w-1/2 flex-col space-y-5">
-        <h3 className="text-center text-lg font-bold">Premium +</h3>
-        <ul className="list-inside space-y-2">
+
+      <div className="flex flex-col gap-6 rounded-xl bg-card p-6 shadow-sm">
+        <div className="space-y-2">
+          <span className="rounded-full bg-accent px-4 py-1 text-sm font-medium text-accent-foreground">
+            Premium +
+          </span>
+          <h3 className="text-2xl font-bold">Advanced Features</h3>
+        </div>
+        <ul className="space-y-3">
           {premiumPlusFeatures.map((feature, index) => (
-            <li key={index} className="flex items-center gap-2">
-              <Check className="size-4 text-primary" />
-              {feature}
+            <li key={index} className="flex items-start gap-3">
+              <Check className="mt-1 size-4 shrink-0 text-primary" />
+              <span className="text-muted-foreground">{feature}</span>
             </li>
           ))}
         </ul>
         <Button
+          size="lg"
           onClick={() =>
             handlePremiumClick(env.NEXT_PUBLIC_STRIPE_PRO_PLUS_MONTHLY)
           }
           disabled={loading}
+          className="mt-auto w-full"
         >
-          Get Premium +
+          Get Premium+
         </Button>
       </div>
     </div>

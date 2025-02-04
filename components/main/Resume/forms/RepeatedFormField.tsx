@@ -110,7 +110,7 @@ export const RepeatedFormField = memo(
                       value={isDate ? field.value?.slice(0, 10) : field.value}
                     />
                   ) : (
-                    <>
+                    <div >
                       <Textarea
                         {...field}
                         placeholder={placeholder ? placeholder : ""}
@@ -132,7 +132,7 @@ export const RepeatedFormField = memo(
                           }
                         />
                       )}
-                    </>
+                    </div>
                   )}
                 </FormControl>
                 <FormMessage />

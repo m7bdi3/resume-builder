@@ -24,6 +24,8 @@ export const env = createEnv({
     OPENAI_API_KEY: z.string().min(1),
     STRIPE_SECRET_KEY: z.string().min(1),
     STRIPE_WEBHOOK_SECRET: z.string().min(1),
+    KV_REST_API_TOKEN: z.string().min(1),
+    KV_REST_API_URL: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),

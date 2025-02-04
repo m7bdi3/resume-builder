@@ -1,5 +1,5 @@
 "use server";
-
+import crypto from "crypto";
 import { env } from "@/env";
 import stripe from "@/lib/stripe";
 import { currentUser } from "@clerk/nextjs/server";
@@ -15,6 +15,8 @@ export async function createCheckoutSession(priceId: string) {
     | string
     | undefined;
 
+  const successToken = crypto.randomBytes(32).toString("hex");
+
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
@@ -23,7 +25,7 @@ export async function createCheckoutSession(priceId: string) {
       },
     ],
     mode: "subscription",
-    success_url: `${env.NEXT_PUBLIC_BASE_URL}/billing/success`,
+    success_url: `${env.NEXT_PUBLIC_BASE_URL}/api/verify-success?session_id={CHECKOUT_SESSION_ID}&token=${successToken}`,
     cancel_url: `${env.NEXT_PUBLIC_BASE_URL}/billing`,
     customer: stripeCustomerId,
     customer_email: stripeCustomerId
@@ -31,6 +33,7 @@ export async function createCheckoutSession(priceId: string) {
       : user.emailAddresses[0].emailAddress,
     metadata: {
       userId: user.id,
+      successToken: successToken,
     },
     subscription_data: {
       metadata: {

@@ -25,7 +25,7 @@ export const CreateResumeButton = ({ canCreate }: Props) => {
   }
 
   return (
-    <Button onClick={() => setOpen(true)} className="mx-auto flex w-fit gap-2">
+    <Button onClick={() => setOpen(true)} className="flex w-fit gap-2">
       <PlusSquare className="size-5" />
       New Resume
     </Button>
