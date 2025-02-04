@@ -7,14 +7,21 @@ import { Breadcrumbs } from "@/components/main/Resume/Breadcrumbs";
 import { Footer } from "@/components/main/Resume/Footer";
 import { ResumeValues } from "@/lib/validation";
 import { PreviewSection } from "@/components/main/Resume/ResumePreview/PreviewSection";
-import { cn } from "@/lib/utils";
+import { cn, mapToResumeValues } from "@/lib/utils";
 import { useAutoSaveResume } from "@/hooks/useAutoSaveResume";
 import { useUnloadWarning } from "@/hooks/useUnloadWarning";
+import { ResumeServerData } from "@/lib/types";
 
-export const ResumeEditor = () => {
+interface Props {
+  resumeToEdit: ResumeServerData | null;
+}
+
+export const ResumeEditor = ({ resumeToEdit }: Props) => {
   const searchParams = useSearchParams();
 
-  const [resumeData, setResumeData] = useState<ResumeValues>({});
+  const [resumeData, setResumeData] = useState<ResumeValues>(
+    resumeToEdit ? mapToResumeValues(resumeToEdit) : {}
+  );
 
   const [showSmResumePreview, setShowResumePreview] = useState(false);
 

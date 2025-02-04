@@ -1,8 +1,11 @@
-import type React from "react";
 import { useRef } from "react";
+
 import { cn } from "@/lib/utils";
+
 import type { ResumeValues } from "@/lib/validation";
+
 import useDimensions from "@/hooks/useDimensions";
+
 import { PersonalInfoHeader } from "@/components/main/Resume/ResumePreview/PersonalInfoHeader";
 import { SummarySection } from "@/components/main/Resume/ResumePreview/SummarySection";
 import { WorkExperienceSection } from "@/components/main/Resume/ResumePreview/WorkExperienceSection";
@@ -11,10 +14,15 @@ import { SkillsSection } from "@/components/main/Resume/ResumePreview/SkillsSect
 
 interface Props {
   resumeData: ResumeValues;
+  contentRef?: React.Ref<HTMLDivElement>;
   className?: string;
 }
 
-export const ResumePreview: React.FC<Props> = ({ resumeData, className }) => {
+export const ResumePreview: React.FC<Props> = ({
+  resumeData,
+  contentRef,
+  className,
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimensions(containerRef as React.RefObject<HTMLElement>);
 
@@ -31,6 +39,8 @@ export const ResumePreview: React.FC<Props> = ({ resumeData, className }) => {
         style={{
           zoom: width ? (1 / 794) * width : 1,
         }}
+        ref={contentRef}
+        id="resumePreviewContent"
       >
         <PersonalInfoHeader resumeData={resumeData} />
         <SummarySection resumeData={resumeData} />

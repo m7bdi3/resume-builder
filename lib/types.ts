@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { ResumeValues } from "./validation";
 
 export interface EditorFormProps {
@@ -9,7 +10,6 @@ export interface ResumeSectionProps {
   resumeData: ResumeValues;
 }
 
-
 export interface FooterProps {
   isSaving: boolean;
   currentStep: string;
@@ -17,3 +17,12 @@ export interface FooterProps {
   showSmResumePreview: boolean;
   setShowResumePreview: (show: boolean) => void;
 }
+
+export const resumeDataInclude = {
+  workExperiences: true,
+  educations: true,
+} satisfies Prisma.ResumeInclude;
+
+export type ResumeServerData = Prisma.ResumeGetPayload<{
+  include: typeof resumeDataInclude;
+}>;

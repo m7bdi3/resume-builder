@@ -14,6 +14,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FieldConfig } from "@/lib/forms";
+import { GenerateSummaryButton } from "./GenerateSummaryButton";
+import { ResumeValues } from "@/lib/validation";
 
 interface Props {
   form: UseFormReturn;
@@ -28,6 +30,8 @@ interface Props {
   accept?: string;
   onSkillChange?: boolean;
   isDate?: boolean;
+  hasButton?: boolean;
+  resumeData?: ResumeValues;
 }
 
 export const RepeatedFormField = memo(
@@ -44,6 +48,8 @@ export const RepeatedFormField = memo(
     accept,
     onSkillChange,
     isDate,
+    hasButton,
+    resumeData,
   }: Props) => {
     const imgInputRef = useRef<HTMLInputElement>(null);
 
@@ -104,19 +110,29 @@ export const RepeatedFormField = memo(
                       value={isDate ? field.value?.slice(0, 10) : field.value}
                     />
                   ) : (
-                    <Textarea
-                      {...field}
-                      placeholder={placeholder ? placeholder : ""}
-                      autoFocus={autoFocus}
-                      onChange={
-                        onSkillChange
-                          ? (e) => {
-                              const skills = e.target.value.split(",");
-                              field.onChange(skills);
-                            }
-                          : field.onChange
-                      }
-                    />
+                    <>
+                      <Textarea
+                        {...field}
+                        placeholder={placeholder ? placeholder : ""}
+                        autoFocus={autoFocus}
+                        onChange={
+                          onSkillChange
+                            ? (e) => {
+                                const skills = e.target.value.split(",");
+                                field.onChange(skills);
+                              }
+                            : field.onChange
+                        }
+                      />
+                      {hasButton && resumeData && (
+                        <GenerateSummaryButton
+                          resumeData={resumeData}
+                          onSummaryGenerated={(summary: string) =>
+                            form.setValue("summary", summary)
+                          }
+                        />
+                      )}
+                    </>
                   )}
                 </FormControl>
                 <FormMessage />

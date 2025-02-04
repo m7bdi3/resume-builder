@@ -15,6 +15,7 @@ export type FieldConfig = {
   accept?: string;
   onSkillChange?: boolean;
   isDate?: boolean;
+  hasButton?: boolean;
 };
 
 export const personalInfofieldsConfig: (FieldConfig | FieldConfig[])[] = [
@@ -109,5 +110,6 @@ export const summaryfieldsConfig: FieldConfig[] = [
     inputType: "textarea",
     placeholder: "A brief, engaging text about yourself",
     autoFocus: true,
+    hasButton: true,
   },
 ];

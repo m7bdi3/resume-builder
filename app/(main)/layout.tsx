@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/navbar/Navbar";
+import { PremiumModal } from "@/components/premium/PremiumModal";
 
 export default function ResumesLayout({
   children,
@@ -9,6 +10,7 @@ export default function ResumesLayout({
     <div className="flex min-h-screen flex-col">
       <Navbar />
       {children}
+      <PremiumModal />
     </div>
   );
 }

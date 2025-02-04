@@ -3,6 +3,7 @@ import { Inter, Rajdhani } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
 
 // Configure Rajdhani for headings
 const rajdhani = Rajdhani({
@@ -43,6 +44,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             {children}
+            <Toaster />
           </ThemeProvider>
         </body>
       </html>

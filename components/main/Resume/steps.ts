@@ -1,10 +1,10 @@
 import { EditorFormProps } from "@/lib/types";
 import { PersonalInfoForm } from "./forms/PersonalInfoForm";
 import { GeneralInfoForm } from "./forms/GeneralInfoForm";
-import { WorkExperienceForm } from "./forms/WorkExperienceForm";
-import { EducationForm } from "./forms/EducationForm";
 import { SkillsForm } from "./forms/SkillsForm";
-import { SummaryForm } from "./forms/SummaryForm";
+import WorkExperienceForm from "./forms/WorkExperienceForm";
+import EducationForm from "./forms/EducationForm";
+import SummaryForm from "./forms/SummaryForm";
 
 export const steps: {
   title: string;

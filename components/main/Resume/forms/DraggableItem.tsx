@@ -11,6 +11,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
 import { RepeatedFormField } from "@/components/main/Resume/forms/RepeatedFormField";
 import { Card } from "@/components/ui/card";
+import { GenerateWorkExperienceButton } from "./GenerateWEButton";
 
 interface Props {
   id: string;
@@ -64,6 +65,18 @@ export const DraggableItem = ({
           {...listeners}
         />
       </div>
+
+      {isEducation ? (
+        <></>
+      ) : (
+        <div className="flex justify-center items-center">
+          <GenerateWorkExperienceButton
+            onWorkExperienceGenerated={(exp) =>
+              form.setValue(`workExperience.${index}`, exp)
+            }
+          />
+        </div>
+      )}
 
       {isEducation ? (
         <>
