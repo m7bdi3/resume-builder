@@ -7,10 +7,10 @@ import {
   generateWorkExperienceSchema,
   WorkExperience,
 } from "@/lib/validation";
-import openai from "@/lib/openai";
 import { auth } from "@clerk/nextjs/server";
 import { getUserSubscriptionLevel } from "@/lib/subscription";
 import { canUseAiTools } from "@/lib/permissions";
+import { model } from "@/lib/gemini";
 
 export async function generateSummary(input: GenerateSummaryInput) {
   const { userId } = await auth();
@@ -28,63 +28,61 @@ export async function generateSummary(input: GenerateSummaryInput) {
   const { jobTitle, workExperience, educations, skills } =
     generateSummarySchema.parse(input);
 
-  const systemMessage = `
-    You are a job resume generator AI. Your task is to write a professional introduction summary for a resume based on the user's data. 
-    **Return only the final summary** without any additional explanations, reasoning, or tags like <think>. 
-    Keep it concise and professional.
-  `;
-
-  const userMessage = `
-    please generate a proffessional resume summary from this data:
-
-    Job title ${jobTitle || "N/A"}
-
-    work experiences: ${workExperience
-      ?.map(
-        (exp) => `
-        Position: ${exp.position || "N/A"} at ${exp.company || "N/A"} from ${exp.startDate || "N/A"} to ${exp.endDate || "Present"} 
-description : 
-${exp.description || "N/A"}
+  const prompt = `
+    You are an advanced AI specialized in writing professional resume summaries. 
+    Given the user's data below, write a concise, impactful summary for a resume. 
+    work on a better prompt to transform job snippets into comprehensive work experiences, emphasizing real achievements with specific metrics and avoiding fictional data.
+   analyze how to transform a brief work experience into a detailed narrative, ensuring a complete, bullet-pointed description in JSON format, adhering to the user's guidelines.
+   integrate missing details while maintaining accuracy, ensuring the completion of the work experience narrative with a professional tone, free from fictional content.
+    enrich work experiences with logical details and professional language, ensuring they remain accurate and forward-looking.
+     refine the prompt to create a comprehensive, bullet-pointed work experience entry. This will ensure it’s factual, logically expanded, and professionally written, avoiding any fictional data.
+      refine the approach to maintain a clear, factual narrative by setting unknown dates to null and carefully inferring or expanding details, ensuring no fictional data is included. This ensures progress in maintaining precision.
+    **Important**:
+    - Return only the final summary text (no additional explanations or placeholders).
+    - Omit any mention of missing data (like "N/A")—just skip fields that have no data.
+    - Keep it professional and well-structured, ideally in 2-4 sentences.
+    - Focus on key strengths, relevant experience, and skills to position the candidate effectively.
+    
+    User data:
+    - Job Title: ${jobTitle || ""}
+    - Work Experiences:
+      ${workExperience
+        ?.map(
+          (exp) => `
+          Position: ${exp.position || ""}
+          Company: ${exp.company || ""}
+          Duration: ${exp.startDate || ""} to ${exp.endDate || "Present"}
+          Description: ${exp.description || ""}
         `
-      )
-      .join("\n\n")}
-
-       Education: ${educations
-         ?.map(
-           (edu) => `
-        Degree: ${edu.degree || "N/A"} at ${edu.school || "N/A"} from ${edu.startDate || "N/A"} to ${edu.endDate || "N/A"} 
+        )
+        .join("\n")}
+    - Education:
+      ${educations
+        ?.map(
+          (edu) => `
+          Degree: ${edu.degree || ""}
+          Institution: ${edu.school || ""}
+          Duration: ${edu.startDate || ""} to ${edu.endDate || ""}
         `
-         )
-         .join("\n\n")}
-Skills :${skills}
+        )
+        .join("\n")}
+    - Skills: ${skills?.join(", ") || ""}
     `;
 
-  const completion = await openai.chat.completions.create({
-    model: "deepseek-ai/DeepSeek-R1",
-    messages: [
-      {
-        role: "system",
-        content: systemMessage,
-      },
-      {
-        role: "user",
-        content: userMessage,
-      },
-    ],
-    max_tokens: 500,
-  });
+  try {
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const aiResponse = response.text();
 
-  const aiResponse = completion.choices[0].message.content;
+    if (!aiResponse) {
+      throw new Error("Failed to generate AI response");
+    }
 
-  if (!aiResponse) {
-    throw new Error("Failed to generate AI response");
+    return aiResponse;
+  } catch (error) {
+    console.error("Gemini API Error:", error);
+    throw new Error("Failed to generate summary. Please try again.");
   }
-
-  const cleanedResponse = aiResponse
-    .replace(/<think>.*?<\/think>/gs, "")
-    .trim();
-
-  return cleanedResponse;
 }
 
 export async function generateWorkExperience(
@@ -104,51 +102,75 @@ export async function generateWorkExperience(
 
   const { description } = generateWorkExperienceSchema.parse(input);
 
-  const systemMessage = `
-  You are a job resume generator AI. Your task is to generate a single work experince entry based on the user input. 
-  Your response must adhere to the following structure. You can ommit fields if they can't be infered from the provided data, but don't add any new ones.
-  Job title: <job title>
-  Company:<Company name>
-  Start Date : <format:YYYY-MM-DD>(only if provided)
-  End Date : <format:YYYY-MM-DD>(only if provided)
-  Description: <an optimized description in bullet format, might be infered from the job title>
+  const prompt = `
+  You are an AI that creates a single, detailed work experience entry from a user’s short description.
+   work on a better prompt to transform job snippets into comprehensive work experiences, emphasizing real achievements with specific metrics and avoiding fictional data.
+   analyze how to transform a brief work experience into a detailed narrative, ensuring a complete, bullet-pointed description in JSON format, adhering to the user's guidelines.
+   integrate missing details while maintaining accuracy, ensuring the completion of the work experience narrative with a professional tone, free from fictional content.
+    enrich work experiences with logical details and professional language, ensuring they remain accurate and forward-looking.
+     refine the prompt to create a comprehensive, bullet-pointed work experience entry. This will ensure it’s factual, logically expanded, and professionally written, avoiding any fictional data.
+      refine the approach to maintain a clear, factual narrative by setting unknown dates to null and carefully inferring or expanding details, ensuring no fictional data is included. This ensures progress in maintaining precision.
+  Expand and enhance the details in a professional manner while following these rules **exactly**:
+  
+  1. Produce **only** a valid JSON object with the keys:
+  {
+    "jobTitle": string,
+    "company": string,
+    "startDate": "YYYY-MM-DD" or null,
+    "endDate": "YYYY-MM-DD" or null,
+    "description": string
+  }
+  
+  2. Read this user description carefully:
+  "${description}"
+  
+  3. Your task:
+     - Infer or refine job title, company name, relevant dates (if any).
+     - For "description", create **4–7** bullet points highlighting:
+       • Concrete accomplishments (use numbers or metrics if you can infer/estimate them realistically)  
+       • Impact or results achieved  
+       • Tools, technologies, or processes used  
+       • Collaboration or leadership responsibilities  
+  
+  4. Strict constraints:
+     - Only include details that can be directly inferred from the user's text, or are reasonable generalizations (e.g., typical tasks for that role).
+     - **Do not** invent data that contradicts or goes beyond the scope of the user’s text.
+     - If no dates are specified, set both "startDate" and "endDate" to null.
+     - Output must be **only** the JSON (no extra text, disclaimers, or code blocks).
+     - Keys must be camelCase. 
+     - In "description", each bullet point **must** start with "- " (hyphen + space).
+     -Omit any mention of missing data (like "N/A")—just skip fields that have no data.
+  
+  Your goal: Write a more robust, achievement-focused entry that shows professional impact, while staying true to the user's text.
   `;
 
-  const userMessage = `
-  Please provide a work experience from this description and dont show your thinking part ${description}`;
+  try {
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const rawText = response.text().trim();
 
-  const completion = await openai.chat.completions.create({
-    model: "deepseek-ai/DeepSeek-R1",
-    messages: [
-      {
-        role: "system",
-        content: systemMessage,
-      },
-      {
-        role: "user",
-        content: userMessage,
-      },
-    ],
-    max_tokens: 500,
-  });
+    // Clean response and parse JSON
+    const jsonString = rawText
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+    const parsedResponse = JSON.parse(jsonString);
 
-  const aiResponse = completion.choices[0].message.content;
+    const formattedDescription = parsedResponse.description
+      .split("\n")
+      .map((line: string) => line.trim())
+      .filter((line: string) => line.startsWith("-"))
+      .join("\n");
 
-  if (!aiResponse) {
-    throw new Error("Failed to generate AI response");
+    return {
+      position: parsedResponse.jobTitle,
+      company: parsedResponse.company,
+      startDate: parsedResponse.startDate ?? undefined,
+      endDate: parsedResponse.endDate ?? undefined,
+      description: formattedDescription,
+    } satisfies WorkExperience;
+  } catch (error) {
+    console.error("Error generating work experience:", error);
+    throw new Error("Failed to generate work experience. Please try again.");
   }
-
-  const cleanedResponse = aiResponse
-    .replace(/<think>.*?<\/think>/gs, "")
-    .trim();
-
-  return {
-    position: cleanedResponse.match(/Job title:(.*)?/)?.[1] ?? "",
-    company: cleanedResponse.match(/Company:(.*)?/)?.[1] ?? "",
-    description: (
-      cleanedResponse.match(/Description:([\s\S]*)/)?.[1] || ""
-    ).trim(),
-    startDate: cleanedResponse.match(/Start date: (\d{4}-\d{2}-\d{2})/)?.[1],
-    endDate: cleanedResponse.match(/End date: (\d{4}-\d{2}-\d{2})/)?.[1],
-  } satisfies WorkExperience;
 }
