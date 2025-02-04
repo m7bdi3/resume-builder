@@ -1,6 +1,6 @@
 import { generateSummary } from "@/actions/ai.actions";
 import { useSubsLevel } from "@/app/(main)/SubsProvider";
-import { LoadingButton } from "@/components/LoadingButton";
+import { LoadingButton } from "@/components/main/LoadingButton";
 import { useToast } from "@/hooks/use-toast";
 import usePremiumModal from "@/hooks/usePremiumModal";
 import { canUseAiTools } from "@/lib/permissions";

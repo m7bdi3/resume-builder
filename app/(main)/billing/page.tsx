@@ -1,4 +1,4 @@
-import { GetSubButton, ManageSubButton } from "@/components/GetSubButton";
+import { GetSubButton, ManageSubButton } from "@/components/main/GetSubButton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

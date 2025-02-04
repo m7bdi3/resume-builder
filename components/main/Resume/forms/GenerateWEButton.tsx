@@ -1,6 +1,6 @@
 import { generateWorkExperience } from "@/actions/ai.actions";
 import { useSubsLevel } from "@/app/(main)/SubsProvider";
-import { LoadingButton } from "@/components/LoadingButton";
+import { LoadingButton } from "@/components/main/LoadingButton";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

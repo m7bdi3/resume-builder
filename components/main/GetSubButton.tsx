@@ -1,7 +1,7 @@
 "use client";
 import usePremiumModal from "@/hooks/usePremiumModal";
 import React from "react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { LoadingButton } from "./LoadingButton";
 import { createCustomerPortal } from "@/actions/premium.actions";

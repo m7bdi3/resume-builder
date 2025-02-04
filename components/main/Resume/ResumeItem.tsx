@@ -25,7 +25,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { LoadingButton } from "@/components/LoadingButton";
+import { LoadingButton } from "@/components/main/LoadingButton";
 import { useReactToPrint } from "react-to-print";
 
 interface Props {
