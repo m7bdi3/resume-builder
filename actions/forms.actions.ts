@@ -12,7 +12,7 @@ import { canCreateResume, canUseCustom } from "@/lib/permissions";
 export const saveResume = async (values: ResumeValues) => {
   const { id } = values;
 
-  const { img, workExperience, educations, ...resumevalues } =
+  const { img, workExperience, educations, jobDescription, ...resumevalues } =
     resumeSchema.parse(values);
 
   const { userId } = await auth();

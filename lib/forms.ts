@@ -89,6 +89,15 @@ export const generalInfofieldsConfig: FieldConfig[] = [
     autoFocus: false,
     description: "Describe what this resume is for.",
   },
+  {
+    name: "jobDescription",
+    label: "Job Description",
+    inputType: "textarea",
+    placeholder: "Job description",
+    autoFocus: false,
+    description:
+      "Place the job description for the job tou want. Leave empty if you want to create your own resume.",
+  },
 ];
 
 export const skillsfieldsConfig: FieldConfig[] = [

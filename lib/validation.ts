@@ -5,6 +5,7 @@ export const optionalString = z.string().trim().optional().or(z.literal(""));
 export const generalInfoSchema = z.object({
   title: optionalString,
   description: optionalString,
+  jobDescription: optionalString,
 });
 
 export type GeneralInfoValues = z.infer<typeof generalInfoSchema>;
@@ -79,6 +80,12 @@ export const summarySchema = z.object({
 
 export type SummarySchemaValues = z.infer<typeof summarySchema>;
 
+export const JobDescriptionSchema = z.object({
+  jobDescription: optionalString,
+});
+
+export type JobDescriptionValues = z.infer<typeof JobDescriptionSchema>;
+
 export const resumeSchema = z.object({
   ...generalInfoSchema.shape,
   ...personalInfoSchema.shape,
@@ -86,6 +93,7 @@ export const resumeSchema = z.object({
   ...educationSchema.shape,
   ...skillsSchema.shape,
   ...summarySchema.shape,
+  ...JobDescriptionSchema.shape,
   colorHex: optionalString,
   borderStyle: optionalString,
 });
@@ -101,6 +109,7 @@ export const generateWorkExperienceSchema = z.object({
     .trim()
     .min(1, "Required")
     .min(20, "Must be at least characters "),
+  ...JobDescriptionSchema.shape,
 });
 
 export type GenerateWorkExperienceInput = z.infer<
@@ -112,6 +121,26 @@ export const generateSummarySchema = z.object({
   ...workExperienceSchema.shape,
   ...educationSchema.shape,
   ...skillsSchema.shape,
+  ...JobDescriptionSchema.shape,
 });
 
 export type GenerateSummaryInput = z.infer<typeof generateSummarySchema>;
+
+export const generateSKillsSchema = z.object({
+  jobTitle: optionalString,
+  ...workExperienceSchema.shape,
+  ...educationSchema.shape,
+  ...skillsSchema.shape,
+  ...JobDescriptionSchema.shape,
+});
+
+export type GenerateSkillsInput = z.infer<typeof generateSKillsSchema>;
+
+export const generateAtsSchema = z.object({
+  ...workExperienceSchema.shape,
+  ...skillsSchema.shape,
+  ...summarySchema.shape,
+  ...JobDescriptionSchema.shape,
+});
+
+export type GenerateAtsInput = z.infer<typeof generateAtsSchema>;

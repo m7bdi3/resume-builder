@@ -14,6 +14,7 @@ export const GeneralInfoForm = ({
     {
       title: resumeData.title ?? "",
       description: resumeData.description ?? "",
+      jobDescription: resumeData.jobDescription ?? "",
     },
     { resumeData, setResumeData }
   );
