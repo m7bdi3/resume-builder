@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { CheckCircle, PlayCircle } from "lucide-react";
+import { PlayCircle } from "lucide-react";
 
 const steps = [
   "Sign up for a free account",
@@ -13,61 +13,64 @@ export default function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="py-24 bg-gradient-to-b from-background to-muted/20"
+      className="py-24 bg-gradient-to-b from-background to-muted/10"
     >
       <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            Simple 5-Step Process
+        <div className="max-w-4xl mx-auto text-center mb-20">
+          <h2 className="text-5xl font-bold mb-5 bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+            Craft Your Perfect Resume in 5 Steps
           </h2>
-          <p className="text-muted-foreground text-lg">
-            Create your perfect resume in minutes with our guided workflow
+          <p className="text-xl text-muted-foreground">
+            Professional results in minutes with our intuitive process
           </p>
         </div>
 
-        <div className="grid gap-12 md:grid-cols-2  items-start">
-          <div className="space-y-6">
+        <div className="grid gap-8 lg:grid-cols-2 lg:gap-16 items-start">
+          <div className="space-y-5">
             {steps.map((step, index) => (
               <div
                 key={index}
-                className="flex items-start gap-4 p-6 rounded-xl border-2 bg-background hover:border-primary/20 transition-colors row-span-1"
+                className="flex items-start gap-5 p-5 rounded-xl border bg-background hover:bg-muted/5 transition-colors"
               >
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="font-semibold text-primary">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <span className="font-semibold text-lg text-primary">
                     {index + 1}
                   </span>
                 </div>
-                <div className="space-y-2">
-                  <CheckCircle className="w-5 h-5 text-primary mt-1" />
-                  <p className="text-lg font-medium">{step}</p>
-                </div>
+                <p className="text-lg font-medium pt-1.5">{step}</p>
               </div>
             ))}
-            <Button className="w-full md:w-auto px-8 py-6 text-lg rounded-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-primary/20">
-              Start Building Now →
-            </Button>
           </div>
 
-          <div className="relative rounded-2xl overflow-hidden border-2 bg-background h-full">
-            <div className="aspect-video bg-muted/50 flex items-center justify-center">
-              <div className="absolute inset-0 bg-gradient-to-br from-background/30 to-primary/5" />
-              <div className="relative z-10 text-center space-y-4 p-8">
-                <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                  <PlayCircle className="w-8 h-8 text-primary" />
+          <div className="relative rounded-xl overflow-hidden border bg-background shadow-sm">
+            <div className="aspect-[1.6] bg-muted/30 flex items-center justify-center">
+              <div className="absolute inset-0 bg-gradient-to-br from-background/40 to-primary/10" />
+              <div className="relative z-10 text-center p-6">
+                <div className="mx-auto w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                  <PlayCircle className="w-12 h-12 text-primary" />
                 </div>
-                <h3 className="text-lg font-semibold">See it in action</h3>
-                <p className="text-muted-foreground">
-                  Watch our 2-minute demo video
+                <h3 className="text-2xl font-semibold mb-3">
+                  See How It Works
+                </h3>
+                <p className="text-muted-foreground text-lg">
+                  2-minute walkthrough video
                 </p>
               </div>
             </div>
-            <div className="p-6 space-y-4">
-              <div className="h-3 w-full rounded-full bg-muted/50" />
-              <div className="h-3 w-3/4 rounded-full bg-muted/50" />
-              <div className="h-3 w-2/3 rounded-full bg-muted/50" />
+            <div className="p-5 bg-muted/5">
+              <div className="flex gap-2">
+                <div className="h-2 w-20 rounded-full bg-muted/50" />
+                <div className="h-2 w-16 rounded-full bg-muted/50" />
+                <div className="h-2 w-24 rounded-full bg-muted/50" />
+              </div>
             </div>
           </div>
         </div>
+          <div className="pt-6 text-center w-full">
+            <Button className="px-10 py-7 text-lg rounded-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg mx-auto">
+              Get Started Now →
+            </Button>
+          </div>
       </div>
     </section>
   );

@@ -83,6 +83,10 @@ export default {
           "0%": { opacity: "0", transform: "translateX(10px)" },
           "100%": { opacity: "1", transform: "translateX(0)" },
         },
+        "fade-in-right": {
+          "0%": { opacity: "0", transform: "translateX(-10px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
         float: {
           "0%, 100%": {
             transform: "translate(var(--tw-translate-x), 0px)",
@@ -98,6 +102,8 @@ export default {
         "fade-in": "fade-in 0.5s ease-out",
         "fade-in-up": "fade-in-up 0.5s ease-out",
         "fade-in-left": "fade-in-left 0.5s ease-out",
+        "fade-in-right": "fade-in-right 0.5s ease-out",
+
         "fade-in-delay": "fade-in 0.5s ease-out 0.2s both",
         float: "float 3s ease-in-out infinite",
       },

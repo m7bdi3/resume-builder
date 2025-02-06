@@ -3,7 +3,7 @@ import FAQ from "@/components/landing/faq";
 import Features from "@/components/landing/features";
 import Footer from "@/components/landing/footer";
 import Header from "@/components/landing/header";
-import Hero from "@/components/landing/hero";
+import HeroGeometric from "@/components/landing/heroWithShapes";
 import HowItWorks from "@/components/landing/how-it-works";
 import Pricing from "@/components/landing/pricing";
 import Testimonials from "@/components/landing/testimonials";
@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <div className="min-h-screen h-full w-full relative mx-auto">
       <Header />
-      <Hero />
+      <HeroGeometric />
       <Features />
       <HowItWorks />
       <Testimonials />

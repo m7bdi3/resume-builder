@@ -42,7 +42,7 @@ export const ResumeItem = ({ resume }: Props) => {
   const wasUpdated = resume.updatedAt !== resume.createdAt;
 
   return (
-    <Card className="group relative border hover:border-primary/20 transition-colors shadow-sm hover:shadow-md">
+    <Card className="group relative border hover:border-primary/20 transition-colors shadow-sm hover:shadow-md max-h-[400px] overflow-hidden">
       <CardHeader className="space-y-2 p-4 pb-2">
         <div className="flex flex-col gap-1">
           <Link
@@ -52,11 +52,14 @@ export const ResumeItem = ({ resume }: Props) => {
             <h3 className="line-clamp-1 font-semibold text-foreground text-lg">
               {resume.title || "Untitled Resume"}
             </h3>
-            {resume.description && (
-              <p className="line-clamp-2 text-sm text-muted-foreground">
-                {resume.description}
-              </p>
-            )}
+
+            <p className="line-clamp-2 text-sm text-muted-foreground">
+              {resume.description || (
+                <span>
+                  <br />
+                </span>
+              )}
+            </p>
           </Link>
           <p className="text-xs text-muted-foreground mt-2">
             {wasUpdated ? "Updated" : "Created"} •{" "}
@@ -65,7 +68,7 @@ export const ResumeItem = ({ resume }: Props) => {
         </div>
       </CardHeader>
 
-      <CardContent className="p-4 pt-0">
+      <CardContent className="p-4 pt-0 overflow-hidden">
         <Link
           href={`/editor?resumeId=${resume.id}`}
           className="inline-block w-full relative"
