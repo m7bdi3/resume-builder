@@ -2,7 +2,7 @@
 
 import React from "react";
 import { UserButton } from "@clerk/nextjs";
-import { CreditCard } from "lucide-react";
+import { CreditCard, FilePen } from "lucide-react";
 import { dark } from "@clerk/themes";
 import { useTheme } from "next-themes";
 
@@ -21,6 +21,11 @@ export const UserNavButton = () => {
       }}
     >
       <UserButton.MenuItems>
+        <UserButton.Link
+          label="Resumes"
+          labelIcon={<FilePen className="size-4" />}
+          href="/resumes"
+        />
         <UserButton.Link
           label="Billing"
           labelIcon={<CreditCard className="size-4" />}
