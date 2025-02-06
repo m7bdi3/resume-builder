@@ -13,17 +13,17 @@ interface Props {
 }
 export const ColorPicker = ({ color, onChange }: Props) => {
   const subLevel = useSubsLevel();
-  const { open, setOpen } = usePremiumModal();
+  const { setOpen } = usePremiumModal();
   const [showPopOver, setShowPopOver] = useState(false);
   return (
     <Popover
       open={showPopOver}
       onOpenChange={() => {
         if (!canUseCustom(subLevel)) {
-          setOpen(!open);
+          setOpen(true);
           return;
         }
-        setShowPopOver(!open);
+        setShowPopOver(!showPopOver);
       }}
     >
       <PopoverTrigger asChild>

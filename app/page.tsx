@@ -10,17 +10,15 @@ import Testimonials from "@/components/landing/testimonials";
 
 export default function Home() {
   return (
-    <div className="min-h-screen w-full relative mx-auto">
+    <div className="min-h-screen h-full w-full relative mx-auto">
       <Header />
-      <main>
-        <Hero />
-        <Features />
-        <HowItWorks />
-        <Testimonials />
-        <Pricing />
-        <FAQ />
-        <CTA />
-      </main>
+      <Hero />
+      <Features />
+      <HowItWorks />
+      <Testimonials />
+      <Pricing />
+      <FAQ />
+      <CTA />
       <Footer />
     </div>
   );

@@ -5,7 +5,7 @@ import { UserNavButton } from "./user-button";
 import { ThemeToggle } from "../theme-toggle";
 export const Navbar = () => {
   return (
-    <header className="shadow-sm bg-primary/20">
+    <header className="shadow-sm bg-primary">
       <div className="max-w-7xl mx-auto p-3 flex items-center justify-between gap-3">
         <Link href={"/resumes"} className="flex items-center gap-2">
           <Image
@@ -13,9 +13,9 @@ export const Navbar = () => {
             alt="logo"
             width={40}
             height={40}
-            className="rounded-full invert dark:invert-0"
+            className="rounded-full"
           />
-          <span className="text-xl font-bold tracking-tight">
+          <span className="text-xl font-bold tracking-tight text-primary-foreground">
             Resume Builder
           </span>
         </Link>
