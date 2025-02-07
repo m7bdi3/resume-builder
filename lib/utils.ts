@@ -13,7 +13,7 @@ export function fileReplacer(key: unknown, value: unknown) {
         name: value.name,
         size: value.size,
         type: value.type,
-        lastModefied: value.lastModified,
+        lastModified: value.lastModified,
       }
     : value;
 }
@@ -34,9 +34,9 @@ export function mapToResumeValues(data: ResumeServerData): ResumeValues {
     workExperience: data.workExperiences.map((exp) => ({
       position: exp.position || undefined,
       company: exp.company || undefined,
-      description: exp.description || undefined,
       startDate: exp.startDate?.toISOString().split("T")[0],
       endDate: exp.endDate?.toISOString().split("T")[0],
+      description: exp.description || undefined,
     })),
     educations: data.educations.map((edu) => ({
       degree: edu.degree || undefined,
@@ -49,11 +49,4 @@ export function mapToResumeValues(data: ResumeServerData): ResumeValues {
     colorHex: data.colorHex,
     summary: data.summary || undefined,
   };
-}
-
-export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(amount);
 }

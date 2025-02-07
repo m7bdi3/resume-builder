@@ -175,13 +175,13 @@ export default function HeroGeometric({
             animate="visible"
           >
             <h1 className=" font-bold mb-6 md:mb-8 tracking-tight">
-              <span className="bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/80 text-3xl sm:text-4xl md:text-6xl">
+              <span className="bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/80 text-xl sm:text-2xl md:text-4xl">
                 {title1}
               </span>
               <br />
               <span
                 className={cn(
-                  "bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-primary text-4xl sm:text-6xl md:text-8xl",
+                  "bg-clip-text text-transparent bg-gradient-to-r from-primary via-foreground to-primary text-4xl sm:text-6xl md:text-8xl",
                   pacifico.className
                 )}
               >
@@ -231,6 +231,10 @@ export default function HeroGeometric({
                 <span aria-label="98% Success Rate">98% Success Rate</span>
               </span>
               <span className="h-6 w-px bg-border" aria-hidden="true" />
+              <span
+                className="w-4 h-4 bg-yellow-500 rounded-full"
+                aria-hidden="true"
+              />
               <span aria-label="5000+ Careers Boosted">
                 5000+ Careers Boosted
               </span>

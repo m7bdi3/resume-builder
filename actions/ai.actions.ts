@@ -392,7 +392,7 @@ export async function compareATS(input: GenerateAtsInput) {
       ${workExperience
         ?.map(
           (exp) => `
-          Position: ${exp.position || ""}
+          Position: ${exp.position || ""} 
           Company: ${exp.company || ""}
           Duration: ${exp.startDate || ""} to ${exp.endDate || "Present"}
           Description: ${exp.description || ""}
@@ -477,4 +477,206 @@ export async function compareATS(input: GenerateAtsInput) {
     console.error("Gemini API Error:", error);
     throw new Error("Failed to generate ATS-aligned resume. Please try again.");
   }
+}
+
+interface JDExtractedData {
+  technicalKeywords: string[];
+  industryTerms: string[];
+  toolsTechnologies: string[];
+  softSkills: string[];
+  atsPriorityTerms: string[];
+}
+
+interface ResumeExtractedData {
+  technicalKeywords: string[];
+  industryTerms: string[];
+  toolsTechnologies: string[];
+  softSkills: string[];
+}
+
+export interface ATSComparisonResult {
+  scores: {
+    technicalKeywords: number;
+    industryTerms: number;
+    toolsTechnologies: number;
+    softSkills: number;
+    atsPriorityTerms: number;
+  };
+  suggestions: {
+    technicalKeywords: string;
+    industryTerms: string;
+    toolsTechnologies: string;
+    softSkills: string;
+    atsPriorityTerms: string;
+  };
+  extractedJD: JDExtractedData;
+  extractedResume: ResumeExtractedData;
+}
+
+export async function analyzeJobDescription(
+  input: GenerateAtsInput
+): Promise<ATSComparisonResult> {
+  const { userId } = await auth();
+  if (!userId) throw new Error("User not authenticated");
+
+  const subLevel = await getUserSubscriptionLevel(userId);
+  if (!canUseAiTools(subLevel))
+    throw new Error("Premium subscription required");
+
+  const { jobDescription, summary, skills, workExperience } =
+    generateAtsSchema.parse(input);
+  if (!jobDescription?.length) throw new Error("Job description required");
+
+  try {
+    // Extract data from Job Description
+    const jdData = await extractJdData(jobDescription);
+    // Extract data from Resume
+    const resumeText = createResumeText(summary, skills, workExperience);
+    const resumeData = await extractResumeData(resumeText);
+
+    // Compare and score
+    const scores = calculateScores(jdData, resumeData, resumeText);
+    const suggestions = generateSuggestions(jdData, resumeData, resumeText);
+    console.log(scores, suggestions, jdData, resumeData);
+
+    return {
+      scores,
+      suggestions,
+      extractedJD: jdData,
+      extractedResume: resumeData,
+    };
+  } catch (error) {
+    console.error("Analysis Error:", error);
+    throw new Error("Analysis failed. Please try again.");
+  }
+}
+
+// Helper Functions
+async function extractJdData(jd: string): Promise<JDExtractedData> {
+  const prompt = `Extract from this job description:
+Technical keywords, Industry terms, Tools/technologies, Soft skills, 
+and ATS priority terms (certifications, education, experience requirements).
+Return JSON with keys: technicalKeywords, industryTerms, toolsTechnologies, 
+softSkills, atsPriorityTerms as string arrays. Job Description: ${jd}`;
+
+  return processAIResponse<JDExtractedData>(prompt);
+}
+
+async function extractResumeData(
+  resumeText: string
+): Promise<ResumeExtractedData> {
+  const prompt = `Extract from this resume:
+Technical keywords, Industry terms, Tools/technologies, Soft skills.
+Return JSON with keys: technicalKeywords, industryTerms, toolsTechnologies, 
+softSkills as string arrays. Resume: ${resumeText}`;
+
+  return processAIResponse<ResumeExtractedData>(prompt);
+}
+
+async function processAIResponse<T>(prompt: string): Promise<T> {
+  const result = await model.generateContent(prompt);
+  const rawText = (await result.response.text()).trim();
+  const cleaned = rawText.replace(/```json|```/g, "");
+  return JSON.parse(cleaned);
+}
+
+function createResumeText(
+  summary?: string,
+  skills?: string[],
+  workExperience?: WorkExperience[]
+): string {
+  return [
+    summary,
+    skills?.join(" "),
+    workExperience?.map((exp) => exp.description).join(" "),
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+function calculateScores(
+  jd: JDExtractedData,
+  resume: ResumeExtractedData,
+  resumeText: string
+) {
+  const scores = {
+    technicalKeywords: calculateMatchScore(
+      jd.technicalKeywords,
+      resume.technicalKeywords
+    ),
+    industryTerms: calculateMatchScore(jd.industryTerms, resume.industryTerms),
+    toolsTechnologies: calculateMatchScore(
+      jd.toolsTechnologies,
+      resume.toolsTechnologies
+    ),
+    softSkills: calculateMatchScore(jd.softSkills, resume.softSkills),
+    atsPriorityTerms: calculateAtsScore(jd.atsPriorityTerms, resumeText),
+  };
+  return scores;
+}
+
+function calculateMatchScore(jdTerms: string[], resumeTerms: string[]): number {
+  if (jdTerms.length === 0) return 0;
+  const resumeSet = new Set(resumeTerms.map((t) => t.toLowerCase()));
+  const matches = jdTerms.filter((t) => resumeSet.has(t.toLowerCase()));
+  return (matches.length / jdTerms.length) * 100;
+}
+
+function calculateAtsScore(atsTerms: string[], resumeText: string): number {
+  if (atsTerms.length === 0) return 0;
+  const text = resumeText.toLowerCase();
+  const matches = atsTerms.filter((t) => text.includes(t.toLowerCase()));
+  return (matches.length / atsTerms.length) * 100;
+}
+
+function generateSuggestions(
+  jd: JDExtractedData,
+  resume: ResumeExtractedData,
+  resumeText: string
+) {
+  return {
+    technicalKeywords: formatSuggestion(
+      "Technical keywords",
+      jd.technicalKeywords,
+      resume.technicalKeywords
+    ),
+    industryTerms: formatSuggestion(
+      "Industry terms",
+      jd.industryTerms,
+      resume.industryTerms
+    ),
+    toolsTechnologies: formatSuggestion(
+      "Tools/technologies",
+      jd.toolsTechnologies,
+      resume.toolsTechnologies
+    ),
+    softSkills: formatSuggestion(
+      "Soft skills",
+      jd.softSkills,
+      resume.softSkills
+    ),
+    atsPriorityTerms: formatAtsSuggestion(jd.atsPriorityTerms, resumeText),
+  };
+}
+
+function formatSuggestion(
+  category: string,
+  jdTerms: string[],
+  resumeTerms: string[]
+): string {
+  const missing = jdTerms.filter(
+    (t) => !resumeTerms.some((rt) => rt.toLowerCase() === t.toLowerCase())
+  );
+  return missing.length > 0
+    ? `Missing ${category}: ${missing.join(", ")}`
+    : `All key ${category} matched!`;
+}
+
+function formatAtsSuggestion(atsTerms: string[], resumeText: string): string {
+  const missing = atsTerms.filter(
+    (t) => !resumeText.toLowerCase().includes(t.toLowerCase())
+  );
+  return missing.length > 0
+    ? `Critical ATS terms missing: ${missing.join(", ")}`
+    : "All ATS priority terms matched!";
 }
