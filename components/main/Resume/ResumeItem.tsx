@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ResumeServerData } from "@/lib/types";
 import { formatDate } from "date-fns";
 import Link from "next/link";
-import React, { useRef, useState, useTransition } from "react";
+import React, { useRef, useState } from "react";
 import { ResumePreview } from "./ResumePreview/ResumePreview";
 import { mapToResumeValues } from "@/lib/utils";
 import {
@@ -15,18 +15,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { MoreVertical, Printer, Trash2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { DeleteResume } from "@/actions/forms.actions";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { LoadingButton } from "@/components/main/LoadingButton";
+
 import { useReactToPrint } from "react-to-print";
+import { DeleteDialog } from "./DeleteResumeDiaog";
 
 interface Props {
   resume: ResumeServerData;
@@ -132,62 +123,5 @@ const DropMenu = ({ resumeId, onPrintClick }: DropProps) => {
         onOpenChange={setShowDelete}
       />
     </>
-  );
-};
-
-interface DeleteProps {
-  resumeId: string;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-const DeleteDialog = ({ resumeId, onOpenChange, open }: DeleteProps) => {
-  const { toast } = useToast();
-  const [isPending, startTransition] = useTransition();
-
-  async function handleDelete() {
-    startTransition(async () => {
-      try {
-        await DeleteResume(resumeId);
-        onOpenChange(false);
-        toast({ description: "Resume deleted successfully" });
-      } catch (error) {
-        console.error(error);
-        toast({
-          variant: "destructive",
-          description: "Failed to delete resume",
-        });
-      }
-    });
-  }
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle className="text-foreground">Delete Resume</DialogTitle>
-          <DialogDescription className="text-muted-foreground">
-            This will permanently delete this resume and all its data.
-          </DialogDescription>
-        </DialogHeader>
-
-        <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            className="ring-offset-background focus-visible:ring-2 focus-visible:ring-primary"
-          >
-            Cancel
-          </Button>
-          <LoadingButton
-            variant="destructive"
-            onClick={handleDelete}
-            loading={isPending}
-          >
-            {isPending ? "Deleting..." : "Delete"}
-          </LoadingButton>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
   );
 };
