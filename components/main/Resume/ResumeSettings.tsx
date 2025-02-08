@@ -131,7 +131,8 @@ export const ResumeSettings = ({ resume }: Props) => {
                 <p className="text-sm font-medium">Job Description</p>
                 <Textarea
                   placeholder="Paste job description here..."
-                  className="field-sizing-content"
+                  className="field-sizing-fixed"
+                  rows={20}
                   onChange={(e) => setJobDescription(e.target.value)}
                 />
               </div>

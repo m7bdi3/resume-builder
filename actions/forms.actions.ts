@@ -12,8 +12,15 @@ import { canCreateResume, canUseCustom } from "@/lib/permissions";
 export const saveResume = async (values: ResumeValues) => {
   const { id } = values;
 
-  const { img, workExperience, educations, jobDescription, ...resumevalues } =
-    resumeSchema.parse(values);
+  const {
+    img,
+    workExperience,
+    educations,
+    jobDescription,
+    projects,
+    certifications,
+    ...resumevalues
+  } = resumeSchema.parse(values);
 
   const { userId } = await auth();
 
@@ -95,6 +102,32 @@ export const saveResume = async (values: ResumeValues) => {
             endDate: edu.endDate ? new Date(edu.endDate) : undefined,
           })),
         },
+        projects: {
+          deleteMany: {},
+          create: projects?.map((pro) => ({
+            ...pro,
+            title: pro.title || "",
+            startDate: pro.startDate ? new Date(pro.startDate) : undefined,
+            endDate: pro.endDate ? new Date(pro.endDate) : undefined,
+          })),
+        },
+        certifications: {
+          deleteMany: {},
+          create: certifications?.map((cert) => ({
+            ...cert,
+            name: cert.name ?? "",
+            dateObtained: cert.dateObtained
+              ? new Date(cert.dateObtained)
+              : undefined,
+          })),
+        },
+
+        references: {
+          deleteMany: {},
+          create: resumevalues.references?.map((ref) => ({
+            ...ref,
+          })),
+        },
         updatedAt: new Date(),
       },
     });
@@ -116,6 +149,29 @@ export const saveResume = async (values: ResumeValues) => {
             ...edu,
             startDate: edu.startDate ? new Date(edu.startDate) : undefined,
             endDate: edu.endDate ? new Date(edu.endDate) : undefined,
+          })),
+        },
+        projects: {
+          create: projects?.map((pro) => ({
+            ...pro,
+            title: pro.title || "",
+
+            startDate: pro.startDate ? new Date(pro.startDate) : undefined,
+            endDate: pro.endDate ? new Date(pro.endDate) : undefined,
+          })),
+        },
+        certifications: {
+          create: certifications?.map((cert) => ({
+            ...cert,
+            name: cert.name ?? "",
+            dateObtained: cert.dateObtained
+              ? new Date(cert.dateObtained)
+              : undefined,
+          })),
+        },
+        references: {
+          create: resumevalues.references?.map((ref) => ({
+            ...ref,
           })),
         },
         updatedAt: new Date(),

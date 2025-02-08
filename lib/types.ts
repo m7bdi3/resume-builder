@@ -21,6 +21,9 @@ export interface FooterProps {
 export const resumeDataInclude = {
   workExperiences: true,
   educations: true,
+  projects: true,
+  references: true,
+  certifications: true,
 } satisfies Prisma.ResumeInclude;
 
 export type ResumeServerData = Prisma.ResumeGetPayload<{

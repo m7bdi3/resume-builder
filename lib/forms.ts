@@ -56,19 +56,41 @@ export const personalInfofieldsConfig: (FieldConfig | FieldConfig[])[] = [
     { name: "city", label: "City", inputType: "input", autoFocus: false },
     { name: "country", label: "Country", inputType: "input", autoFocus: false },
   ],
+  [
+    {
+      name: "phone",
+      label: "Phone",
+      inputType: "input",
+      type: "tel",
+      autoFocus: false,
+    },
+    {
+      name: "email",
+      label: "Email",
+      inputType: "input",
+      type: "email",
+      placeholder: "example@email.com",
+      autoFocus: false,
+    },
+  ],
+  [
+    {
+      name: "linkedInUrl",
+      label: "linkedIn",
+      inputType: "input",
+      autoFocus: false,
+    },
+    {
+      name: "githubUrl",
+      label: "Github",
+      inputType: "input",
+      autoFocus: false,
+    },
+  ],
   {
-    name: "phone",
-    label: "Phone",
+    name: "websiteUrl",
+    label: "Website",
     inputType: "input",
-    type: "tel",
-    autoFocus: false,
-  },
-  {
-    name: "email",
-    label: "Email",
-    inputType: "input",
-    type: "email",
-    placeholder: "example@email.com",
     autoFocus: false,
   },
 ];
@@ -96,29 +118,27 @@ export const generalInfofieldsConfig: FieldConfig[] = [
     placeholder: "Job description",
     autoFocus: false,
     description:
-      "Place the job description for the job tou want. Leave empty if you want to create your own resume.",
+      "Place the job description for the job you want. Leave empty if you want to create your own resume.",
   },
 ];
 
-export const skillsfieldsConfig: FieldConfig[] = [
+export const additionalInfofieldsConfig: FieldConfig[] = [
   {
-    name: "skills",
-    label: "Skills",
+    name: "hobbies",
+    label: "Hobbies",
     inputType: "textarea",
-    placeholder: "e.g react.js, node.js, graphic design, ...",
-    autoFocus: true,
-    onSkillChange: true,
-    description: "Separate each skill with a comma",
+    autoFocus: false,
   },
-];
-
-export const summaryfieldsConfig: FieldConfig[] = [
   {
-    name: "summary",
-    label: "Professional Summary",
+    name: "achievements",
+    label: "Achievements",
     inputType: "textarea",
-    placeholder: "A brief, engaging text about yourself",
-    autoFocus: true,
-    hasButton: true,
+    autoFocus: false,
+  },
+  {
+    name: "languages",
+    label: "Languages",
+    inputType: "textarea",
+    autoFocus: false,
   },
 ];

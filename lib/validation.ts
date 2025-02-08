@@ -29,9 +29,20 @@ export const personalInfoSchema = z.object({
   country: optionalString,
   phone: optionalString,
   email: optionalString,
+  linkedInUrl: optionalString,
+  githubUrl: optionalString,
+  websiteUrl: optionalString,
 });
 
 export type PersonalInfoValues = z.infer<typeof personalInfoSchema>;
+
+export const additionalInfoSchema = z.object({
+  hobbies: z.array(z.string().trim()).optional(),
+  achievements: z.array(z.string().trim()).optional(),
+  languages: z.array(z.string().trim()).optional(),
+});
+
+export type AdditionalInfoValues = z.infer<typeof additionalInfoSchema>;
 
 export const workExperienceSchema = z.object({
   workExperience: z
@@ -53,6 +64,63 @@ export type WorkExperience = NonNullable<
   z.infer<typeof workExperienceSchema>["workExperience"]
 >[number];
 
+export const projectsSchema = z.object({
+  projects: z
+    .array(
+      z.object({
+        title: optionalString,
+        description: optionalString,
+        startDate: optionalString,
+        endDate: optionalString,
+        link: optionalString,
+      })
+    )
+    .optional(),
+});
+
+export type ProjectsValues = z.infer<typeof projectsSchema>;
+
+export type Projects = NonNullable<
+  z.infer<typeof projectsSchema>["projects"]
+>[number];
+
+export const referencesSchema = z.object({
+  references: z
+    .array(
+      z.object({
+        name: optionalString,
+        phone: optionalString,
+        email: optionalString,
+      })
+    )
+    .optional(),
+});
+
+export type ReferencesValues = z.infer<typeof referencesSchema>;
+
+export type References = NonNullable<
+  z.infer<typeof referencesSchema>["references"]
+>[number];
+
+export const certificationsSchema = z.object({
+  certifications: z
+    .array(
+      z.object({
+        name: optionalString,
+        issuer: optionalString,
+        dateObtained: optionalString,
+        credentialId: optionalString,
+      })
+    )
+    .optional(),
+});
+
+export type CertificationsValues = z.infer<typeof certificationsSchema>;
+
+export type Certifications = NonNullable<
+  z.infer<typeof certificationsSchema>["certifications"]
+>[number];
+
 export const educationSchema = z.object({
   educations: z
     .array(
@@ -69,7 +137,8 @@ export const educationSchema = z.object({
 export type EducationSchemaValues = z.infer<typeof educationSchema>;
 
 export const skillsSchema = z.object({
-  skills: z.array(z.string().trim()).optional(),
+  softSkills: z.array(z.string().trim()).optional(),
+  technicalSkills: z.array(z.string().trim()).optional(),
 });
 
 export type SkillsSchemaValues = z.infer<typeof skillsSchema>;
@@ -88,12 +157,16 @@ export type JobDescriptionValues = z.infer<typeof JobDescriptionSchema>;
 
 export const resumeSchema = z.object({
   ...generalInfoSchema.shape,
+  ...additionalInfoSchema.shape,
   ...personalInfoSchema.shape,
   ...workExperienceSchema.shape,
   ...educationSchema.shape,
   ...skillsSchema.shape,
   ...summarySchema.shape,
   ...JobDescriptionSchema.shape,
+  ...projectsSchema.shape,
+  ...referencesSchema.shape,
+  ...certificationsSchema.shape,
   colorHex: optionalString,
   borderStyle: optionalString,
 });

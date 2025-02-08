@@ -43,9 +43,9 @@ export const ResumeEditor = ({ resumeToEdit }: Props) => {
 
   return (
     <div className="flex grow flex-col">
-      <header className="space-y-1.5 border-b px-3 py-5 text-center bg-accent/50 dark:bg-accent/80 ">
-        <h1 className="text-2xl font-bold"> Design your resume</h1>
-        <p className="text-sm text-muted-foreground dark:text-muted">
+      <header className="space-y-1.5 border-b px-3 py-5 text-center bg-neutral-600 dark:bg-neutral-900 ">
+        <h1 className="text-2xl font-bold text-white"> Design your resume</h1>
+        <p className="text-sm text-neutral-200">
           Follow the steps to create your resume, Your progress will be saved
           automatically
         </p>

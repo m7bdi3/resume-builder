@@ -12,7 +12,7 @@ import { summarySchema, SummarySchemaValues } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { GenerateSummaryButton } from "./GenerateSummaryButton";
+import { GenerateSummaryButton } from "./ai/GenerateSummaryButton";
 
 export default function SummaryForm({
   resumeData,

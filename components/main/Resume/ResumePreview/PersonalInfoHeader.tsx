@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import type { ResumeValues } from "@/lib/validation";
 import { BorderStyles } from "../BorderStyleButton";
+import Link from "next/link";
 
 interface Props {
   resumeData: ResumeValues;
@@ -20,6 +21,9 @@ export const PersonalInfoHeader: React.FC<Props> = ({ resumeData }) => {
     email,
     colorHex,
     borderStyle,
+    linkedInUrl,
+    githubUrl,
+    websiteUrl,
   } = resumeData;
 
   const [imgSrc, setImgSrc] = useState(img instanceof File ? "" : img);
@@ -33,6 +37,12 @@ export const PersonalInfoHeader: React.FC<Props> = ({ resumeData }) => {
       setImgSrc("");
     }
   }, [img]);
+
+  const socialLinks = [
+    { url: linkedInUrl, label: "LinkedIn" },
+    { url: githubUrl, label: "GitHub" },
+    { url: websiteUrl, label: "Website" },
+  ].filter((link) => link.url);
 
   return (
     <header className="flex items-center gap-6 mb-4">
@@ -68,6 +78,14 @@ export const PersonalInfoHeader: React.FC<Props> = ({ resumeData }) => {
               {item}
               {index < 3 && " •"}
             </span>
+          ))}
+        </div>
+        <div className="text-sm text-gray-600">
+          {socialLinks.map((item, index) => (
+            <Link key={index} className="mr-2" href={item.url ?? ""}>
+              {item.label}
+              {index < 2 && " •"}
+            </Link>
           ))}
         </div>
       </div>

@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -12,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { EditorFormProps } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { workExperienceSchema, WorkExperienceValues } from "@/lib/validation";
+import { projectsSchema, ProjectsValues } from "@/lib/validation";
 import {
   closestCenter,
   DndContext,
@@ -35,16 +34,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { GripHorizontal } from "lucide-react";
 import { useEffect } from "react";
 import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
-import { GenerateWorkExperienceButton } from "./ai/GenerateWEButton";
 
-export default function WorkExperienceForm({
+export default function ProjectsForm({
   resumeData,
   setResumeData,
 }: EditorFormProps) {
-  const form = useForm<WorkExperienceValues>({
-    resolver: zodResolver(workExperienceSchema),
+  const form = useForm<ProjectsValues>({
+    resolver: zodResolver(projectsSchema),
     defaultValues: {
-      workExperience: resumeData.workExperience || [],
+      projects: resumeData.projects || [],
     },
   });
 
@@ -54,8 +52,7 @@ export default function WorkExperienceForm({
       if (!isValid) return;
       setResumeData({
         ...resumeData,
-        workExperience:
-          values.workExperience?.filter((exp) => exp !== undefined) || [],
+        projects: values.projects?.filter((pro) => pro !== undefined) || [],
       });
     });
     return unsubscribe;
@@ -63,7 +60,7 @@ export default function WorkExperienceForm({
 
   const { fields, append, remove, move } = useFieldArray({
     control: form.control,
-    name: "workExperience",
+    name: "projects",
   });
 
   const sensors = useSensors(
@@ -87,9 +84,9 @@ export default function WorkExperienceForm({
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <div className="space-y-1.5 text-center">
-        <h2 className="text-2xl font-semibold">Work experience</h2>
+        <h2 className="text-2xl font-semibold">Projects</h2>
         <p className="text-sm text-muted-foreground">
-          Add as many work experiences as you like.
+          Add as many projects as you like.
         </p>
       </div>
       <Form {...form}>
@@ -105,7 +102,7 @@ export default function WorkExperienceForm({
               strategy={verticalListSortingStrategy}
             >
               {fields.map((field, index) => (
-                <WorkExperienceItem
+                <ProjectItem
                   id={field.id}
                   key={field.id}
                   index={index}
@@ -120,15 +117,15 @@ export default function WorkExperienceForm({
               type="button"
               onClick={() =>
                 append({
-                  position: "",
-                  company: "",
+                  title: "",
+                  link: "",
+                  description: "",
                   startDate: "",
                   endDate: "",
-                  description: "",
                 })
               }
             >
-              Add work experience
+              Add a project
             </Button>
           </div>
         </form>
@@ -137,19 +134,14 @@ export default function WorkExperienceForm({
   );
 }
 
-interface WorkExperienceItemProps {
+interface ProjectItemProps {
   id: string;
-  form: UseFormReturn<WorkExperienceValues>;
+  form: UseFormReturn<ProjectsValues>;
   index: number;
   remove: (index: number) => void;
 }
 
-function WorkExperienceItem({
-  id,
-  form,
-  index,
-  remove,
-}: WorkExperienceItemProps) {
+function ProjectItem({ id, form, index, remove }: ProjectItemProps) {
   const {
     attributes,
     listeners,
@@ -172,26 +164,20 @@ function WorkExperienceItem({
       }}
     >
       <div className="flex justify-between gap-2">
-        <span className="font-semibold">Work experience {index + 1}</span>
+        <span className="font-semibold">Project {index + 1}</span>
         <GripHorizontal
           className="size-5 cursor-grab text-muted-foreground focus:outline-none"
           {...attributes}
           {...listeners}
         />
       </div>
-      <div className="flex justify-center">
-        <GenerateWorkExperienceButton
-          onWorkExperienceGenerated={(exp) =>
-            form.setValue(`workExperience.${index}`, exp)
-          }
-        />
-      </div>
+
       <FormField
         control={form.control}
-        name={`workExperience.${index}.position`}
+        name={`projects.${index}.title`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Job title</FormLabel>
+            <FormLabel>Project Title</FormLabel>
             <FormControl>
               <Input {...field} autoFocus />
             </FormControl>
@@ -201,10 +187,10 @@ function WorkExperienceItem({
       />
       <FormField
         control={form.control}
-        name={`workExperience.${index}.company`}
+        name={`projects.${index}.link`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Company</FormLabel>
+            <FormLabel>Link</FormLabel>
             <FormControl>
               <Input {...field} />
             </FormControl>
@@ -215,7 +201,7 @@ function WorkExperienceItem({
       <div className="grid grid-cols-2 gap-3">
         <FormField
           control={form.control}
-          name={`workExperience.${index}.startDate`}
+          name={`projects.${index}.startDate`}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Start date</FormLabel>
@@ -232,7 +218,7 @@ function WorkExperienceItem({
         />
         <FormField
           control={form.control}
-          name={`workExperience.${index}.endDate`}
+          name={`projects.${index}.endDate`}
           render={({ field }) => (
             <FormItem>
               <FormLabel>End date</FormLabel>
@@ -248,13 +234,9 @@ function WorkExperienceItem({
           )}
         />
       </div>
-      <FormDescription>
-        Leave <span className="font-semibold">end date</span> empty if you are
-        currently working here.
-      </FormDescription>
       <FormField
         control={form.control}
-        name={`workExperience.${index}.description`}
+        name={`projects.${index}.description`}
         render={({ field }) => (
           <FormItem>
             <FormLabel>Description</FormLabel>

@@ -11,26 +11,49 @@ model Resume {
   id     String @id @default(cuid())
   userId String
 
-  title       String?
-  description String?
+  // Basic info
+  firstName String? //
+  lastName  String? //
+  jobTitle  String? //
+  summary   String? //
 
-  imgUrl      String?
-  colorHex    String  @default("#000000")
-  borderStyle String  @default("squircle")
-  summary     String?
-  firstName   String?
-  lastName    String?
-  jobTitle    String?
-  city        String?
-  country     String?
-  phone       String?
-  email       String?
+  // Contact info
+  phone   String? //
+  email   String? //
+  city    String? //
+  country String? //
 
-  skills String[]
+  // Design / Layout
+  colorHex    String  @default("#000000") //
+  borderStyle String  @default("squircle") //
+  imgUrl      String? //
 
-  workExperiences WorkExperience[]
-  educations      Education[]
+  // Headline
+  title       String? //
+  description String? //
 
+  // Skills
+  softSkills      String[] //
+  technicalSkills String[] //
+
+  // Additional inline arrays
+  hobbies      String[] //
+  achievements String[] //
+  languages    String[] //
+
+  // Social/portfolio links
+  linkedInUrl String? //
+  githubUrl   String? //
+  websiteUrl  String? //
+
+  // Relations
+  workExperiences WorkExperience[] //
+  educations      Education[] //
+  projects        Project[]
+  certifications  Certification[]
+  references      Reference[]
+
+  // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -70,6 +93,54 @@ model Education {
   updatedAt DateTime @updatedAt
 
   @@map("education")
+}
+
+model Project {
+  id          String    @id @default(cuid())
+  title       String?
+  description String?
+  startDate   DateTime?
+  endDate     DateTime?
+  link        String?
+
+  resumeId String
+  resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("projects")
+}
+
+model Reference {
+  id    String  @id @default(cuid())
+  name  String?
+  phone String?
+  email String?
+
+  resumeId String
+  resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("references")
+}
+
+model Certification {
+  id           String    @id @default(cuid())
+  name         String?
+  issuer       String?
+  dateObtained DateTime?
+  credentialId String?
+
+  resumeId String
+  resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("certifications")
 }
 
 model UserSub {

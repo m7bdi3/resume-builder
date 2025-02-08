@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FieldConfig } from "@/lib/forms";
-import { GenerateSummaryButton } from "./GenerateSummaryButton";
+import { GenerateSummaryButton } from "./ai/GenerateSummaryButton";
 import { ResumeValues } from "@/lib/validation";
 
 interface Props {
@@ -110,7 +110,7 @@ export const RepeatedFormField = memo(
                       value={isDate ? field.value?.slice(0, 10) : field.value}
                     />
                   ) : (
-                    <div >
+                    <div>
                       <Textarea
                         {...field}
                         placeholder={placeholder ? placeholder : ""}

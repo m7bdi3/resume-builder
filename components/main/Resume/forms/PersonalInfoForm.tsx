@@ -23,6 +23,9 @@ export const PersonalInfoForm = ({
       country: resumeData.country ?? "",
       phone: resumeData.phone ?? "",
       email: resumeData.email ?? "",
+      githubUrl: resumeData.githubUrl ?? "",
+      linkedInUrl: resumeData.linkedInUrl ?? "",
+      websiteUrl: resumeData.websiteUrl ?? "",
     },
     { resumeData, setResumeData }
   );

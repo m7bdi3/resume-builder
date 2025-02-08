@@ -9,18 +9,21 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { EditorFormProps } from "@/lib/types";
-import { skillsSchema, SkillsSchemaValues } from "@/lib/validation";
+import { additionalInfoSchema, AdditionalInfoValues } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { GenerateSkillsButton } from "./ai/GenerateSkillsButton";
 
-export function SkillsForm({ resumeData, setResumeData }: EditorFormProps) {
-  const form = useForm<SkillsSchemaValues>({
-    resolver: zodResolver(skillsSchema),
+export function AdditionalInfoForm({
+  resumeData,
+  setResumeData,
+}: EditorFormProps) {
+  const form = useForm<AdditionalInfoValues>({
+    resolver: zodResolver(additionalInfoSchema),
     defaultValues: {
-      softSkills: resumeData.softSkills ?? [],
-      technicalSkills: resumeData.technicalSkills ?? [],
+      hobbies: resumeData.hobbies ?? [],
+      achievements: resumeData.achievements ?? [],
+      languages: resumeData.languages ?? [],
     },
   });
 
@@ -30,13 +33,18 @@ export function SkillsForm({ resumeData, setResumeData }: EditorFormProps) {
       if (!isValid) return;
       setResumeData({
         ...resumeData,
-        softSkills:
-          values.softSkills
+        hobbies:
+          values.hobbies
             ?.filter((skill) => skill !== undefined)
             .map((skill) => skill.trim())
             .filter((skill) => skill !== "") || [],
-        technicalSkills:
-          values.technicalSkills
+        achievements:
+          values.achievements
+            ?.filter((skill) => skill !== undefined)
+            .map((skill) => skill.trim())
+            .filter((skill) => skill !== "") || [],
+        languages:
+          values.languages
             ?.filter((skill) => skill !== undefined)
             .map((skill) => skill.trim())
             .filter((skill) => skill !== "") || [],
@@ -48,67 +56,79 @@ export function SkillsForm({ resumeData, setResumeData }: EditorFormProps) {
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <div className="space-y-1.5 text-center">
-        <h2 className="text-2xl font-semibold">Skills</h2>
-        <p className="text-sm text-muted-foreground">What are you good at?</p>
+        <h2 className="text-2xl font-semibold">Additional Info</h2>
+        <p className="text-sm text-muted-foreground">
+          Leave empty if you do not want to add
+        </p>
       </div>
       <Form {...form}>
         <form className="space-y-3">
           <FormField
             control={form.control}
-            name="technicalSkills"
+            name="achievements"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Technical Skills</FormLabel>
+                <FormLabel>Achievements</FormLabel>
                 <FormControl>
                   <Textarea
                     {...field}
-                    placeholder="e.g. React.js, Node.js, graphic design, ..."
+                    placeholder="e.g. Award 1 at place, Award 1 at place, Award 1 at place, ..."
                     onChange={(e) => {
                       const skills = e.target.value.split(",");
                       field.onChange(skills);
                     }}
+                    className="resize-none"
                   />
                 </FormControl>
-                <FormDescription>
-                  Separate each skill with a comma.
-                </FormDescription>
+                <FormDescription>Separate each with a comma.</FormDescription>
 
-                <GenerateSkillsButton
-                  resumeData={resumeData}
-                  onSkillsGenerated={(skills) =>
-                    form.setValue("technicalSkills", skills)
-                  }
-                />
                 <FormMessage />
               </FormItem>
             )}
           />
           <FormField
             control={form.control}
-            name="softSkills"
+            name="languages"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Soft Skills</FormLabel>
+                <FormLabel>Languages</FormLabel>
                 <FormControl>
                   <Textarea
                     {...field}
-                    placeholder="e.g. Problem solving, Planning, Team work, ..."
+                    placeholder="e.g. Arabic, English, Duetch, ..."
                     onChange={(e) => {
                       const skills = e.target.value.split(",");
                       field.onChange(skills);
                     }}
+                    className="resize-none"
                   />
                 </FormControl>
-                <FormDescription>
-                  Separate each skill with a comma.
-                </FormDescription>
+                <FormDescription>Separate each with a comma.</FormDescription>
 
-                <GenerateSkillsButton
-                  resumeData={resumeData}
-                  onSkillsGenerated={(skills) =>
-                    form.setValue("softSkills", skills)
-                  }
-                />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="hobbies"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Hobbies</FormLabel>
+                <FormControl>
+                  <Textarea
+                    {...field}
+                    placeholder="e.g. Reading, Coding ..."
+                    onChange={(e) => {
+                      const skills = e.target.value.split(",");
+                      field.onChange(skills);
+                    }}
+                    className="resize-none"
+                  />
+                </FormControl>
+                <FormDescription>Separate each with a comma.</FormDescription>
+
                 <FormMessage />
               </FormItem>
             )}
