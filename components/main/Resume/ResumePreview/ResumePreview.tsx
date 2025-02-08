@@ -15,6 +15,8 @@ import { EducationSection } from "@/components/main/Resume/ResumePreview/Educati
 import { SkillsSection } from "@/components/main/Resume/ResumePreview/SkillsSection";
 import { AdditionalSection } from "./AdditionalSection";
 import { ProjectsSection } from "./ProjectsSection";
+import { CertificatedSection } from "./CertificatesSection";
+import { ReferenceSection } from "./ReferenceSection";
 
 interface Props {
   resumeData: ResumeValues;
@@ -51,8 +53,10 @@ export const ResumePreview: React.FC<Props> = ({
         <WorkExperienceSection resumeData={resumeData} />
         <EducationSection resumeData={resumeData} />
         <ProjectsSection resumeData={resumeData} />
+        <CertificatedSection resumeData={resumeData} />
         <SkillsSection resumeData={resumeData} />
         <AdditionalSection resumeData={resumeData} />
+        <ReferenceSection resumeData={resumeData} />
       </div>
     </div>
   );

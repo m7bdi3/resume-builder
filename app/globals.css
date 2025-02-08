@@ -117,8 +117,8 @@
 
 /* From Uiverse.io by Nawsome */
 .typewriter {
-  --blue: hsl(var(--primary));
-  --blue-dark: hsl(var(--primary));
+  --blue: hsl(47.9 95.8% 53.1%);
+  --blue-dark: hsl(47.9 95.8% 33.1%);
   --key: #fff;
   --paper: #eef0fd;
   --text: #d3d4ec;
