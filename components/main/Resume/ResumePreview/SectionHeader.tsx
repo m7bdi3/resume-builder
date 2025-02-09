@@ -13,7 +13,7 @@ export const SectionHeader: React.FC<Props> = ({ title, colorHex }) => (
       }}
     />
     <h2
-      className="text-lg font-semibold mt-2"
+      className="text-lg font-semibold my-2"
       style={{
         color: colorHex,
       }}

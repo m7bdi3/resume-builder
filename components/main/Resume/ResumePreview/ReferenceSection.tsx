@@ -1,3 +1,5 @@
+"use client";
+
 import type React from "react";
 import type { ResumeValues } from "@/lib/validation";
 import { SectionHeader } from "./SectionHeader";
@@ -16,21 +18,28 @@ export const ReferenceSection: React.FC<Props> = ({ resumeData }) => {
   if (!referencesNotEmpty?.length) return null;
 
   return (
-    <section className="mb-4">
+    <section className="mb-8">
       <SectionHeader title="References" colorHex={colorHex} />
-      <div className="space-y-4">
+      <div className="">
         {referencesNotEmpty.map((ref, index) => (
-          <div key={index} className="break-inside-avoid">
-            <div className="flex justify-between items-start">
-              <p
-                className="font-semibold text-base"
-                style={{ color: colorHex }}
-              >
-                • {ref.name}
-              </p>
-              <p className="text-sm ml-1">{ref.phone}</p>
-              <p className="text-sm ml-1">{ref.email}</p>
-            </div>
+          <div
+            key={index}
+            className="break-inside-avoid flex items-center justify-between"
+          >
+            <h3 className="font-bold text-lg mb-2" style={{ color: colorHex }}>
+              {ref.name}
+            </h3>
+
+            {ref.phone && (
+              <div className="flex items-center text-sm text-gray-700">
+                {ref.phone}
+              </div>
+            )}
+            {ref.email && (
+              <div className="flex items-center text-sm text-gray-700">
+                {ref.email}
+              </div>
+            )}
           </div>
         ))}
       </div>

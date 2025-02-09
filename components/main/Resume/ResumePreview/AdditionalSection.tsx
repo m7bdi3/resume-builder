@@ -1,70 +1,86 @@
+"use client";
+
+import type React from "react";
 import { Badge } from "@/components/ui/badge";
-import { ResumeSectionProps } from "@/lib/types";
+import type { ResumeSectionProps } from "@/lib/types";
 import { BorderStyles } from "../BorderStyleButton";
 import { SectionHeader } from "./SectionHeader";
 
-export const AdditionalSection = ({ resumeData }: ResumeSectionProps) => {
+export const AdditionalSection: React.FC<ResumeSectionProps> = ({
+  resumeData,
+}) => {
   const { hobbies, achievements, languages, colorHex, borderStyle } =
     resumeData;
 
-  const skill1 = (hobbies ?? []).length > 0 ? hobbies : null;
+  const hasAchievements = (achievements ?? []).length > 0;
+  const hasLanguages = (languages ?? []).length > 0;
+  const hasHobbies = (hobbies ?? []).length > 0;
 
-  const skill2 = (achievements ?? []).length > 0 ? achievements : null;
-
-  const skill3 = (languages ?? []).length > 0 ? languages : null;
+  if (!hasAchievements && !hasLanguages && !hasHobbies) return null;
 
   return (
-    <section className="mb-4">
-      <div className="break-inside-avoid space-y-3">
-        {skill1 && (
-          <>
+    <section className="mb-8">
+      <div className="break-inside-avoid space-y-6">
+        {hasAchievements && (
+          <div>
             <SectionHeader title="Achievements" colorHex={colorHex} />
-            <ul className="flex flex-wrap gap-2 print:gap-1">
-              {achievements?.map((skill, index) => (
-                <li key={index}>- {skill}</li>
+            <ul className="mt-3 space-y-2">
+              {achievements?.map((achievement, index) => (
+                <li key={index} className="flex items-center">
+                  <span className="mr-2 text-xl" style={{ color: colorHex }}>
+                    •
+                  </span>
+                  <span className="text-sm text-gray-700">{achievement}</span>
+                </li>
               ))}
             </ul>
-          </>
+          </div>
         )}
 
-        {skill3 && (
-          <>
+        {hasLanguages && (
+          <div>
             <SectionHeader title="Languages" colorHex={colorHex} />
-
-            <div className="flex flex-wrap gap-2 print:gap-1">
-              {languages?.map((skill, index) => (
+            <div className="flex flex-wrap gap-2 mt-3">
+              {languages?.map((language, index) => (
                 <Badge
                   key={index}
-                  className="text-white"
+                  variant="secondary"
+                  className="text-sm font-medium py-1 px-3"
                   style={{
-                    backgroundColor: colorHex,
+                    backgroundColor: `${colorHex}20`,
+                    color: colorHex,
                     borderRadius:
                       borderStyle === BorderStyles.SQUARE
                         ? "0px"
                         : borderStyle === BorderStyles.CIRCLE
                           ? "99999px"
-                          : "8px",
+                          : "6px",
                   }}
                 >
-                  {skill}
+                  {language}
                 </Badge>
               ))}
             </div>
-          </>
+          </div>
         )}
 
-        {skill2 && (
-          <>
+        {hasHobbies && (
+          <div>
             <SectionHeader title="Hobbies" colorHex={colorHex} />
-
-            <ul className="flex flex-wrap gap-2 print:gap-1">
-              {hobbies?.map((skill, index) => (
-                <li key={index} className="font-semibold">
-                  - {skill}
+            <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+              {hobbies?.map((hobby, index) => (
+                <li
+                  key={index}
+                  className="text-sm text-gray-700 flex items-center"
+                >
+                  <span className="mr-2 text-xl" style={{ color: colorHex }}>
+                    •
+                  </span>
+                  {hobby}
                 </li>
               ))}
             </ul>
-          </>
+          </div>
         )}
       </div>
     </section>

@@ -1,67 +1,74 @@
+"use client";
+
+import type React from "react";
 import { Badge } from "@/components/ui/badge";
-import { ResumeSectionProps } from "@/lib/types";
+import type { ResumeSectionProps } from "@/lib/types";
 import { BorderStyles } from "../BorderStyleButton";
 import { SectionHeader } from "./SectionHeader";
 
-export const SkillsSection = ({ resumeData }: ResumeSectionProps) => {
+export const SkillsSection: React.FC<ResumeSectionProps> = ({ resumeData }) => {
   const { softSkills, technicalSkills, colorHex, borderStyle } = resumeData;
 
-  const skill1 = (technicalSkills ?? []).length > 0 ? technicalSkills : null;
+  const hasTechnicalSkills = (technicalSkills ?? []).length > 0;
+  const hasSoftSkills = (softSkills ?? []).length > 0;
 
-  const skill2 = (softSkills ?? []).length > 0 ? softSkills : null;
+  if (!hasTechnicalSkills && !hasSoftSkills) return null;
 
   return (
-    <section className="mb-4">
-      <div className="break-inside-avoid space-y-3">
-        {skill1 && (
-          <>
+    <section className="mb-8">
+      <div className="break-inside-avoid space-y-6">
+        {hasTechnicalSkills && (
+          <div>
             <SectionHeader title="Technical Skills" colorHex={colorHex} />
-            <div className="flex flex-wrap gap-2 print:gap-1">
+            <div className="flex flex-wrap gap-2 mt-3">
               {technicalSkills?.map((skill, index) => (
                 <Badge
                   key={index}
-                  className="text-white"
+                  variant="secondary"
+                  className="text-sm font-medium py-1 px-3"
                   style={{
-                    backgroundColor: colorHex,
+                    backgroundColor: `${colorHex}20`,
+                    color: colorHex,
                     borderRadius:
                       borderStyle === BorderStyles.SQUARE
                         ? "0px"
                         : borderStyle === BorderStyles.CIRCLE
                           ? "99999px"
-                          : "8px",
+                          : "6px",
                   }}
                 >
                   {skill}
                 </Badge>
               ))}
             </div>
-          </>
+          </div>
         )}
 
-        {skill2 && (
-          <>
+        {hasSoftSkills && (
+          <div>
             <SectionHeader title="Soft Skills" colorHex={colorHex} />
-
-            <div className="flex flex-wrap gap-2 print:gap-1">
+            <div className="flex flex-wrap gap-2 mt-3">
               {softSkills?.map((skill, index) => (
                 <Badge
                   key={index}
-                  className="text-white"
+                  variant="outline"
+                  className="text-sm font-medium py-1 px-3"
                   style={{
-                    backgroundColor: colorHex,
+                    borderColor: colorHex,
+                    color: colorHex,
                     borderRadius:
                       borderStyle === BorderStyles.SQUARE
                         ? "0px"
                         : borderStyle === BorderStyles.CIRCLE
                           ? "99999px"
-                          : "8px",
+                          : "6px",
                   }}
                 >
                   {skill}
                 </Badge>
               ))}
             </div>
-          </>
+          </div>
         )}
       </div>
     </section>

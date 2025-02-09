@@ -1,5 +1,7 @@
+"use client";
+
 import { formatDate } from "date-fns";
-import { ResumeSectionProps } from "@/lib/types";
+import type { ResumeSectionProps } from "@/lib/types";
 import { SectionHeader } from "./SectionHeader";
 
 export const WorkExperienceSection = ({ resumeData }: ResumeSectionProps) => {
@@ -10,32 +12,33 @@ export const WorkExperienceSection = ({ resumeData }: ResumeSectionProps) => {
   );
 
   if (!workExperienceNotEmpty?.length) return null;
+
   return (
-    <section className="mb-4">
+    <section className="mb-8">
       <SectionHeader title="Work Experience" colorHex={colorHex} />
-      <div className="space-y-4">
+      <div className="space-y-6">
         {workExperienceNotEmpty.map((exp, index) => (
-          <div key={index} className="mb-4 break-inside-avoid">
-            <div className="flex justify-between items-start mb-1">
-              <div className="flex items-center">
-                <p
-                  className="font-semibold text-base"
-                  style={{ color: colorHex }}
-                >
-                  • {exp.position}
-                </p>
-                <p className="text-sm font-medium ml-1">
-                  <span className="text-muted-foreground">|</span> {exp.company}
+          <div key={index} className="break-inside-avoid">
+            <div className="flex flex-col sm:flex-row justify-between items-start mb-2">
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <h3 className="font-bold text-lg" style={{ color: colorHex }}>
+                  {exp.position}
+                </h3>
+                <p className="text-base font-medium text-gray-700 sm:ml-2">
+                  <span className="hidden sm:inline text-gray-400">|</span>{" "}
+                  {exp.company}
                 </p>
               </div>
               {exp.startDate && (
-                <span className="text-sm text-gray-600">
-                  {formatDate(exp.startDate, "MM/yyyy")} -{" "}
-                  {exp.endDate ? formatDate(exp.endDate, "MM/yyyy") : "Present"}
+                <span className="text-sm font-medium text-gray-600 mt-1 sm:mt-0">
+                  {formatDate(new Date(exp.startDate), "MMM yyyy")} -{" "}
+                  {exp.endDate
+                    ? formatDate(new Date(exp.endDate), "MMM yyyy")
+                    : "Present"}
                 </span>
               )}
             </div>
-            <p className="text-sm text-gray-700 whitespace-pre-line ml-1">
+            <p className="text-sm text-gray-700 whitespace-pre-line mt-2">
               {exp.description}
             </p>
           </div>

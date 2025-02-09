@@ -1,9 +1,11 @@
+"use client";
+
 import type React from "react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import type { ResumeValues } from "@/lib/validation";
 import { BorderStyles } from "../BorderStyleButton";
-import Link from "next/link";
 
 interface Props {
   resumeData: ResumeValues;
@@ -26,7 +28,9 @@ export const PersonalInfoHeader: React.FC<Props> = ({ resumeData }) => {
     websiteUrl,
   } = resumeData;
 
-  const [imgSrc, setImgSrc] = useState(img instanceof File ? "" : img);
+  const [imgSrc, setImgSrc] = useState<string>(
+    img instanceof File ? "" : img || ""
+  );
 
   useEffect(() => {
     if (img instanceof File) {
@@ -45,46 +49,56 @@ export const PersonalInfoHeader: React.FC<Props> = ({ resumeData }) => {
   ].filter((link) => link.url);
 
   return (
-    <header className="flex items-center gap-6 mb-4">
+    <header className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-8 p-6">
       {imgSrc && (
         <Image
           src={imgSrc || "/placeholder.svg"}
           alt={`${firstName || "Author"}'s photo`}
-          width={100}
-          height={100}
+          width={120}
+          height={120}
           style={{
             borderRadius:
               borderStyle === BorderStyles.SQUARE
                 ? "0px"
                 : borderStyle === BorderStyles.CIRCLE
-                  ? "99999px"
+                  ? "50%"
                   : "10%",
+            borderColor: colorHex,
+            borderWidth: "2px",
           }}
-          className="aspect-square object-cover"
+          className="aspect-square object-cover shadow-md"
         />
       )}
-      <div className="space-y-2.5">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-bold" style={{ color: colorHex }}>
+      <div className="flex flex-col items-center md:items-start space-y-3 flex-grow">
+        <div className="text-center md:text-left">
+          <h1
+            className="text-4xl font-bold tracking-tight"
+            style={{ color: colorHex }}
+          >
             {firstName} {lastName}
           </h1>
-          <h2 className="font-medium text-xl" style={{ color: colorHex }}>
+          <h2 className="text-2xl font-semibold mt-1 text-gray-700">
             {jobTitle}
           </h2>
         </div>
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-gray-600 flex flex-wrap justify-center md:justify-start gap-2">
           {[city, country, phone, email].filter(Boolean).map((item, index) => (
-            <span key={index} className="mr-2">
+            <span key={index} className="flex items-center">
               {item}
-              {index < 3 && " •"}
+              {index < 3 && <span className="mx-2 text-gray-400">•</span>}
             </span>
           ))}
         </div>
-        <div className="text-sm text-gray-600">
+        <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-2">
           {socialLinks.map((item, index) => (
-            <Link key={index} className="mr-2" href={item.url ?? ""}>
+            <Link
+              key={index}
+              href={item.url ?? ""}
+              className="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {item.label}
-              {index < 2 && " •"}
             </Link>
           ))}
         </div>
