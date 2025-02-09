@@ -17,12 +17,7 @@ export const PreviewSection = ({
   className,
 }: Props) => {
   return (
-    <div
-      className={cn(
-        " group relative hidden md:w-1/2 md:flex w-full",
-        className
-      )}
-    >
+    <div className={cn(className)}>
       <div className="opacity-30 xl:opacity-100 group-hover:opacity-100 transition-opacity delay-200 absolute left-1 top-1 flex flex-col gap-3 flex-none lg:left-3 lg:top-3">
         <ColorPicker
           color={resumeData.colorHex}

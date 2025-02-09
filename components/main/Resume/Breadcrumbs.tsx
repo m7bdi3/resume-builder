@@ -21,14 +21,12 @@ export const Breadcrumbs = ({ currentStep, setCurrentStep }: Props) => {
         <BreadcrumbList className="flex items-center justify-center">
           {steps.map((step) => (
             <React.Fragment key={step.key}>
-              <BreadcrumbItem>
+              <BreadcrumbItem className="cursor-pointer">
                 {step.key === currentStep ? (
                   <BreadcrumbPage>{step.title}</BreadcrumbPage>
                 ) : (
-                  <BreadcrumbLink asChild>
-                    <button onClick={() => setCurrentStep(step.key)}>
-                      {step.title}
-                    </button>
+                  <BreadcrumbLink onClick={() => setCurrentStep(step.key)}>
+                    {step.title}
                   </BreadcrumbLink>
                 )}
               </BreadcrumbItem>
