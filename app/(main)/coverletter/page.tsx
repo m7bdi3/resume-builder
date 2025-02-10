@@ -6,18 +6,18 @@ import { getUserSubscriptionLevel } from "@/lib/subscription";
 import { canCreateResume } from "@/lib/permissions";
 import prisma from "@/lib/prisma";
 import { Header } from "@/components/main/Resume/ResumeHeader";
-import { ResumeList } from "@/components/main/Resume/ResumeList";
+import { CoverLetterList } from "@/components/main/Resume/CoverLetterList";
 
 export const metadata: Metadata = {
-  title: "Your Resumes | ResumeAI",
-  description: "Manage and create your AI-powered resumes",
+  title: "Your Cover Letters | ResumeAI",
+  description: "Manage and create your AI-powered Cover Letters",
 };
 
-export async function getResumesCount(userId: string): Promise<number> {
-  return prisma.resume.count({ where: { userId } });
+export async function getCoverLettersCount(userId: string): Promise<number> {
+  return prisma.coverLetter.count({ where: { userId } });
 }
 
-export default async function ResumesPage() {
+export default async function CoverLettersPage() {
   const { userId } = await auth();
 
   if (!userId) {
@@ -25,7 +25,7 @@ export default async function ResumesPage() {
   }
 
   const [totalCount, subLevel] = await Promise.all([
-    getResumesCount(userId),
+    getCoverLettersCount(userId),
     getUserSubscriptionLevel(userId),
   ]);
 
@@ -38,18 +38,18 @@ export default async function ResumesPage() {
           totalCount={totalCount}
           subLevel={subLevel}
           canCreate={canCreate}
-          title="My Resumes"
-          isResume
+          title="My Cover Letters"
+          isResume={false}
         />
-        <Suspense fallback={<ResumeListSkeleton />}>
-          <ResumeList userId={userId} canCreate={canCreate} />
+        <Suspense fallback={<CoverLetterListSkeleton />}>
+          <CoverLetterList userId={userId} canCreate={canCreate} />
         </Suspense>
       </div>
     </main>
   );
 }
 
-function ResumeListSkeleton() {
+function CoverLetterListSkeleton() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {[...Array(6)].map((_, i) => (

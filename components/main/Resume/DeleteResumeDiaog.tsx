@@ -1,6 +1,6 @@
 "use client";
 import { useToast } from "@/hooks/use-toast";
-import { DeleteResume } from "@/actions/forms.actions";
+import { DeleteCoverLetter, DeleteResume } from "@/actions/forms.actions";
 import {
   Dialog,
   DialogContent,
@@ -16,26 +16,40 @@ import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 
 interface DeleteProps {
-  resumeId: string;
+  id: string;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  isResume: boolean;
 }
 
-export const DeleteDialog = ({ resumeId, onOpenChange, open }: DeleteProps) => {
+export const DeleteDialog = ({
+  id,
+  onOpenChange,
+  open,
+  isResume,
+}: DeleteProps) => {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
 
   async function handleDelete() {
     startTransition(async () => {
       try {
-        await DeleteResume(resumeId);
+        if (isResume) {
+          await DeleteResume(id);
+        } else {
+          await DeleteCoverLetter(id);
+        }
         if (onOpenChange) onOpenChange(false);
-        toast({ description: "Resume deleted successfully" });
+        if (isResume) {
+          toast({ description: "Resume deleted successfully" });
+        } else {
+          toast({ description: "Cover Letter deleted successfully" });
+        }
       } catch (error) {
         console.error(error);
         toast({
           variant: "destructive",
-          description: "Failed to delete resume",
+          description: "Failed to delete.",
         });
       }
     });
@@ -45,16 +59,18 @@ export const DeleteDialog = ({ resumeId, onOpenChange, open }: DeleteProps) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       {!open && !onOpenChange && (
         <DialogTrigger asChild>
-          <Button variant={"destructive"} >
+          <Button variant={"destructive"}>
             <Trash2 className="size-5" /> Delete
           </Button>
         </DialogTrigger>
       )}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-foreground">Delete Resume</DialogTitle>
+          <DialogTitle className="text-foreground">
+            Delete {isResume ? "Resume" : "Cover Letter"}
+          </DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            This will permanently delete this resume and all its data.
+            This will permanently delete this document and all its data.
           </DialogDescription>
         </DialogHeader>
 

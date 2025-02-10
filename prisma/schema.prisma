@@ -11,49 +11,40 @@ model Resume {
   id     String @id @default(cuid())
   userId String
 
-  // Basic info
-  firstName String? //
-  lastName  String? //
-  jobTitle  String? //
-  summary   String? //
+  firstName String?
+  lastName  String?
+  jobTitle  String?
+  summary   String?
 
-  // Contact info
-  phone   String? //
-  email   String? //
-  city    String? //
-  country String? //
+  phone   String?
+  email   String?
+  city    String?
+  country String?
 
-  // Design / Layout
-  colorHex    String  @default("#000000") //
-  borderStyle String  @default("squircle") //
-  imgUrl      String? //
+  colorHex    String  @default("#000000")
+  borderStyle String  @default("squircle")
+  imgUrl      String?
 
-  // Headline
-  title       String? //
-  description String? //
+  title       String?
+  description String?
 
-  // Skills
-  softSkills      String[] //
-  technicalSkills String[] //
+  softSkills      String[]
+  technicalSkills String[]
 
-  // Additional inline arrays
-  hobbies      String[] //
-  achievements String[] //
-  languages    String[] //
+  hobbies      String[]
+  achievements String[]
+  languages    String[]
 
-  // Social/portfolio links
-  linkedInUrl String? //
-  githubUrl   String? //
-  websiteUrl  String? //
+  linkedInUrl String?
+  githubUrl   String?
+  websiteUrl  String?
 
-  // Relations
-  workExperiences WorkExperience[] //
-  educations      Education[] //
+  workExperiences WorkExperience[]
+  educations      Education[]
   projects        Project[]
   certifications  Certification[]
   references      Reference[]
 
-  // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -157,4 +148,24 @@ model UserSub {
   updatedAt DateTime @updatedAt
 
   @@map("user_subs")
+}
+
+model CoverLetter {
+  id     String @id @default(cuid())
+  userId String
+
+  jobDescription String?
+  title          String?
+  body           String?
+
+  firstName String?
+  lastName  String?
+  jobTitle  String?
+  phone     String?
+  email     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("cover_letter")
 }

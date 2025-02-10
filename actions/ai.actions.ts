@@ -1,18 +1,21 @@
 "use server";
 
 import {
-  GenerateAtsInput,
-  generateAtsSchema,
+  GenerateCoverInput,
+  generateCoverSchema,
   GenerateSummaryInput,
   generateSummarySchema,
   GenerateWorkExperienceInput,
   generateWorkExperienceSchema,
+  ResumeValues,
   WorkExperience,
 } from "@/lib/validation";
 import { auth } from "@clerk/nextjs/server";
 import { getUserSubscriptionLevel } from "@/lib/subscription";
 import { canUseAiTools } from "@/lib/permissions";
 import { model } from "@/lib/gemini";
+import { saveResume } from "./forms.actions";
+import { revalidatePath } from "next/cache";
 // import openai from "@/lib/openai";
 
 export async function generateSummary(input: GenerateSummaryInput) {
@@ -28,8 +31,14 @@ export async function generateSummary(input: GenerateSummaryInput) {
     throw new Error("You need a premium subscription to use AI tools.");
   }
 
-  const { jobTitle, workExperience, educations, skills, jobDescription } =
-    generateSummarySchema.parse(input);
+  const {
+    jobTitle,
+    workExperience,
+    educations,
+    technicalSkills,
+    softSkills,
+    jobDescription,
+  } = generateSummarySchema.parse(input);
 
   const prompt = `
     You are an advanced AI specialized in writing professional resume summaries. 
@@ -72,7 +81,9 @@ export async function generateSummary(input: GenerateSummaryInput) {
         `
         )
         .join("\n")}
-    - Skills: ${skills?.join(", ") || ""}
+    - softSkills: ${softSkills?.join(", ") || ""}
+    - technicalSkills: ${technicalSkills?.join(", ") || ""}
+
     `;
 
   try {
@@ -180,8 +191,14 @@ export async function generateSkills(input: GenerateSummaryInput) {
     throw new Error("You need a premium subscription to use AI tools.");
   }
 
-  const { jobTitle, workExperience, educations, skills, jobDescription } =
-    generateSummarySchema.parse(input);
+  const {
+    jobTitle,
+    workExperience,
+    educations,
+    softSkills,
+    technicalSkills,
+    jobDescription,
+  } = generateSummarySchema.parse(input);
 
   const prompt = `
 You are an AI specializing in resume optimization. 
@@ -211,7 +228,7 @@ ${educations
   `
   )
   .join("\n")}
-- **Current Skills**: ${skills?.join(", ") || ""}
+- **Current Skills**: ${softSkills?.join(", ") || ""} ${technicalSkills?.join(", ") || ""}
 ${
   jobDescription && jobDescription.trim().length > 0
     ? `- **Job Description**: ${jobDescription}`
@@ -357,7 +374,13 @@ export async function generateWorkExperience(
   }
 }
 
-export async function compareATS(input: GenerateAtsInput) {
+export async function analyzeJobDescription({
+  resumeData,
+  jobDescription,
+}: {
+  resumeData: ResumeValues;
+  jobDescription: string;
+}) {
   const { userId } = await auth();
 
   if (!userId) {
@@ -370,313 +393,255 @@ export async function compareATS(input: GenerateAtsInput) {
     throw new Error("You need a premium subscription to use AI tools.");
   }
 
-  const { summary, workExperience, skills, jobDescription } =
-    generateAtsSchema.parse(input);
-
-  if (!jobDescription || jobDescription.length < 1) {
-    throw new Error("Job description is needed");
-  }
-
   const prompt = `
-    You are an advanced AI specialized in optimizing a resume to pass ATS checks.
-    Given the user's existing resume data (summary, skills, and work experiences) 
-    and a specific job description, refine or expand each section to align with 
-    the job requirements while remaining accurate to the user's real background.
-    
-    ---
-    
-    **User Data:**
-    - Summary: ${summary || ""}
-    - Skills: ${skills?.join(", ") || ""}
-    - Work Experiences:
-      ${workExperience
-        ?.map(
-          (exp) => `
-          Position: ${exp.position || ""} 
-          Company: ${exp.company || ""}
-          Duration: ${exp.startDate || ""} to ${exp.endDate || "Present"}
-          Description: ${exp.description || ""}
-        `
-        )
-        .join("\n")}
-    
-    ---
-    
-    **Job Description:**
-    ${jobDescription}
-    
-    ---
-    
-    ### Your Output Requirements
-    
-    1. **Return a single JSON object** with **only** these keys at the top level:
-       \`\`\`
-       {
-         "summary": string,
-         "skills": string[],
-         "workExperience": [
-           {
-             "jobTitle": string,
-             "company": string,
-             "startDate": "YYYY-MM-DD" | null,
-             "endDate": "YYYY-MM-DD" | null,
-             "description": string
-           },
-           ...
-         ]
-       }
-       \`\`\`
-    
-    2. **summary** (string):  
-       - Refine or rewrite the user’s summary (2–4 sentences) to emphasize the most relevant skills and experiences for the given job description.
-       - Do not mention missing data or placeholders like "N/A."
-       - Keep it professional and results-oriented.
-    
-    3. **skills** (array of strings):  
-       - Include the user’s original skills.
-       - Add any additional skills that can be **logically inferred** from the user’s data or the job description.
-       - Do not invent impossible or contradictory skills.
-    
-    4. **workExperience** (array of objects):  
-       - For each user-submitted experience, create or refine an entry with the keys:
-         - \`jobTitle\`
-         - \`company\`
-         - \`startDate\` (YYYY-MM-DD or null)
-         - \`endDate\` (YYYY-MM-DD or null)
-         - \`description\` (4–7 bullet points)
-       - Each bullet point must begin with "- " (hyphen + space).
-       - Highlight real achievements, technologies, and impact. Use metrics if you can reasonably infer them.
-       - Do **not** fabricate data that contradicts or goes far beyond the user’s text. 
-       - If no dates can be inferred, set them to null.
-    
-    5. **Formatting**:
-       - Return **only** valid JSON (no extra keys, no comments, no code blocks).
-       - Use camelCase for all keys.
-       - Do not include any disclaimers or additional explanations in the response.
-    
-    ---
-    
-    **Your goal**: Produce a revised resume (summary, skills, work experience array) that fits the job description more closely, highlights achievements, and remains truthful to the user’s original data. Return only the final JSON object with no extra text.
-    `;
+You are an expert resume writer and ATS checker. Your task is to compare the following Job Description with the provided resume data.
+
+**Objectives**:
+1. From the job description, identify all relevant:
+   - Technical keywords
+   - Industry terms
+   - Tools/technologies
+   - Soft skills
+   - ATS priority terms (e.g., certifications, education, experience requirements).
+
+2. From the resume, identify all existing:
+   - Technical keywords
+   - Industry terms
+   - Tools/technologies
+   - Soft skills
+
+3. Determine which items from the job description are *missing* in the resume. Then calculate the percentage of overall similarity or match (0–100).
+
+4. Return **only** the missing data from the resume, along with the similarity score, in valid JSON format (no explanations or extra text).
+
+Your output **must** follow this exact JSON structure:
+
+{
+  "score": <number from 0 to 100>,
+  "technical": <string[] of missing technical keywords>,
+  "industry": <string[] of missing industry terms>,
+  "technologies": <string[] of missing tools/technologies>,
+  "softSkills": <string[] of missing soft skills>,
+  "atsPriorityTerms": <string[] of missing ATS priority terms>
+}
+
+**Job Description**:
+{${jobDescription}}
+
+**Resume**:
+{${JSON.stringify(resumeData)}}
+  `;
 
   try {
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const rawText = response.text().trim();
 
-    // Remove ```json or ``` or any triple backticks that might appear
-    const cleanedText = rawText
-      .replace(/```json/g, "") // remove ```json
-      .replace(/```/g, "") // remove ```
+    const jsonString = rawText
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
       .trim();
-
-    const parsedJson = JSON.parse(cleanedText);
-    console.log(parsedJson);
-    return parsedJson;
-  } catch (error) {
-    console.error("Gemini API Error:", error);
-    throw new Error("Failed to generate ATS-aligned resume. Please try again.");
-  }
-}
-
-interface JDExtractedData {
-  technicalKeywords: string[];
-  industryTerms: string[];
-  toolsTechnologies: string[];
-  softSkills: string[];
-  atsPriorityTerms: string[];
-}
-
-interface ResumeExtractedData {
-  technicalKeywords: string[];
-  industryTerms: string[];
-  toolsTechnologies: string[];
-  softSkills: string[];
-}
-
-export interface ATSComparisonResult {
-  scores: {
-    technicalKeywords: number;
-    industryTerms: number;
-    toolsTechnologies: number;
-    softSkills: number;
-    atsPriorityTerms: number;
-  };
-  suggestions: {
-    technicalKeywords: string;
-    industryTerms: string;
-    toolsTechnologies: string;
-    softSkills: string;
-    atsPriorityTerms: string;
-  };
-  extractedJD: JDExtractedData;
-  extractedResume: ResumeExtractedData;
-}
-
-export async function analyzeJobDescription(
-  input: GenerateAtsInput
-): Promise<ATSComparisonResult> {
-  const { userId } = await auth();
-  if (!userId) throw new Error("User not authenticated");
-
-  const subLevel = await getUserSubscriptionLevel(userId);
-  if (!canUseAiTools(subLevel))
-    throw new Error("Premium subscription required");
-
-  const { jobDescription, summary, skills, workExperience } =
-    generateAtsSchema.parse(input);
-  if (!jobDescription?.length) throw new Error("Job description required");
-
-  try {
-    // Extract data from Job Description
-    const jdData = await extractJdData(jobDescription);
-    // Extract data from Resume
-    const resumeText = createResumeText(summary, skills, workExperience);
-    const resumeData = await extractResumeData(resumeText);
-
-    // Compare and score
-    const scores = calculateScores(jdData, resumeData, resumeText);
-    const suggestions = generateSuggestions(jdData, resumeData, resumeText);
-    console.log(scores, suggestions, jdData, resumeData);
+    const parsedResponse = JSON.parse(jsonString);
 
     return {
-      scores,
-      suggestions,
-      extractedJD: jdData,
-      extractedResume: resumeData,
+      score: parsedResponse.score,
+      technical: parsedResponse.technical,
+      industry: parsedResponse.industry,
+      technologies: parsedResponse.technologies,
+      softSkills: parsedResponse.softSkills,
+      atsPriorityTerms: parsedResponse.atsPriorityTerms,
     };
   } catch (error) {
-    console.error("Analysis Error:", error);
-    throw new Error("Analysis failed. Please try again.");
+    console.error("Error generating comparison:", error);
+    throw new Error("Failed to generate comparison. Please try again.");
   }
 }
 
-// Helper Functions
-async function extractJdData(jd: string): Promise<JDExtractedData> {
-  const prompt = `Extract from this job description:
-Technical keywords, Industry terms, Tools/technologies, Soft skills, 
-and ATS priority terms (certifications, education, experience requirements).
-Return JSON with keys: technicalKeywords, industryTerms, toolsTechnologies, 
-softSkills, atsPriorityTerms as string arrays. Job Description: ${jd}`;
+export type AnalyzedData = {
+  score: number;
+  technical: string[];
+  industry: string[];
+  technologies: string[];
+  softSkills: string[];
+  atsPriorityTerms: string[];
+};
 
-  return processAIResponse<JDExtractedData>(prompt);
-}
+export async function improveResumeData({
+  resumeData,
+  analysisData,
+}: {
+  resumeData: ResumeValues;
+  analysisData: AnalyzedData | undefined;
+}): Promise<ResumeValues> {
+  const { userId } = await auth();
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
 
-async function extractResumeData(
-  resumeText: string
-): Promise<ResumeExtractedData> {
-  const prompt = `Extract from this resume:
-Technical keywords, Industry terms, Tools/technologies, Soft skills.
-Return JSON with keys: technicalKeywords, industryTerms, toolsTechnologies, 
-softSkills as string arrays. Resume: ${resumeText}`;
+  const subLevel = await getUserSubscriptionLevel(userId);
+  if (!canUseAiTools(subLevel)) {
+    throw new Error("You need a premium subscription to use AI tools.");
+  }
 
-  return processAIResponse<ResumeExtractedData>(prompt);
-}
+  const prompt = `
+You are an expert resume writer. Below is analysis data that identifies missing elements in the resume for a specific job application.
 
-async function processAIResponse<T>(prompt: string): Promise<T> {
-  const result = await model.generateContent(prompt);
-  const rawText = (await result.response.text()).trim();
-  const cleaned = rawText.replace(/```json|```/g, "");
-  return JSON.parse(cleaned);
-}
+**Objectives**:
+1. Incorporate all **missing** items from the analysis data into the existing resume.
+2. Return **only** valid JSON. Do not include additional text, commentary, or explanations.
+3. Preserve existing resume information; only modify or append what's needed to address the missing elements.
+4. Don't create any imaginary data. Make it realistic to the original resume data exprtise.
 
-function createResumeText(
-  summary?: string,
-  skills?: string[],
-  workExperience?: WorkExperience[]
-): string {
-  return [
-    summary,
-    skills?.join(" "),
-    workExperience?.map((exp) => exp.description).join(" "),
+**Required JSON structure**:
+{
+  "summary": string,
+  "softSkills": string[],
+  "technicalSkills": string[],
+  "workExperiences": [
+    {
+      "id": string,
+      "description": string
+    }
   ]
-    .filter(Boolean)
-    .join(" ");
+}
+Analysis Data: {${JSON.stringify(analysisData)}}
+
+Current Resume: {${JSON.stringify(resumeData)}}
+`;
+
+  try {
+    const result = await model.generateContent(prompt);
+    const rawResponse = await result.response;
+    const rawText = rawResponse.text().trim();
+
+    const jsonString = rawText
+      .replace(/```json/gi, "")
+      .replace(/```/g, "")
+      .trim();
+
+    const parsedResponse = JSON.parse(jsonString);
+
+    const updatedWorkExperience =
+      resumeData.workExperience?.map((oldExp) => {
+        const updatedExp = parsedResponse.workExperiences?.find(
+          (item: WorkExperience) => item.id === oldExp.id
+        );
+        if (!updatedExp) {
+          return oldExp;
+        }
+        return {
+          ...oldExp,
+          description: updatedExp.description,
+        };
+      }) ?? [];
+
+    const updatedResume: ResumeValues = {
+      ...resumeData,
+      summary:
+        parsedResponse.summary !== undefined
+          ? parsedResponse.summary
+          : resumeData.summary,
+      softSkills: Array.isArray(parsedResponse.softSkills)
+        ? parsedResponse.softSkills
+        : resumeData.softSkills,
+      technicalSkills: Array.isArray(parsedResponse.technicalSkills)
+        ? parsedResponse.technicalSkills
+        : resumeData.technicalSkills,
+      workExperience: updatedWorkExperience,
+    };
+
+    await saveResume(updatedResume);
+
+    revalidatePath(`/resumes/${resumeData.id}`);
+    revalidatePath(`/resumes`);
+
+    return updatedResume;
+  } catch (error) {
+    console.error("Error improving resume:", error);
+    throw new Error("Failed to improve the resume. Please try again.");
+  }
 }
 
-function calculateScores(
-  jd: JDExtractedData,
-  resume: ResumeExtractedData,
-  resumeText: string
-) {
-  const scores = {
-    technicalKeywords: calculateMatchScore(
-      jd.technicalKeywords,
-      resume.technicalKeywords
-    ),
-    industryTerms: calculateMatchScore(jd.industryTerms, resume.industryTerms),
-    toolsTechnologies: calculateMatchScore(
-      jd.toolsTechnologies,
-      resume.toolsTechnologies
-    ),
-    softSkills: calculateMatchScore(jd.softSkills, resume.softSkills),
-    atsPriorityTerms: calculateAtsScore(jd.atsPriorityTerms, resumeText),
-  };
-  return scores;
-}
+export async function generateCover(input: GenerateCoverInput) {
+  const { userId } = await auth();
 
-function calculateMatchScore(jdTerms: string[], resumeTerms: string[]): number {
-  if (jdTerms.length === 0) return 0;
-  const resumeSet = new Set(resumeTerms.map((t) => t.toLowerCase()));
-  const matches = jdTerms.filter((t) => resumeSet.has(t.toLowerCase()));
-  return (matches.length / jdTerms.length) * 100;
-}
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
 
-function calculateAtsScore(atsTerms: string[], resumeText: string): number {
-  if (atsTerms.length === 0) return 0;
-  const text = resumeText.toLowerCase();
-  const matches = atsTerms.filter((t) => text.includes(t.toLowerCase()));
-  return (matches.length / atsTerms.length) * 100;
-}
+  const subLevel = await getUserSubscriptionLevel(userId);
+  if (!canUseAiTools(subLevel)) {
+    throw new Error("You need a premium subscription to use AI tools.");
+  }
 
-function generateSuggestions(
-  jd: JDExtractedData,
-  resume: ResumeExtractedData,
-  resumeText: string
-) {
-  return {
-    technicalKeywords: formatSuggestion(
-      "Technical keywords",
-      jd.technicalKeywords,
-      resume.technicalKeywords
-    ),
-    industryTerms: formatSuggestion(
-      "Industry terms",
-      jd.industryTerms,
-      resume.industryTerms
-    ),
-    toolsTechnologies: formatSuggestion(
-      "Tools/technologies",
-      jd.toolsTechnologies,
-      resume.toolsTechnologies
-    ),
-    softSkills: formatSuggestion(
-      "Soft skills",
-      jd.softSkills,
-      resume.softSkills
-    ),
-    atsPriorityTerms: formatAtsSuggestion(jd.atsPriorityTerms, resumeText),
-  };
-}
+  const { jobDescription } = generateCoverSchema.parse(input);
 
-function formatSuggestion(
-  category: string,
-  jdTerms: string[],
-  resumeTerms: string[]
-): string {
-  const missing = jdTerms.filter(
-    (t) => !resumeTerms.some((rt) => rt.toLowerCase() === t.toLowerCase())
-  );
-  return missing.length > 0
-    ? `Missing ${category}: ${missing.join(", ")}`
-    : `All key ${category} matched!`;
-}
+  const prompt = `
+Generate a professional cover letter body in styled HTML format. Follow these rules:
 
-function formatAtsSuggestion(atsTerms: string[], resumeText: string): string {
-  const missing = atsTerms.filter(
-    (t) => !resumeText.toLowerCase().includes(t.toLowerCase())
-  );
-  return missing.length > 0
-    ? `Critical ATS terms missing: ${missing.join(", ")}`
-    : "All ATS priority terms matched!";
+1. Use this structure:
+<div class="cover-letter" style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: 20px auto;">
+  <p style="margin-bottom: 15px;">[First paragraph - direct introduction]</p>
+  <p style="margin-bottom: 15px;">[Second paragraph - key qualifications]</p>
+  <p style="margin-bottom: 15px;">[Third paragraph - enthusiasm and call to action]</p>
+</div>
+
+2. Requirements:
+- Fill ALL [bracketed placeholders] with context-based content
+- Include 2-3 specific metrics/numbers in achievements
+- Use minimum 3 exact keywords/phrases from job description
+- Final output MUST be valid HTML that passes W3C validation
+- Return ONLY the HTML between <div class="cover-letter"> tags
+- No markdown, explanations, or non-HTML content
+- Don't add any imaginary data. Keep it consise
+- Integrate user’s name and experience from context.
+- Do not include any headers, addresses, or signature blocks.
+- Maintain a professional, business-appropriate tone.
+- Include specific achievements with metrics.
+- Reflect job description keywords and skills.
+- Use inline CSS for basic formatting.
+
+3. Formatting rules:
+- Only use: <div> and <p> tags
+- Inline styles ONLY with these permitted properties:
+  font-family, line-height, margin, padding, max-width
+- Paragraph styling must include: margin-bottom: 15px
+- Web-safe typography (size: 14-16px equivalent)
+- Clean spacing between paragraphs (no <br> tags)
+- Absolute prohibition of: 
+  • External CSS • Classes/IDs • Images • Tables
+  • Lists • Bold/italic • Any other HTML elements
+
+
+Job Description:
+${jobDescription}
+
+Respond ONLY with the styled HTML content between <div class="cover-letter"> tags. Do not include any other elements or explanations.
+`;
+  try {
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    let aiResponse = response.text().trim();
+
+    // Remove potential code block wrappers
+    aiResponse = aiResponse
+      .replace(/```html/g, "")
+      .replace(/```/g, "")
+      .trim();
+
+    // Extract HTML content
+    const htmlMatch = aiResponse.match(
+      /<div class="cover-letter"[^>]*>([\s\S]*?)<\/div>/i
+    );
+
+    if (!htmlMatch) {
+      console.error("No valid HTML content found in:", aiResponse);
+      throw new Error("AI failed to generate valid HTML content");
+    }
+
+    return htmlMatch[0];
+  } catch (error) {
+    console.error("Cover Letter Generation Error:", error);
+    throw new Error("Failed to generate cover letter. Please try again.");
+  }
 }

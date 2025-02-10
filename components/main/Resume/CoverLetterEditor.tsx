@@ -5,27 +5,28 @@ import { useSearchParams } from "next/navigation";
 import { steps } from "@/lib/steps";
 import { Breadcrumbs } from "@/components/main/Resume/Breadcrumbs";
 import { Footer } from "@/components/main/Resume/Footer";
-import { ResumeValues } from "@/lib/validation";
+import { CoverLetterValues } from "@/lib/validation";
 import { PreviewSection } from "@/components/main/Resume/ResumePreview/PreviewSection";
-import { cn, mapToResumeValues } from "@/lib/utils";
-import { useAutoSaveResume } from "@/hooks/useAutoSaveResume";
+import { cn, mapToCoverLetterValues } from "@/lib/utils";
 import { useUnloadWarning } from "@/hooks/useUnloadWarning";
-import { ResumeServerData } from "@/lib/types";
+import { CoverLetterServerData } from "@/lib/types";
+import { Coversteps } from "../../../lib/Coversteps";
+import { useAutoSaveCover } from "@/hooks/useAutoSaveCover";
 
 interface Props {
-  resumeToEdit: ResumeServerData | null;
+  coverLetterToEdit: CoverLetterServerData | null;
 }
 
-export const ResumeEditor = ({ resumeToEdit }: Props) => {
+export const CoverLetterEditor = ({ coverLetterToEdit }: Props) => {
   const searchParams = useSearchParams();
 
-  const [resumeData, setResumeData] = useState<ResumeValues>(
-    resumeToEdit ? mapToResumeValues(resumeToEdit) : {}
+  const [coverLetterData, setCoverLetterData] = useState<CoverLetterValues>(
+    coverLetterToEdit ? mapToCoverLetterValues(coverLetterToEdit) : {}
   );
 
   const [showSmResumePreview, setShowResumePreview] = useState(false);
 
-  const { isSaving, hasUnsavedChanges } = useAutoSaveResume(resumeData);
+  const { isSaving, hasUnsavedChanges } = useAutoSaveCover(coverLetterData);
   useUnloadWarning(hasUnsavedChanges);
 
   const currentStep = searchParams.get("step") || steps[0].key;
@@ -37,17 +38,17 @@ export const ResumeEditor = ({ resumeToEdit }: Props) => {
     window.history.pushState(null, "", `?${newSearchParams.toString()}`);
   }
 
-  const FormComponent = steps.find(
+  const FormComponent = Coversteps.find(
     (step) => step.key === currentStep
   )?.component;
 
   return (
     <div className="flex grow flex-col">
       <header className="space-y-1.5 border-b px-3 py-5 text-center">
-        <h1 className="text-2xl font-bold">Design your resume</h1>
+        <h1 className="text-2xl font-bold">Design your Cover Letter</h1>
         <p className="text-sm text-muted-foreground">
-          Follow the steps below to create your resume. Your progress will be
-          saved automatically.
+          Follow the steps below to create your cover letter. Your progress will
+          be saved automatically.
         </p>
       </header>
       <main className="relative grow">
@@ -61,21 +62,20 @@ export const ResumeEditor = ({ resumeToEdit }: Props) => {
             <Breadcrumbs
               currentStep={currentStep}
               setCurrentStep={setStep}
-              resumeSteps
+              resumeSteps={false}
             />
             {FormComponent && (
               <FormComponent
-                resumeData={resumeData}
-                setResumeData={setResumeData}
+                coverData={coverLetterData}
+                setCoverData={setCoverLetterData}
               />
             )}
           </div>
           <div className="grow md:border-r" />
           <PreviewSection
-            resumeData={resumeData}
-            setResumeData={setResumeData}
+            coverLetterData={coverLetterData}
             className={cn(showSmResumePreview && "flex")}
-            isResume
+            isResume={false}
           />
         </div>
       </main>
@@ -85,7 +85,7 @@ export const ResumeEditor = ({ resumeToEdit }: Props) => {
         showSmResumePreview={showSmResumePreview}
         setShowResumePreview={setShowResumePreview}
         isSaving={isSaving}
-        isResume
+        isResume={false}
       />
     </div>
   );

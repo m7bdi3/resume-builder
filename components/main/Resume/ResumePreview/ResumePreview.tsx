@@ -17,9 +17,8 @@ import { AdditionalSection } from "./AdditionalSection";
 import { ProjectsSection } from "./ProjectsSection";
 import { CertificationsSection } from "./CertificatesSection";
 import { ReferenceSection } from "./ReferenceSection";
-
 interface Props {
-  resumeData: ResumeValues;
+  resumeData?: ResumeValues;
   contentRef?: React.Ref<HTMLDivElement>;
   className?: string;
 }
@@ -48,15 +47,19 @@ export const ResumePreview: React.FC<Props> = ({
         ref={contentRef}
         id="resumePreviewContent"
       >
-        <PersonalInfoHeader resumeData={resumeData} />
-        <SummarySection resumeData={resumeData} />
-        <WorkExperienceSection resumeData={resumeData} />
-        <EducationSection resumeData={resumeData} />
-        <ProjectsSection resumeData={resumeData} />
-        <CertificationsSection resumeData={resumeData} />
-        <SkillsSection resumeData={resumeData} />
-        <ReferenceSection resumeData={resumeData} />
-        <AdditionalSection resumeData={resumeData} />
+        {resumeData && (
+          <>
+            <PersonalInfoHeader resumeData={resumeData} />
+            <SummarySection resumeData={resumeData} />
+            <WorkExperienceSection resumeData={resumeData} />
+            <EducationSection resumeData={resumeData} />
+            <ProjectsSection resumeData={resumeData} />
+            <SkillsSection resumeData={resumeData} />
+            <CertificationsSection resumeData={resumeData} />
+            <AdditionalSection resumeData={resumeData} />
+            <ReferenceSection resumeData={resumeData} />
+          </>
+        )}
       </div>
     </div>
   );

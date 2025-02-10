@@ -1,14 +1,14 @@
 import { EditorFormProps } from "@/lib/types";
-import { PersonalInfoForm } from "./forms/PersonalInfoForm";
-import { GeneralInfoForm } from "./forms/GeneralInfoForm";
-import { SkillsForm } from "./forms/SkillsForm";
-import WorkExperienceForm from "./forms/WorkExperienceForm";
-import EducationForm from "./forms/EducationForm";
-import SummaryForm from "./forms/SummaryForm";
-import { AdditionalInfoForm } from "./forms/AdditionalInfoForm";
-import ProjectsForm from "./forms/ProjectsForm";
-import CertificationsForm from "./forms/CertificationsForm";
-import RefrencesForm from "./forms/RefrenceForm";
+import { PersonalInfoForm } from "../components/main/Resume/forms/PersonalInfoForm";
+import { GeneralInfoForm } from "../components/main/Resume/forms/GeneralInfoForm";
+import { SkillsForm } from "../components/main/Resume/forms/SkillsForm";
+import WorkExperienceForm from "../components/main/Resume/forms/WorkExperienceForm";
+import EducationForm from "../components/main/Resume/forms/EducationForm";
+import SummaryForm from "../components/main/Resume/forms/SummaryForm";
+import { AdditionalInfoForm } from "../components/main/Resume/forms/AdditionalInfoForm";
+import ProjectsForm from "../components/main/Resume/forms/ProjectsForm";
+import CertificationsForm from "../components/main/Resume/forms/CertificationsForm";
+import RefrencesForm from "../components/main/Resume/forms/RefrenceForm";
 
 export const steps: {
   title: string;

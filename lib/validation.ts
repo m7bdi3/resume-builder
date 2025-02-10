@@ -48,6 +48,7 @@ export const workExperienceSchema = z.object({
   workExperience: z
     .array(
       z.object({
+        id: optionalString,
         position: optionalString,
         company: optionalString,
         startDate: optionalString,
@@ -68,6 +69,7 @@ export const projectsSchema = z.object({
   projects: z
     .array(
       z.object({
+        id: optionalString,
         title: optionalString,
         description: optionalString,
         startDate: optionalString,
@@ -209,11 +211,40 @@ export const generateSKillsSchema = z.object({
 
 export type GenerateSkillsInput = z.infer<typeof generateSKillsSchema>;
 
-export const generateAtsSchema = z.object({
-  ...workExperienceSchema.shape,
-  ...skillsSchema.shape,
-  ...summarySchema.shape,
-  ...JobDescriptionSchema.shape,
+export const coverLetterSchema = z.object({
+  id: optionalString,
+  firstName: optionalString,
+  lastName: optionalString,
+  jobTitle: optionalString,
+  phone: optionalString,
+  email: optionalString,
+  jobDescription: optionalString,
+  title: optionalString,
+  body: optionalString,
 });
 
-export type GenerateAtsInput = z.infer<typeof generateAtsSchema>;
+export type CoverLetterValues = z.infer<typeof coverLetterSchema>;
+
+export const coverGeneralInfoSchema = z.object({
+  jobDescription: optionalString,
+  title: optionalString,
+});
+
+export type CoverGeneralInfoValues = z.infer<typeof coverGeneralInfoSchema>;
+
+export const coverPersonalInfoSchema = z.object({
+  firstName: optionalString,
+  lastName: optionalString,
+  jobTitle: optionalString,
+  phone: optionalString,
+  email: optionalString,
+  body: optionalString,
+});
+
+export type CoverPersonalInfoValues = z.infer<typeof coverPersonalInfoSchema>;
+
+export const generateCoverSchema = z.object({
+  ...coverLetterSchema.shape,
+});
+
+export type GenerateCoverInput = z.infer<typeof generateCoverSchema>;

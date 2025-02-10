@@ -49,7 +49,7 @@ export const PersonalInfoHeader: React.FC<Props> = ({ resumeData }) => {
   ].filter((link) => link.url);
 
   return (
-    <header className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-8 p-6">
+    <header className="flex items-start gap-6  py-2">
       {imgSrc && (
         <Image
           src={imgSrc || "/placeholder.svg"}

@@ -1,45 +1,59 @@
-import { ResumeValues } from "@/lib/validation";
+import { CoverLetterValues, ResumeValues } from "@/lib/validation";
 import React from "react";
 import { ResumePreview } from "./ResumePreview";
 import { ColorPicker } from "../ColorPicker";
 import { BorderStyleButton } from "../BorderStyleButton";
 import { cn } from "@/lib/utils";
+import { CoverLetterPreview } from "./CoverLetterPreview";
 
 interface Props {
-  resumeData: ResumeValues;
-  setResumeData: (data: ResumeValues) => void;
+  resumeData?: ResumeValues;
+  coverLetterData?: CoverLetterValues;
+  setResumeData?: (data: ResumeValues) => void;
   className?: string;
+  isResume: boolean;
 }
 
 export const PreviewSection = ({
   resumeData,
+  coverLetterData,
   setResumeData,
   className,
+  isResume,
 }: Props) => {
   return (
-    <div className={cn(className)}>
-      <div className="opacity-30 xl:opacity-100 group-hover:opacity-100 transition-opacity delay-200 absolute left-1 top-1 flex flex-col gap-3 flex-none lg:left-3 lg:top-3">
-        <ColorPicker
-          color={resumeData.colorHex}
-          onChange={(color) =>
-            setResumeData({ ...resumeData, colorHex: color.hex })
-          }
-        />
-        <BorderStyleButton
-          borderStyle={resumeData.borderStyle}
-          onChange={(borderStyle) =>
-            setResumeData({
-              ...resumeData,
-              borderStyle,
-            })
-          }
-        />
-      </div>
-      <div className="flex w-full justify-center overflow-y-auto bg-muted p-3">
-        <ResumePreview
-          resumeData={resumeData}
-          className="max-w-2xl shadow-md"
-        />
+    <div
+      className={cn("group relative hidden w-full md:flex md:w-1/2", className)}
+    >
+      {isResume && (
+        <div className="absolute left-1 top-1 flex flex-none flex-col gap-3 opacity-50 transition-opacity group-hover:opacity-100 lg:left-3 lg:top-3 xl:opacity-100">
+          <ColorPicker
+            color={resumeData?.colorHex}
+            onChange={(color) => {
+              if (setResumeData)
+                setResumeData({ ...resumeData, colorHex: color.hex });
+            }}
+          />
+          <BorderStyleButton
+            borderStyle={resumeData?.borderStyle}
+            onChange={(borderStyle) => {
+              if (setResumeData) setResumeData({ ...resumeData, borderStyle });
+            }}
+          />
+        </div>
+      )}
+      <div className="flex w-full justify-center overflow-y-auto bg-secondary p-3">
+        {isResume ? (
+          <ResumePreview
+            resumeData={resumeData}
+            className="max-w-2xl shadow-md"
+          />
+        ) : (
+          <CoverLetterPreview
+            coverLetterData={coverLetterData}
+            className="max-w-2xl shadow-md"
+          />
+        )}
       </div>
     </div>
   );

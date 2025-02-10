@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "../../ui/button";
 import Link from "next/link";
-import { steps } from "./steps";
+import { steps } from "../../../lib/steps";
 import { FileUser, PenLine } from "lucide-react";
 import { FooterProps } from "@/lib/types";
 
@@ -11,6 +11,7 @@ export const Footer = ({
   setCurrentStep,
   showSmResumePreview,
   setShowResumePreview,
+  isResume,
 }: FooterProps) => {
   const previousStep = steps.find(
     (_, index) => steps[index + 1]?.key === currentStep
@@ -53,7 +54,9 @@ export const Footer = ({
         </Button>
         <div className="flex items-center gap-3">
           <Button asChild>
-            <Link href={"/resumes"}>{isSaving ? "Saving..." : "Close"}</Link>
+            <Link href={isResume ? "/resumes" : "/coverletter"}>
+              {isSaving ? "Saving..." : "Close"}
+            </Link>
           </Button>
         </div>
       </div>

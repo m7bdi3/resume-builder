@@ -1,7 +1,12 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { resumeSchema, ResumeValues } from "@/lib/validation";
+import {
+  CoverLetterValues,
+  coverLetterSchema,
+  resumeSchema,
+  ResumeValues,
+} from "@/lib/validation";
 import prisma from "@/lib/prisma";
 import { del, put } from "@vercel/blob";
 import path from "path";
@@ -126,6 +131,7 @@ export const saveResume = async (values: ResumeValues) => {
           deleteMany: {},
           create: resumevalues.references?.map((ref) => ({
             ...ref,
+            name: ref.name ?? "",
           })),
         },
         updatedAt: new Date(),
@@ -172,9 +178,63 @@ export const saveResume = async (values: ResumeValues) => {
         references: {
           create: resumevalues.references?.map((ref) => ({
             ...ref,
+            name: ref.name ?? "",
           })),
         },
         updatedAt: new Date(),
+      },
+    });
+  }
+};
+
+export const saveCover = async (values: CoverLetterValues) => {
+  const { id } = values;
+
+  const { ...coverValues } = coverLetterSchema.parse(values);
+
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("user not authenticated.");
+  }
+
+  const subLevel = await getUserSubscriptionLevel(userId);
+
+  if (id === undefined) {
+    const resumeCount = await prisma.resume.count({ where: { userId } });
+
+    if (!canCreateResume(subLevel, resumeCount)) {
+      throw new Error("User has reached the limit of resumes they can create.");
+    }
+  }
+
+  const existingCover = id
+    ? await prisma.coverLetter.findUnique({
+        where: {
+          id,
+          userId,
+        },
+      })
+    : null;
+
+  if (id && !existingCover) {
+    throw new Error("Cover Letter not found");
+  }
+
+  if (id) {
+    return prisma.coverLetter.update({
+      where: {
+        id,
+      },
+      data: {
+        ...coverValues,
+      },
+    });
+  } else {
+    return prisma.coverLetter.create({
+      data: {
+        ...coverValues,
+        userId,
       },
     });
   }
@@ -207,4 +267,54 @@ export async function DeleteResume(id: string) {
   });
 
   revalidatePath("/resumes");
+}
+
+export async function DeleteCover(id: string) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  const cover = await prisma.coverLetter.findUnique({
+    where: {
+      id,
+      userId,
+    },
+  });
+
+  if (!cover) {
+    throw new Error("Cover Letter not found");
+  }
+
+  await prisma.coverLetter.delete({
+    where: { id },
+  });
+
+  revalidatePath("/coverletter");
+}
+
+export async function DeleteCoverLetter(id: string) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  const coverLetter = await prisma.coverLetter.findUnique({
+    where: {
+      id,
+      userId,
+    },
+  });
+
+  if (!coverLetter) {
+    throw new Error("Cover Letter not found");
+  }
+
+  await prisma.coverLetter.delete({
+    where: { id },
+  });
+
+  revalidatePath("/coverletter");
 }

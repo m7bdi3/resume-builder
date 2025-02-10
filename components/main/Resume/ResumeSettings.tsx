@@ -1,39 +1,53 @@
 "use client";
 
 import Link from "next/link";
-import { ResumeServerData } from "@/lib/types";
+import type { ResumeServerData } from "@/lib/types";
 import { mapToResumeValues } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { ResumePreview } from "./ResumePreview/ResumePreview";
 import { DeleteDialog } from "./DeleteResumeDiaog";
 
-import { Edit, FileText } from "lucide-react";
+import {
+  Edit,
+  FileText,
+  AlertCircle,
+  Loader2,
+  ChevronLeft,
+} from "lucide-react";
 import { formatDate } from "date-fns";
+
+import { useRef, useState, useTransition } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { useReactToPrint } from "react-to-print";
+import type { ResumeValues } from "@/lib/validation";
 import {
   analyzeJobDescription,
-  ATSComparisonResult,
+  type AnalyzedData,
+  improveResumeData,
 } from "@/actions/ai.actions";
-import { useState, useTransition } from "react";
-import { useToast } from "@/hooks/use-toast";
 
 interface Props {
   resume: ResumeServerData | null;
 }
 
 export const ResumeSettings = ({ resume }: Props) => {
-  const resumeData = resume ? mapToResumeValues(resume) : {};
-  const [jobDescription, setJobDescription] = useState<string | undefined>(
-    undefined
-  );
-  const [returnedData, setReturnedData] = useState<
-    ATSComparisonResult | undefined
-  >(undefined);
+  const resumeData = resume ? mapToResumeValues(resume) : ({} as ResumeValues);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const [jobDescription, setJobDescription] = useState<string | undefined>();
+  const [analysisResult, setAnalysisResult] = useState<AnalyzedData>();
+
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+
+  const reactToPrintFn = useReactToPrint({
+    contentRef,
+    documentTitle: resume?.title || "Resume",
+  });
 
   if (!resume) {
     return null;
@@ -41,14 +55,14 @@ export const ResumeSettings = ({ resume }: Props) => {
 
   const wasUpdated = resume.updatedAt !== resume.createdAt;
 
-  async function handleClick() {
+  async function handleAnalyzeResume() {
     startTransition(async () => {
       try {
         const res = await analyzeJobDescription({
-          ...resumeData,
-          jobDescription: jobDescription,
+          resumeData: resumeData,
+          jobDescription: jobDescription ?? "",
         });
-        setReturnedData(res);
+        setAnalysisResult(res);
       } catch (error) {
         console.error(error);
         toast({
@@ -59,156 +73,218 @@ export const ResumeSettings = ({ resume }: Props) => {
     });
   }
 
-  // Calculate overall score based on all scores.
-  const calculateOverallScore = () => {
-    if (!returnedData) return 0;
-    const scores = Object.values(returnedData.scores);
-    return (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(0);
-  };
-
-  const overallScore = calculateOverallScore();
-
-  // Define category order and display names.
-  const categories = [
-    { key: "technicalKeywords", label: "Technical Keywords" },
-    { key: "industryTerms", label: "Industry Terms" },
-    { key: "toolsTechnologies", label: "Tools & Technologies" },
-    { key: "softSkills", label: "Soft Skills" },
-    { key: "atsPriorityTerms", label: "ATS Priority Terms" },
-  ];
-
-  // Helper: parse suggestion text to extract missing terms (if any)
-  const parseMissingTerms = (suggestion: string): string[] => {
-    if (suggestion.startsWith("Missing")) {
-      const parts = suggestion.split(":");
-      if (parts.length > 1) {
-        return parts[1]
-          .split(",")
-          .map((term) => term.trim())
-          .filter(Boolean);
+  async function handleUpdateResume() {
+    startTransition(async () => {
+      try {
+        if (analysisResult)
+          await improveResumeData({
+            resumeData: resumeData,
+            analysisData: analysisResult,
+          });
+      } catch (error) {
+        console.error(error);
+        toast({
+          variant: "destructive",
+          description: "Update failed. Please try again.",
+        });
+      } finally {
+        const res = await analyzeJobDescription({
+          resumeData: resumeData,
+          jobDescription: jobDescription ?? "",
+        });
+        setAnalysisResult(res);
       }
-    }
-    return [];
-  };
+    });
+  }
 
   return (
-    <div className="lg:container mx-auto relative p-4 space-y-4">
-      {/* Resume header */}
-      <Card className="h-32 w-full p-4 mt-6 flex items-center justify-between bg-muted">
-        <div>
-          <h2>{resume.title}</h2>
-          <p>{resume.description}</p>
-          <p className="text-xs text-muted-foreground mt-2">
-            {wasUpdated ? "Updated" : "Created"} •{" "}
-            {formatDate(resume.updatedAt, "MMM d, yyyy")}
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button variant="outline" size={"lg"} asChild>
-            <Link href={`/editor?resumeId=${resume.id}`}>
-              <Edit className="h-4 w-4" /> Edit
-            </Link>
-          </Button>
-          <Button variant="default">
-            <FileText className="h-4 w-4" /> Export PDF
-          </Button>
-          <DeleteDialog resumeId={resume.id} />
-        </div>
+    <div className="container mx-auto px-4 py-8 space-y-8">
+      <Link href="/resumes" className="flex gap-2 items-center  group ">
+        <ChevronLeft className="size-5 group-hover:-translate-x-1 transition-transform duration-150" />
+        <span className="text-lg font-semibold group-hover:underline duration-150">
+          All Resumes
+        </span>
+      </Link>
+      <Card className="bg-muted">
+        <CardContent className="flex flex-col md:flex-row justify-between items-start md:items-center p-6 space-y-4 md:space-y-0">
+          <div className="space-y-2">
+            <h1 className="text-2xl font-bold">{resume.title}</h1>
+            <p className="text-muted-foreground">{resume.description}</p>
+            <p className="text-sm text-muted-foreground">
+              {wasUpdated ? "Updated" : "Created"} •{" "}
+              {formatDate(resume.updatedAt, "MMM d, yyyy")}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Button variant="outline" asChild>
+              <Link href={`/editor?resumeId=${resume.id}`}>
+                <Edit className="h-4 w-4 mr-2" /> Edit Resume
+              </Link>
+            </Button>
+            <Button variant="default" onClick={() => reactToPrintFn()}>
+              <FileText className="h-4 w-4 mr-2" /> Export PDF
+            </Button>
+            <DeleteDialog resumeId={resume.id} />
+          </div>
+        </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="space-y-6 flex w-full justify-center bg-muted p-3 rounded-lg">
-          <ResumePreview resumeData={resumeData} className="shadow-md" />
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <Card className="lg:col-span-1 h-fit lg:sticky top-8">
+          <CardHeader>
+            <CardTitle>Resume Preview</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResumePreview
+              resumeData={resumeData}
+              className="shadow-md max-h-[calc(100vh-200px)] overflow-y-auto"
+              contentRef={contentRef}
+            />
+          </CardContent>
+        </Card>
 
-        <div className="space-y-6 col-span-2">
-          <Card>
-            <CardHeader className="pb-4">
-              <h2 className="text-xl font-semibold">ATS Score Analysis</h2>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <p className="text-sm font-medium">Job Description</p>
-                <Textarea
-                  placeholder="Paste job description here..."
-                  className="field-sizing-fixed"
-                  rows={20}
-                  onChange={(e) => setJobDescription(e.target.value)}
-                />
-              </div>
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle>ATS Score Analysis</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <label htmlFor="jobDescription" className="text-sm font-medium">
+                Job Description
+              </label>
+              <Textarea
+                id="jobDescription"
+                placeholder="Paste job description here..."
+                className="h-40 resize-none"
+                onChange={(e) => setJobDescription(e.target.value)}
+              />
+            </div>
 
-              <Button
-                className="w-full"
-                variant={"secondary"}
-                onClick={handleClick}
-                disabled={isPending}
-              >
-                Analyze Compatibility
-              </Button>
-
-              {returnedData && (
-                <div className="space-y-6">
-                  {/* Overall Score */}
-                  <div className="flex items-center justify-center">
-                    <div className="relative w-32 h-32">
-                      <Progress
-                        value={Number(overallScore)}
-                        className="h-32 w-32 [&_circle]:stroke-primary"
-                        style={{ stroke: resume.colorHex }}
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-2xl font-bold">
-                          {overallScore}%
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Detailed breakdown for each category */}
-                  <div className="grid grid-cols-1 gap-4">
-                    {categories.map(({ key, label }) => {
-                      const score =
-                        returnedData.scores[
-                          key as keyof ATSComparisonResult["scores"]
-                        ];
-                      const suggestion =
-                        returnedData.suggestions[
-                          key as keyof ATSComparisonResult["suggestions"]
-                        ];
-                      const missing = parseMissingTerms(suggestion);
-                      return (
-                        <div key={key} className="space-y-1">
-                          <div className="flex justify-between text-sm font-medium">
-                            <span>{label}</span>
-                            <span>{score.toFixed(0)}%</span>
-                          </div>
-                          <Progress value={score} className="h-2" />
-                          <p className="text-sm text-muted-foreground">
-                            {suggestion}
-                          </p>
-                          {missing.length > 0 && (
-                            <div className="flex flex-wrap gap-2">
-                              {missing.map((term) => (
-                                <Badge
-                                  key={term}
-                                  variant="outline"
-                                  className="text-destructive"
-                                >
-                                  {term}
-                                </Badge>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
+            <Button
+              className="w-full"
+              variant="secondary"
+              onClick={handleAnalyzeResume}
+              disabled={isPending || !jobDescription}
+            >
+              {isPending ? (
+                <span className="flex items-center gap-3">
+                  <Loader2 className="size-4 animate-spin" />
+                  {"Analyzing..."}
+                </span>
+              ) : (
+                "Analyze Compatibility"
               )}
-            </CardContent>
-          </Card>
-        </div>
+            </Button>
+
+            {analysisResult && (
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center justify-between">
+                      <CardTitle>Overall Match Score</CardTitle>
+                      <Badge
+                        variant="outline"
+                        className="text-lg font-bold px-4 py-2"
+                      >
+                        {analysisResult.score}%
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <Progress value={analysisResult.score} className="h-2" />
+                  </CardContent>
+                </Card>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <CategorySection
+                    title="Technical Skills"
+                    items={analysisResult.technical}
+                    color="bg-blue-100 dark:bg-blue-800"
+                  />
+                  <CategorySection
+                    title="Industry Terms"
+                    items={analysisResult.industry}
+                    color="bg-green-100 dark:bg-green-800"
+                  />
+                  <CategorySection
+                    title="Tools & Technologies"
+                    items={analysisResult.technologies}
+                    color="bg-purple-100 dark:bg-purple-800"
+                  />
+                  <CategorySection
+                    title="Soft Skills"
+                    items={analysisResult.softSkills}
+                    color="bg-yellow-100 dark:bg-yellow-800"
+                  />
+                  <CategorySection
+                    title="ATS Priority Terms"
+                    items={analysisResult.atsPriorityTerms}
+                    color="bg-red-100 dark:bg-red-800"
+                  />
+                </div>
+
+                <Button
+                  className="w-full"
+                  onClick={handleUpdateResume}
+                  disabled={isPending}
+                >
+                  {isPending ? (
+                    <span className="flex items-center gap-3">
+                      <Loader2 className="size-4 animate-spin" />
+                      {"Improving..."}
+                    </span>
+                  ) : (
+                    "Auto-Improve Resume"
+                  )}
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
 };
+
+const CategorySection = ({
+  title,
+  items,
+  color,
+  highlightMissing = false,
+}: {
+  title: string;
+  items: string[];
+  color: string;
+  highlightMissing?: boolean;
+}) => (
+  <Card className={`${color} border-0`}>
+    <CardHeader className="pb-2">
+      <CardTitle className="text-base flex items-center justify-between">
+        {title}
+        <Badge variant="secondary" className="ml-2">
+          {items.length}
+        </Badge>
+      </CardTitle>
+    </CardHeader>
+    <CardContent className="relative">
+      {items.length > 0 ? (
+        <div className="flex flex-wrap gap-2">
+          {items.map((item, index) => (
+            <Badge
+              key={index}
+              variant={highlightMissing ? "destructive" : "secondary"}
+              className="font-normal break-words"
+            >
+              {item}
+            </Badge>
+          ))}
+        </div>
+      ) : (
+        <div className="flex items-center text-muted-foreground text-sm">
+          <AlertCircle className="h-4 w-4 mr-2" />
+          No {title.toLowerCase()} found
+        </div>
+      )}
+    </CardContent>
+  </Card>
+);
