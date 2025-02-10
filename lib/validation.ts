@@ -157,6 +157,20 @@ export const JobDescriptionSchema = z.object({
 
 export type JobDescriptionValues = z.infer<typeof JobDescriptionSchema>;
 
+export const coverLetterSchema = z.object({
+  id: optionalString,
+  firstName: optionalString,
+  lastName: optionalString,
+  jobTitle: optionalString,
+  phone: optionalString,
+  email: optionalString,
+  jobDescription: optionalString,
+  title: optionalString,
+  body: optionalString,
+});
+
+export type CoverLetterValues = z.infer<typeof coverLetterSchema>;
+
 export const resumeSchema = z.object({
   ...generalInfoSchema.shape,
   ...additionalInfoSchema.shape,
@@ -169,6 +183,7 @@ export const resumeSchema = z.object({
   ...projectsSchema.shape,
   ...referencesSchema.shape,
   ...certificationsSchema.shape,
+  coverLetters: z.array(coverLetterSchema),
   colorHex: optionalString,
   borderStyle: optionalString,
 });
@@ -210,20 +225,6 @@ export const generateSKillsSchema = z.object({
 });
 
 export type GenerateSkillsInput = z.infer<typeof generateSKillsSchema>;
-
-export const coverLetterSchema = z.object({
-  id: optionalString,
-  firstName: optionalString,
-  lastName: optionalString,
-  jobTitle: optionalString,
-  phone: optionalString,
-  email: optionalString,
-  jobDescription: optionalString,
-  title: optionalString,
-  body: optionalString,
-});
-
-export type CoverLetterValues = z.infer<typeof coverLetterSchema>;
 
 export const coverGeneralInfoSchema = z.object({
   jobDescription: optionalString,

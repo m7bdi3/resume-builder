@@ -8,17 +8,18 @@ import usePremiumModal from "@/hooks/usePremiumModal";
 
 interface Props {
   canCreate: boolean;
+  resumeId: string;
 }
 
-export const CreateCoverLetterButton = ({ canCreate }: Props) => {
+export const CreateCoverLetterButton = ({ canCreate, resumeId }: Props) => {
   const { setOpen } = usePremiumModal();
 
   if (canCreate) {
     return (
       <Button asChild className="mx-auto flex w-fit gap-2">
-        <Link href={"/coverletter/create"}>
+        <Link href={`/resumes/${resumeId}/coverletter/create`}>
           <PlusSquare className="size-5" />
-          New Cover Letter
+          Create
         </Link>
       </Button>
     );
@@ -27,7 +28,7 @@ export const CreateCoverLetterButton = ({ canCreate }: Props) => {
   return (
     <Button onClick={() => setOpen(true)} className="flex w-fit gap-2">
       <PlusSquare className="size-5" />
-      New Cover Letter
+      Create
     </Button>
   );
 };

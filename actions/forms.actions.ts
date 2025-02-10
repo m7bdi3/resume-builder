@@ -186,21 +186,24 @@ export const saveResume = async (values: ResumeValues) => {
     });
   }
 };
-
-export const saveCover = async (values: CoverLetterValues) => {
+export const saveCover = async (
+  values: CoverLetterValues,
+  resumeId: string
+) => {
   const { id } = values;
 
-  const { ...coverValues } = coverLetterSchema.parse(values);
+  const coverValues = coverLetterSchema.parse(values);
 
   const { userId } = await auth();
 
   if (!userId) {
-    throw new Error("user not authenticated.");
+    throw new Error("User not authenticated.");
   }
 
   const subLevel = await getUserSubscriptionLevel(userId);
 
-  if (id === undefined) {
+  if (!id) {
+    // Check if creating a new cover letter
     const resumeCount = await prisma.resume.count({ where: { userId } });
 
     if (!canCreateResume(subLevel, resumeCount)) {
@@ -213,6 +216,7 @@ export const saveCover = async (values: CoverLetterValues) => {
         where: {
           id,
           userId,
+          resumeId,
         },
       })
     : null;
@@ -225,9 +229,12 @@ export const saveCover = async (values: CoverLetterValues) => {
     return prisma.coverLetter.update({
       where: {
         id,
+        userId,
+        resumeId,
       },
       data: {
         ...coverValues,
+        updatedAt: new Date(),
       },
     });
   } else {
@@ -235,6 +242,8 @@ export const saveCover = async (values: CoverLetterValues) => {
       data: {
         ...coverValues,
         userId,
+        resumeId,
+        updatedAt: new Date(),
       },
     });
   }

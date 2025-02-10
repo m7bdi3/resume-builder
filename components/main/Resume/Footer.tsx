@@ -12,6 +12,7 @@ export const Footer = ({
   showSmResumePreview,
   setShowResumePreview,
   isResume,
+  resumeId,
 }: FooterProps) => {
   const previousStep = steps.find(
     (_, index) => steps[index + 1]?.key === currentStep
@@ -54,7 +55,7 @@ export const Footer = ({
         </Button>
         <div className="flex items-center gap-3">
           <Button asChild>
-            <Link href={isResume ? "/resumes" : "/coverletter"}>
+            <Link href={isResume ? "/resumes" : `/resumes/${resumeId}`}>
               {isSaving ? "Saving..." : "Close"}
             </Link>
           </Button>

@@ -3,23 +3,35 @@ import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { Suspense } from "react";
 import { CoverLetterEditor } from "@/components/main/Resume/CoverLetterEditor";
+import { resumeDataInclude } from "@/lib/types";
 
-export const metdata: Metadata = {
+export const metadata: Metadata = {
   title: "Design your Cover Letter",
 };
 
-interface Props {
-  searchParams: Promise<{ coverId?: string }>;
-}
-
-export default async function CoverLetterEditorPage({ searchParams }: Props) {
+export default async function CoverLetterEditorPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ coverId: string }>;
+}) {
+  const { id } = await params;
   const { coverId } = await searchParams;
-
   const { userId } = await auth();
 
   if (!userId) {
     return null;
   }
+
+  const resume = await prisma.resume.findUnique({
+    where: {
+      id,
+      userId,
+    },
+    include: resumeDataInclude,
+  });
+
   const CoverToEdit = coverId
     ? await prisma.coverLetter.findUnique({
         where: {
@@ -31,7 +43,7 @@ export default async function CoverLetterEditorPage({ searchParams }: Props) {
 
   return (
     <Suspense fallback>
-      <CoverLetterEditor coverLetterToEdit={CoverToEdit} />
+      <CoverLetterEditor coverLetterToEdit={CoverToEdit} resume={resume} />
     </Suspense>
   );
 }

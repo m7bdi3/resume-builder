@@ -20,7 +20,7 @@ export const ResumeEditor = ({ resumeToEdit }: Props) => {
   const searchParams = useSearchParams();
 
   const [resumeData, setResumeData] = useState<ResumeValues>(
-    resumeToEdit ? mapToResumeValues(resumeToEdit) : {}
+    resumeToEdit ? mapToResumeValues(resumeToEdit) : ({} as ResumeValues)
   );
 
   const [showSmResumePreview, setShowResumePreview] = useState(false);

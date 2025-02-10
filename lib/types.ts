@@ -7,6 +7,7 @@ export interface EditorFormProps {
 }
 export interface CoverEditorFormProps {
   coverData: CoverLetterValues;
+  resumeData: ResumeValues;
   setCoverData: (data: CoverLetterValues) => void;
 }
 export interface ResumeSectionProps {
@@ -20,6 +21,7 @@ export interface FooterProps {
   showSmResumePreview: boolean;
   setShowResumePreview: (show: boolean) => void;
   isResume: boolean;
+  resumeId: string;
 }
 
 export const resumeDataInclude = {
@@ -28,6 +30,7 @@ export const resumeDataInclude = {
   projects: true,
   references: true,
   certifications: true,
+  CoverLetter: true,
 } satisfies Prisma.ResumeInclude;
 
 export type ResumeServerData = Prisma.ResumeGetPayload<{

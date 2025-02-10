@@ -33,12 +33,13 @@ export const CoverLetterPreview: React.FC<Props> = ({
       ref={containerRef}
     >
       <div
-        className={cn("space-y-6 p-12", !width && "invisible")}
+        className={cn("space-y-6 p-12 ", !width && "invisible")}
         style={{
           zoom: width ? (1 / 794) * width : 1,
         }}
         ref={contentRef}
-        id="coverLetterPreviewContent"
+        id="resumePreviewContent"
+
       >
         <div className="space-y-2">
           <h1 className="text-3xl font-bold">{`${firstName ?? ""} ${lastName ?? ""}`}</h1>

@@ -18,6 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 export const GeneralInfoForm = ({
   coverData,
   setCoverData,
+  resumeData,
 }: CoverEditorFormProps) => {
   const form = useCoverForm<CoverGeneralInfoValues>(
     coverGeneralInfoSchema,
@@ -25,7 +26,7 @@ export const GeneralInfoForm = ({
       title: coverData.title ?? "",
       jobDescription: coverData.jobDescription ?? "",
     },
-    { coverData, setCoverData }
+    { coverData, setCoverData, resumeData }
   );
 
   return (

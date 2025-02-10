@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { ResumeServerData } from "@/lib/types";
+import type { CoverLetterServerData, ResumeServerData } from "@/lib/types";
 import { mapToResumeValues } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -29,12 +29,15 @@ import {
   type AnalyzedData,
   improveResumeData,
 } from "@/actions/ai.actions";
+import { CoverLetterItem } from "./CoverLettertem";
+import { CreateCoverLetterButton } from "@/components/premium/CreateCoverLetterButton";
 
 interface Props {
   resume: ResumeServerData | null;
+  canCreate: boolean;
 }
 
-export const ResumeSettings = ({ resume }: Props) => {
+export const ResumeSettings = ({ resume, canCreate }: Props) => {
   const resumeData = resume ? mapToResumeValues(resume) : ({} as ResumeValues);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -99,16 +102,18 @@ export const ResumeSettings = ({ resume }: Props) => {
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
-      <Link href="/resumes" className="flex gap-2 items-center  group ">
-        <ChevronLeft className="size-5 group-hover:-translate-x-1 transition-transform duration-150" />
-        <span className="text-lg font-semibold group-hover:underline duration-150">
-          All Resumes
-        </span>
+      <Link
+        href="/resumes"
+        className="inline-flex items-center text-lg font-semibold hover:underline"
+      >
+        <ChevronLeft className="h-5 w-5 mr-2" />
+        All Resumes
       </Link>
+
       <Card className="bg-muted">
         <CardContent className="flex flex-col md:flex-row justify-between items-start md:items-center p-6 space-y-4 md:space-y-0">
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold">{resume.title}</h1>
+            <h1 className="text-3xl font-bold">{resume.title}</h1>
             <p className="text-muted-foreground">{resume.description}</p>
             <p className="text-sm text-muted-foreground">
               {wasUpdated ? "Updated" : "Created"} •{" "}
@@ -124,24 +129,51 @@ export const ResumeSettings = ({ resume }: Props) => {
             <Button variant="default" onClick={() => reactToPrintFn()}>
               <FileText className="h-4 w-4 mr-2" /> Export PDF
             </Button>
-            <DeleteDialog resumeId={resume.id} />
+            <DeleteDialog id={resume.id} isResume />
           </div>
         </CardContent>
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <Card className="lg:col-span-1 h-fit lg:sticky top-8">
-          <CardHeader>
-            <CardTitle>Resume Preview</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResumePreview
-              resumeData={resumeData}
-              className="shadow-md max-h-[calc(100vh-200px)] overflow-y-auto"
-              contentRef={contentRef}
-            />
-          </CardContent>
-        </Card>
+        <div className="lg:col-span-1 space-y-6">
+          <Card className="sticky top-8">
+            <CardHeader>
+              <CardTitle>Resume Preview</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResumePreview
+                resumeData={resumeData}
+                className="shadow-md max-h-[calc(100vh-200px)] overflow-y-auto"
+                contentRef={contentRef}
+              />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="flex-1">Cover Letters</CardTitle>
+              <CreateCoverLetterButton
+                canCreate={canCreate}
+                resumeId={resume.id}
+              />
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {resumeData.coverLetters &&
+              resumeData.coverLetters.filter((cov) => cov !== undefined)
+                .length > 0 ? (
+                resumeData.coverLetters
+                  .filter((cov) => cov !== undefined)
+                  .map((cov) => (
+                    <CoverLetterItem
+                      key={cov.id}
+                      coverLetter={cov as CoverLetterServerData}
+                    />
+                  ))
+              ) : (
+                <p className="text-muted-foreground">No Cover Letters found</p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
         <Card className="lg:col-span-2">
           <CardHeader>
@@ -167,9 +199,9 @@ export const ResumeSettings = ({ resume }: Props) => {
               disabled={isPending || !jobDescription}
             >
               {isPending ? (
-                <span className="flex items-center gap-3">
-                  <Loader2 className="size-4 animate-spin" />
-                  {"Analyzing..."}
+                <span className="flex items-center justify-center gap-3">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Analyzing...
                 </span>
               ) : (
                 "Analyze Compatibility"
@@ -199,27 +231,27 @@ export const ResumeSettings = ({ resume }: Props) => {
                   <CategorySection
                     title="Technical Skills"
                     items={analysisResult.technical}
-                    color="bg-blue-100 dark:bg-blue-800"
+                    color="bg-blue-100 dark:bg-blue-800/30"
                   />
                   <CategorySection
                     title="Industry Terms"
                     items={analysisResult.industry}
-                    color="bg-green-100 dark:bg-green-800"
+                    color="bg-green-100 dark:bg-green-800/30"
                   />
                   <CategorySection
                     title="Tools & Technologies"
                     items={analysisResult.technologies}
-                    color="bg-purple-100 dark:bg-purple-800"
+                    color="bg-purple-100 dark:bg-purple-800/30"
                   />
                   <CategorySection
                     title="Soft Skills"
                     items={analysisResult.softSkills}
-                    color="bg-yellow-100 dark:bg-yellow-800"
+                    color="bg-yellow-100 dark:bg-yellow-800/30"
                   />
                   <CategorySection
                     title="ATS Priority Terms"
                     items={analysisResult.atsPriorityTerms}
-                    color="bg-red-100 dark:bg-red-800"
+                    color="bg-red-100 dark:bg-red-800/30"
                   />
                 </div>
 
@@ -229,9 +261,9 @@ export const ResumeSettings = ({ resume }: Props) => {
                   disabled={isPending}
                 >
                   {isPending ? (
-                    <span className="flex items-center gap-3">
-                      <Loader2 className="size-4 animate-spin" />
-                      {"Improving..."}
+                    <span className="flex items-center justify-center gap-3">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Improving...
                     </span>
                   ) : (
                     "Auto-Improve Resume"
@@ -266,7 +298,7 @@ const CategorySection = ({
         </Badge>
       </CardTitle>
     </CardHeader>
-    <CardContent className="relative">
+    <CardContent>
       {items.length > 0 ? (
         <div className="flex flex-wrap gap-2">
           {items.map((item, index) => (

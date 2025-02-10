@@ -75,6 +75,19 @@ export function mapToResumeValues(data: ResumeServerData): ResumeValues {
       dateObtained: cert.dateObtained?.toISOString().split("T")[0],
     })),
 
+    coverLetters: data.CoverLetter.map((data) => ({
+      id: data.id,
+      firstName: data.firstName || undefined,
+      lastName: data.lastName || undefined,
+      jobTitle: data.jobTitle || undefined,
+      phone: data.phone || undefined,
+      email: data.email || undefined,
+      title: data.title || undefined,
+      jobDescription: data.jobDescription || undefined,
+      body: data.body || undefined,
+      resumeId: data.resumeId,
+    })),
+
     borderStyle: data.borderStyle,
     colorHex: data.colorHex,
     summary: data.summary || undefined,
@@ -92,13 +105,13 @@ export function mapToCoverLetterValues(
   data: CoverLetterServerData
 ): CoverLetterValues {
   return {
-    id: data.id,
-    title: data.title || undefined,
+    id: data.id || undefined,
     firstName: data.firstName || undefined,
     lastName: data.lastName || undefined,
     jobTitle: data.jobTitle || undefined,
     phone: data.phone || undefined,
     email: data.email || undefined,
+    title: data.title || undefined,
     jobDescription: data.jobDescription || undefined,
     body: data.body || undefined,
   };

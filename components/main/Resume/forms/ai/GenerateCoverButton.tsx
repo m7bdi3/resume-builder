@@ -4,16 +4,21 @@ import { LoadingButton } from "@/components/main/LoadingButton";
 import { useToast } from "@/hooks/use-toast";
 import usePremiumModal from "@/hooks/usePremiumModal";
 import { canUseAiTools } from "@/lib/permissions";
-import { CoverLetterValues } from "@/lib/validation";
+import { CoverLetterValues, ResumeValues } from "@/lib/validation";
 import { WandSparkles } from "lucide-react";
 import { useState } from "react";
 
 interface Props {
   coverData: CoverLetterValues;
+  resumeData: ResumeValues;
   onGenerated: (body: string) => void;
 }
 
-export const GenerateCoverButton = ({ coverData, onGenerated }: Props) => {
+export const GenerateCoverButton = ({
+  coverData,
+  onGenerated,
+  resumeData,
+}: Props) => {
   const { toast } = useToast();
 
   const [loading, setLoading] = useState(false);
@@ -27,7 +32,7 @@ export const GenerateCoverButton = ({ coverData, onGenerated }: Props) => {
     }
     try {
       setLoading(true);
-      const aiResponse = await generateCover(coverData);
+      const aiResponse = await generateCover(coverData, resumeData);
       onGenerated(aiResponse);
     } catch (error) {
       console.error(error);

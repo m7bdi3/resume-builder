@@ -1,6 +1,6 @@
 import type { CoverEditorFormProps } from "@/lib/types";
 import {
-  personalInfoSchema,
+  coverPersonalInfoSchema,
   type CoverPersonalInfoValues,
 } from "@/lib/validation";
 
@@ -19,9 +19,10 @@ import { GenerateCoverButton } from "../ai/GenerateCoverButton";
 export const PersonalInfoForm = ({
   coverData,
   setCoverData,
+  resumeData,
 }: CoverEditorFormProps) => {
   const form = useCoverForm<CoverPersonalInfoValues>(
-    personalInfoSchema,
+    coverPersonalInfoSchema,
     {
       firstName: coverData.firstName ?? "",
       lastName: coverData.lastName ?? "",
@@ -30,7 +31,7 @@ export const PersonalInfoForm = ({
       email: coverData.email ?? "",
       body: coverData.body ?? "",
     },
-    { coverData, setCoverData }
+    { coverData, setCoverData, resumeData }
   );
 
   return (
@@ -109,6 +110,7 @@ export const PersonalInfoForm = ({
       />
       <GenerateCoverButton
         coverData={coverData}
+        resumeData={resumeData}
         onGenerated={(body) => form.setValue("body", body)}
       />
     </ResumeFormWrapper>

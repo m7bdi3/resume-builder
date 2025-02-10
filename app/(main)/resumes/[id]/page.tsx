@@ -4,6 +4,9 @@ import { auth } from "@clerk/nextjs/server";
 import { resumeDataInclude } from "@/lib/types";
 import { Suspense } from "react";
 import { ResumeSettings } from "@/components/main/Resume/ResumeSettings";
+import { getResumesCount } from "../page";
+import { getUserSubscriptionLevel } from "@/lib/subscription";
+import { canCreateResume } from "@/lib/permissions";
 
 export const metdata: Metadata = {
   title: "your resume",
@@ -32,9 +35,16 @@ export default async function ResumePage({ params }: Props) {
       })
     : null;
 
+  const [totalCount, subLevel] = await Promise.all([
+    getResumesCount(userId),
+    getUserSubscriptionLevel(userId),
+  ]);
+
+  const canCreate = canCreateResume(subLevel, totalCount);
+
   return (
     <Suspense>
-      <ResumeSettings resume={resume} />
+      <ResumeSettings resume={resume} canCreate={canCreate} />
     </Suspense>
   );
 }
