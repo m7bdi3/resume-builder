@@ -1,14 +1,14 @@
 import { EditorFormProps } from "@/lib/types";
-import { PersonalInfoForm } from "../components/main/Resume/forms/PersonalInfoForm";
-import { GeneralInfoForm } from "../components/main/Resume/forms/GeneralInfoForm";
-import { SkillsForm } from "../components/main/Resume/forms/SkillsForm";
-import WorkExperienceForm from "../components/main/Resume/forms/WorkExperienceForm";
-import EducationForm from "../components/main/Resume/forms/EducationForm";
-import SummaryForm from "../components/main/Resume/forms/SummaryForm";
-import { AdditionalInfoForm } from "../components/main/Resume/forms/AdditionalInfoForm";
-import ProjectsForm from "../components/main/Resume/forms/ProjectsForm";
-import CertificationsForm from "../components/main/Resume/forms/CertificationsForm";
-import RefrencesForm from "../components/main/Resume/forms/RefrenceForm";
+import { PersonalInfoForm } from "../components/forms/resume/PersonalInfoForm";
+import { GeneralInfoForm } from "../components/forms/resume/GeneralInfoForm";
+import { SkillsForm } from "../components/forms/resume/SkillsForm";
+import WorkExperienceForm from "../components/forms/resume/WorkExperienceForm";
+import EducationForm from "../components/forms/resume/EducationForm";
+import SummaryForm from "../components/forms/resume/SummaryForm";
+import { AdditionalInfoForm } from "../components/forms/resume/AdditionalInfoForm";
+import ProjectsForm from "../components/forms/resume/ProjectsForm";
+import CertificationsForm from "../components/forms/resume/CertificationsForm";
+import RefrencesForm from "../components/forms/resume/RefrenceForm";
 
 export const steps: {
   title: string;

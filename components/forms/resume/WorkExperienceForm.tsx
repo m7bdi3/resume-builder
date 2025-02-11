@@ -35,7 +35,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { GripHorizontal } from "lucide-react";
 import { useEffect } from "react";
 import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
-import { GenerateWorkExperienceButton } from "./ai/GenerateWEButton";
+import { GenerateWorkExperienceButton } from "../ai/GenerateWEButton";
 
 export default function WorkExperienceForm({
   resumeData,

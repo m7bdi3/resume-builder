@@ -1,4 +1,5 @@
 "use client";
+import { useRef, useState, useTransition } from "react";
 
 import Link from "next/link";
 import type { CoverLetterServerData, ResumeServerData } from "@/lib/types";
@@ -8,8 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
-import { ResumePreview } from "./ResumePreview/ResumePreview";
-import { DeleteDialog } from "./DeleteResumeDiaog";
+import { ResumePreview } from "@/components/main/Resume/ResumePreview/ResumePreview";
 
 import {
   Edit,
@@ -20,7 +20,6 @@ import {
 } from "lucide-react";
 import { formatDate } from "date-fns";
 
-import { useRef, useState, useTransition } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useReactToPrint } from "react-to-print";
 import type { ResumeValues } from "@/lib/validation";
@@ -29,8 +28,9 @@ import {
   type AnalyzedData,
   improveResumeData,
 } from "@/actions/ai.actions";
-import { CoverLetterItem } from "./CoverLettertem";
 import { CreateCoverLetterButton } from "@/components/premium/CreateCoverLetterButton";
+import { DeleteDialog } from "@/components/main/DeleteResumeDiaog";
+import { CoverLetterItem } from "@/components/main/coverLetter/CoverLettertem";
 
 interface Props {
   resume: ResumeServerData | null;

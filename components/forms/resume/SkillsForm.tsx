@@ -13,7 +13,7 @@ import { skillsSchema, SkillsSchemaValues } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { GenerateSkillsButton } from "./ai/GenerateSkillsButton";
+import { GenerateSkillsButton } from "../ai/GenerateSkillsButton";
 
 export function SkillsForm({ resumeData, setResumeData }: EditorFormProps) {
   const form = useForm<SkillsSchemaValues>({

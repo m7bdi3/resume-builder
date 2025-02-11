@@ -1,6 +1,6 @@
 import { Circle, Square, Squircle } from "lucide-react";
-import { Button } from "../../ui/button";
-import { useSubsLevel } from "@/app/(main)/SubsProvider";
+import { Button } from "@/components/ui/button";
+import { useSubsLevel } from "@/components/SubsProvider";
 import usePremiumModal from "@/hooks/usePremiumModal";
 import { canUseCustom } from "@/lib/permissions";
 

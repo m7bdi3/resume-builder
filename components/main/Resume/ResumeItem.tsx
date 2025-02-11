@@ -5,7 +5,7 @@ import { ResumeServerData } from "@/lib/types";
 import { formatDate } from "date-fns";
 import Link from "next/link";
 import React, { useRef, useState } from "react";
-import { ResumePreview } from "./ResumePreview/ResumePreview";
+import { ResumePreview } from "@/components/main/Resume/ResumePreview/ResumePreview";
 import { mapToResumeValues } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { MoreVertical, Printer, Trash2 } from "lucide-react";
 
 import { useReactToPrint } from "react-to-print";
-import { DeleteDialog } from "./DeleteResumeDiaog";
+import { DeleteDialog } from "@/components/main/DeleteResumeDiaog";
 
 interface Props {
   resume: ResumeServerData;

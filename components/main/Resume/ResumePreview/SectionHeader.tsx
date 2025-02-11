@@ -1,11 +1,9 @@
-import type React from "react";
-
 interface Props {
   title: string;
   colorHex?: string;
 }
 
-export const SectionHeader: React.FC<Props> = ({ title, colorHex }) => (
+export const SectionHeader = ({ title, colorHex }: Props) => (
   <>
     <hr
       style={{

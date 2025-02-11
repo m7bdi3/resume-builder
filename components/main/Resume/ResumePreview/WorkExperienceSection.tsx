@@ -1,8 +1,6 @@
-"use client";
-
 import { formatDate } from "date-fns";
 import type { ResumeSectionProps } from "@/lib/types";
-import { SectionHeader } from "./SectionHeader";
+import { SectionHeader } from "@/components/main/Resume/ResumePreview/SectionHeader";
 
 export const WorkExperienceSection = ({ resumeData }: ResumeSectionProps) => {
   const { workExperience, colorHex } = resumeData;

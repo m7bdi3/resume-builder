@@ -1,6 +1,6 @@
 import { CoverEditorFormProps } from "@/lib/types";
-import { PersonalInfoForm } from "@/components/main/Resume/forms/cover/PersonalInfoForm";
-import { GeneralInfoForm } from "@/components/main/Resume/forms/cover/GeneralInfoForm";
+import { PersonalInfoForm } from "@/components/forms/cover/PersonalInfoForm";
+import { GeneralInfoForm } from "@/components/forms/cover/GeneralInfoForm";
 
 export const Coversteps: {
   title: string;

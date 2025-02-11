@@ -1,8 +1,5 @@
-"use client";
-
-import type React from "react";
 import type { ResumeValues } from "@/lib/validation";
-import { SectionHeader } from "./SectionHeader";
+import { SectionHeader } from "@/components/main/Resume/ResumePreview/SectionHeader";
 
 interface Props {
   resumeData: ResumeValues;

@@ -1,13 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreateResumeButton } from "@/components/premium/CreateResumeButton";
-import { CreateCoverLetterButton } from "@/components/premium/CreateCoverLetterButton";
 
 interface HeaderProps {
   totalCount: number;
   subLevel: string;
   canCreate: boolean;
-  isResume: boolean;
   title: string;
 }
 
@@ -15,7 +13,6 @@ export function Header({
   totalCount,
   subLevel,
   canCreate,
-  isResume,
   title,
 }: HeaderProps) {
   return (
@@ -32,11 +29,8 @@ export function Header({
             {totalCount} {totalCount === 1 ? "document" : "documents"} stored
           </p>
         </div>
-        {isResume ? (
-          <CreateResumeButton canCreate={canCreate} />
-        ) : (
-          <CreateCoverLetterButton canCreate={canCreate} />
-        )}
+
+        <CreateResumeButton canCreate={canCreate} />
       </CardHeader>
     </Card>
   );

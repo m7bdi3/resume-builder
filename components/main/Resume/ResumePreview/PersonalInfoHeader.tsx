@@ -1,11 +1,10 @@
 "use client";
 
-import type React from "react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { ResumeValues } from "@/lib/validation";
-import { BorderStyles } from "../BorderStyleButton";
+import { BorderStyles } from "@/components/main/Resume/BorderStyleButton";
 
 interface Props {
   resumeData: ResumeValues;

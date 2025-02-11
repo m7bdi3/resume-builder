@@ -1,4 +1,4 @@
-import React from "react";
+import { Fragment } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -6,7 +6,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "../../ui/breadcrumb";
+} from "@/components/ui/breadcrumb";
 import { steps } from "@/lib/steps";
 import { Coversteps } from "@/lib/Coversteps";
 
@@ -28,7 +28,7 @@ export const Breadcrumbs = ({
           {resumeSteps ? (
             <>
               {steps.map((step) => (
-                <React.Fragment key={step.key}>
+                <Fragment key={step.key}>
                   <BreadcrumbItem className="cursor-pointer">
                     {step.key === currentStep ? (
                       <BreadcrumbPage>{step.title}</BreadcrumbPage>
@@ -39,13 +39,13 @@ export const Breadcrumbs = ({
                     )}
                   </BreadcrumbItem>
                   <BreadcrumbSeparator className="last:hidden" />
-                </React.Fragment>
+                </Fragment>
               ))}
             </>
           ) : (
             <>
               {Coversteps.map((step) => (
-                <React.Fragment key={step.key}>
+                <Fragment key={step.key}>
                   <BreadcrumbItem className="cursor-pointer">
                     {step.key === currentStep ? (
                       <BreadcrumbPage>{step.title}</BreadcrumbPage>
@@ -56,7 +56,7 @@ export const Breadcrumbs = ({
                     )}
                   </BreadcrumbItem>
                   <BreadcrumbSeparator className="last:hidden" />
-                </React.Fragment>
+                </Fragment>
               ))}
             </>
           )}

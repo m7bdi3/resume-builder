@@ -39,7 +39,6 @@ export default async function ResumesPage() {
           subLevel={subLevel}
           canCreate={canCreate}
           title="My Resumes"
-          isResume
         />
         <Suspense fallback={<ResumeListSkeleton />}>
           <ResumeList userId={userId} canCreate={canCreate} />

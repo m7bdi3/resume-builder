@@ -2,7 +2,7 @@ import { Navbar } from "@/components/navbar/Navbar";
 import { PremiumModal } from "@/components/premium/PremiumModal";
 import { getUserSubscriptionLevel } from "@/lib/subscription";
 import { auth } from "@clerk/nextjs/server";
-import { SubsProvider } from "./SubsProvider";
+import { SubsProvider } from "../../components/SubsProvider";
 
 export default async function ResumesLayout({
   children,

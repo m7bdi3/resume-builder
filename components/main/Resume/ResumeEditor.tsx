@@ -3,14 +3,15 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { steps } from "@/lib/steps";
-import { Breadcrumbs } from "@/components/main/Resume/Breadcrumbs";
-import { Footer } from "@/components/main/Resume/Footer";
+
 import { ResumeValues } from "@/lib/validation";
-import { PreviewSection } from "@/components/main/Resume/ResumePreview/PreviewSection";
+import { PreviewSection } from "@/components/main/PreviewSection";
 import { cn, mapToResumeValues } from "@/lib/utils";
 import { useAutoSaveResume } from "@/hooks/useAutoSaveResume";
 import { useUnloadWarning } from "@/hooks/useUnloadWarning";
 import { ResumeServerData } from "@/lib/types";
+import { Footer } from "@/components/main/Footer";
+import { Breadcrumbs } from "@/components/main/Breadcrumbs";
 
 interface Props {
   resumeToEdit: ResumeServerData | null;
@@ -86,6 +87,7 @@ export const ResumeEditor = ({ resumeToEdit }: Props) => {
         setShowResumePreview={setShowResumePreview}
         isSaving={isSaving}
         isResume
+        resumeId={resumeData.id!}
       />
     </div>
   );

@@ -1,10 +1,10 @@
 import { CoverLetterValues, ResumeValues } from "@/lib/validation";
 import React from "react";
-import { ResumePreview } from "./ResumePreview";
-import { ColorPicker } from "../ColorPicker";
-import { BorderStyleButton } from "../BorderStyleButton";
+import { ResumePreview } from "@/components/main/Resume/ResumePreview/ResumePreview";
+import { ColorPicker } from "@/components/main/Resume/ColorPicker";
+import { BorderStyleButton } from "@/components/main/Resume/BorderStyleButton";
 import { cn } from "@/lib/utils";
-import { CoverLetterPreview } from "./CoverLetterPreview";
+import { CoverLetterPreview } from "@/components/main/coverLetter/CoverLetterPreview/CoverLetterPreview";
 
 interface Props {
   resumeData?: ResumeValues;
@@ -31,13 +31,22 @@ export const PreviewSection = ({
             color={resumeData?.colorHex}
             onChange={(color) => {
               if (setResumeData)
-                setResumeData({ ...resumeData, colorHex: color.hex });
+                setResumeData({
+                  ...resumeData,
+                  colorHex: color.hex,
+                  coverLetters: resumeData?.coverLetters || [],
+                });
             }}
           />
           <BorderStyleButton
             borderStyle={resumeData?.borderStyle}
             onChange={(borderStyle) => {
-              if (setResumeData) setResumeData({ ...resumeData, borderStyle });
+              if (setResumeData)
+                setResumeData({
+                  ...resumeData,
+                  borderStyle,
+                  coverLetters: resumeData?.coverLetters || [],
+                });
             }}
           />
         </div>

@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { Color, ColorChangeHandler, TwitterPicker } from "react-color";
-import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
-import { Button } from "../../ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 import { Palette } from "lucide-react";
-import { useSubsLevel } from "@/app/(main)/SubsProvider";
+import { useSubsLevel } from "@/components/SubsProvider";
 import usePremiumModal from "@/hooks/usePremiumModal";
 import { canUseCustom } from "@/lib/permissions";
 

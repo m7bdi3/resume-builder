@@ -1,9 +1,10 @@
 "use client";
+
+import { useState } from "react";
 import usePremiumModal from "@/hooks/usePremiumModal";
-import React from "react";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { LoadingButton } from "./LoadingButton";
+import { LoadingButton } from "@/components/main/LoadingButton";
 import { createCustomerPortal } from "@/actions/premium.actions";
 
 export const GetSubButton = () => {
@@ -16,7 +17,7 @@ export const GetSubButton = () => {
 export const ManageSubButton = () => {
   const { toast } = useToast();
 
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = useState(false);
 
   async function handleClick() {
     try {

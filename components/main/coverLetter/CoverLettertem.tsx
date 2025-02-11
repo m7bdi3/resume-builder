@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { File, MoreVertical, Printer, Trash2, Edit } from "lucide-react";
 
 import { useReactToPrint } from "react-to-print";
-import { DeleteDialog } from "./DeleteResumeDiaog";
+import { DeleteDialog } from "@/components/main/DeleteResumeDiaog";
 import type { CoverLetterServerData } from "@/lib/types";
 
 interface Props {

@@ -1,7 +1,8 @@
-import { CreateResumeButton } from "@/components/premium/CreateResumeButton";
 import prisma from "@/lib/prisma";
+
 import { FilePen } from "lucide-react";
-import { CoverLetterItem } from "./CoverLettertem";
+import { CoverLetterItem } from "@/components/main/coverLetter/CoverLettertem";
+import { CreateResumeButton } from "@/components/premium/CreateResumeButton";
 
 interface ResumeListProps {
   userId: string;

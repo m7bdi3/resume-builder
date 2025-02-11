@@ -3,15 +3,16 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { steps } from "@/lib/steps";
-import { Breadcrumbs } from "@/components/main/Resume/Breadcrumbs";
-import { Footer } from "@/components/main/Resume/Footer";
+
 import { CoverLetterValues } from "@/lib/validation";
-import { PreviewSection } from "@/components/main/Resume/ResumePreview/PreviewSection";
+import { PreviewSection } from "@/components/main/PreviewSection";
 import { cn, mapToCoverLetterValues, mapToResumeValues } from "@/lib/utils";
 import { useUnloadWarning } from "@/hooks/useUnloadWarning";
 import { CoverLetterServerData, ResumeServerData } from "@/lib/types";
 import { Coversteps } from "@/lib/Coversteps";
 import { useAutoSaveCover } from "@/hooks/useAutoSaveCover";
+import { Breadcrumbs } from "@/components/main/Breadcrumbs";
+import { Footer } from "@/components/main/Footer";
 
 interface Props {
   coverLetterToEdit: CoverLetterServerData | null;

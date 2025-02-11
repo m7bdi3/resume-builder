@@ -1,8 +1,7 @@
 "use client";
 
-import React from "react";
-import { Button } from "../ui/button";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { PlusSquare } from "lucide-react";
 import usePremiumModal from "@/hooks/usePremiumModal";
 

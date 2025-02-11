@@ -1,10 +1,7 @@
-"use client";
-
-import type React from "react";
 import { Badge } from "@/components/ui/badge";
 import type { ResumeSectionProps } from "@/lib/types";
-import { BorderStyles } from "../BorderStyleButton";
-import { SectionHeader } from "./SectionHeader";
+import { BorderStyles } from "@/components/main/Resume/BorderStyleButton";
+import { SectionHeader } from "@/components/main/Resume/ResumePreview/SectionHeader";
 
 export const AdditionalSection: React.FC<ResumeSectionProps> = ({
   resumeData,

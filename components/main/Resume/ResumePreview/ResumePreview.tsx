@@ -13,10 +13,10 @@ import { SummarySection } from "@/components/main/Resume/ResumePreview/SummarySe
 import { WorkExperienceSection } from "@/components/main/Resume/ResumePreview/WorkExperienceSection";
 import { EducationSection } from "@/components/main/Resume/ResumePreview/EducationSection";
 import { SkillsSection } from "@/components/main/Resume/ResumePreview/SkillsSection";
-import { AdditionalSection } from "./AdditionalSection";
-import { ProjectsSection } from "./ProjectsSection";
-import { CertificationsSection } from "./CertificatesSection";
-import { ReferenceSection } from "./ReferenceSection";
+import { AdditionalSection } from "@/components/main/Resume/ResumePreview/AdditionalSection";
+import { ProjectsSection } from "@/components/main/Resume/ResumePreview/ProjectsSection";
+import { CertificationsSection } from "@/components/main/Resume/ResumePreview/CertificatesSection";
+import { ReferenceSection } from "@/components/main/Resume/ResumePreview/ReferenceSection";
 interface Props {
   resumeData?: ResumeValues;
   contentRef?: React.Ref<HTMLDivElement>;

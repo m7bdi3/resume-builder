@@ -1,9 +1,8 @@
-import React from "react";
-import { Button } from "../../ui/button";
 import Link from "next/link";
-import { steps } from "../../../lib/steps";
 import { FileUser, PenLine } from "lucide-react";
 import { FooterProps } from "@/lib/types";
+import { steps } from "@/lib/steps";
+import { Button } from "@/components/ui/button";
 
 export const Footer = ({
   isSaving,

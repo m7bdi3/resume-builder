@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { Suspense } from "react";
-import { CoverLetterEditor } from "@/components/main/Resume/CoverLetterEditor";
+import { CoverLetterEditor } from "@/components/main/coverLetter/CoverLetterEditor";
 import { resumeDataInclude } from "@/lib/types";
 
 export const metadata: Metadata = {
