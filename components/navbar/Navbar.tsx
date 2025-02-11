@@ -5,7 +5,7 @@ import { UserNavButton } from "./user-button";
 import { ThemeToggle } from "../theme-toggle";
 export const Navbar = () => {
   return (
-    <header className="shadow-sm bg-secondary lg:container mx-auto lg:rounded-b-lg">
+    <header className="shadow-sm bg-secondary w-full lg:container mx-auto lg:rounded-b-lg">
       <div className="max-w-7xl mx-auto p-3 flex items-center justify-between gap-3">
         <Link href={"/resumes"} className="flex items-center gap-2">
           <Image

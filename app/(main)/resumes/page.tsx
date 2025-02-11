@@ -36,7 +36,6 @@ export default async function ResumesPage() {
       <div className="max-w-7xl mx-auto p-4 space-y-6 relative">
         <Header
           totalCount={totalCount}
-          subLevel={subLevel}
           canCreate={canCreate}
           title="My Resumes"
         />

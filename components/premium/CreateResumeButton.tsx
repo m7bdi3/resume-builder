@@ -17,7 +17,7 @@ export const CreateResumeButton = ({ canCreate }: Props) => {
       <Button asChild className="mx-auto flex w-fit gap-2">
         <Link href={"/editor"}>
           <PlusSquare className="size-5" />
-          New Resume
+          Create
         </Link>
       </Button>
     );
@@ -26,7 +26,7 @@ export const CreateResumeButton = ({ canCreate }: Props) => {
   return (
     <Button onClick={() => setOpen(true)} className="flex w-fit gap-2">
       <PlusSquare className="size-5" />
-      New Resume
+      Create
     </Button>
   );
 };

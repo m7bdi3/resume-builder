@@ -9,12 +9,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { File, MoreVertical, Printer, Trash2, Edit } from "lucide-react";
+import { MoreVertical, Printer, Trash2, Edit } from "lucide-react";
 
 import { useReactToPrint } from "react-to-print";
 import { DeleteDialog } from "@/components/main/DeleteResumeDiaog";
 import type { CoverLetterServerData } from "@/lib/types";
+import { CoverLetterPreview } from "./CoverLetterPreview/CoverLetterPreview";
+import { mapToCoverLetterValues } from "@/lib/utils";
 
 interface Props {
   coverLetter: CoverLetterServerData;
@@ -27,11 +28,18 @@ export const CoverLetterItem = ({ coverLetter }: Props) => {
     documentTitle: coverLetter.title || "Cover Letter",
   });
 
+  const coverLetterData = mapToCoverLetterValues(coverLetter);
+
   return (
-    <Card className="group relative border hover:border-primary/20 transition-colors shadow-sm hover:shadow-md overflow-hidden">
+    <Card className="group relative border hover:border-primary/20 bg-accent/20 transition-colors shadow-sm hover:shadow-md overflow-hidden">
       <CardContent className="space-y-3 p-5">
         <div className="flex items-center justify-between">
-          <File className="size-10 text-primary" />
+          <div className="size-20 rounded-lg overflow-hidden">
+            <CoverLetterPreview
+              contentRef={contentRef}
+              coverLetterData={coverLetterData}
+            />
+          </div>
           <DropMenu
             coverLetterId={coverLetter.id}
             onPrintClick={reactToPrintFn}
@@ -60,15 +68,8 @@ const DropMenu = ({ coverLetterId, onPrintClick, resumeId }: DropProps) => {
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="size-8 p-0 hover:bg-accent"
-            aria-label="Cover Letter actions menu"
-          >
-            <MoreVertical className="size-4 text-muted-foreground" />
-          </Button>
+        <DropdownMenuTrigger className="group absolute right-2 top-2 size-8 cursor-pointer hover:bg-accent/60 backdrop-blur-sm flex items-center justify-center rounded">
+          <MoreVertical className="size-4 text-muted-foreground group-hover:text-accent-foreground" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
           <DropdownMenuItem asChild>

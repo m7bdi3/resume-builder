@@ -6,7 +6,13 @@ import type { CoverLetterServerData, ResumeServerData } from "@/lib/types";
 import { mapToResumeValues } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { ResumePreview } from "@/components/main/Resume/ResumePreview/ResumePreview";
@@ -31,6 +37,7 @@ import {
 import { CreateCoverLetterButton } from "@/components/premium/CreateCoverLetterButton";
 import { DeleteDialog } from "@/components/main/DeleteResumeDiaog";
 import { CoverLetterItem } from "@/components/main/coverLetter/CoverLettertem";
+import { Label } from "@/components/ui/label";
 
 interface Props {
   resume: ResumeServerData | null;
@@ -110,30 +117,44 @@ export const ResumeSettings = ({ resume, canCreate }: Props) => {
         All Resumes
       </Link>
 
-      <Card className="bg-muted">
-        <CardContent className="flex flex-col md:flex-row justify-between items-start md:items-center p-6 space-y-4 md:space-y-0">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold capitalize">{resume.title}</h1>
-            <p className="text-muted-foreground line-clamp-2">
-              {resume.description}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              {wasUpdated ? "Updated" : "Created"} •{" "}
-              {formatDate(resume.updatedAt, "MMM d, yyyy")}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <Button variant="outline" asChild>
-              <Link href={`/editor?resumeId=${resume.id}`}>
-                <Edit className="size-4" /> Edit
-              </Link>
-            </Button>
-            <Button variant="default" onClick={() => reactToPrintFn()}>
-              <FileText className="size-4" /> Export
-            </Button>
-            <DeleteDialog id={resume.id} isResume />
-          </div>
+      <Card className="bg-accent/20 hover:bg-accent/30 transition-colors duration-200">
+        <CardHeader>
+          <CardTitle className="text-xl sm:text-2xl font-bold capitalize">
+            {resume.title}
+          </CardTitle>
+          <p className="text-muted-foreground line-clamp-2 mt-2">
+            {resume.description}
+          </p>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">
+            {wasUpdated ? "Updated" : "Created"} •{" "}
+            {formatDate(resume.updatedAt, "MMM d, yyyy")}
+          </p>
         </CardContent>
+        <CardFooter className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-4">
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <Link
+              href={`/resumes/editor?resumeId=${resume.id}`}
+              className="w-full sm:w-auto"
+            >
+              <Button variant="outline" className="w-full sm:w-auto">
+                <Edit className="size-4" />
+                Edit
+              </Button>
+            </Link>
+            <Button
+              variant="default"
+              onClick={() => reactToPrintFn()}
+              className="w-full sm:w-auto"
+              aria-label="Export resume"
+            >
+              <FileText className="size-4" />
+              Export
+            </Button>
+          </div>
+          <DeleteDialog id={resume.id} isResume />
+        </CardFooter>
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -158,7 +179,7 @@ export const ResumeSettings = ({ resume, canCreate }: Props) => {
                 resumeId={resume.id}
               />
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="grid grid-cols-4 md:grid-cols-2 gap-4">
               {resumeData.coverLetters &&
               resumeData.coverLetters.filter((cov) => cov !== undefined)
                 .length > 0 ? (
@@ -183,13 +204,13 @@ export const ResumeSettings = ({ resume, canCreate }: Props) => {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <label htmlFor="jobDescription" className="text-sm font-medium">
+              <Label htmlFor="jobDescription" className="text-sm font-medium">
                 Job Description
-              </label>
+              </Label>
               <Textarea
                 id="jobDescription"
                 placeholder="Paste job description here..."
-                className="h-40 resize-none"
+                className="h-40 resize-none mt-2"
                 onChange={(e) => setJobDescription(e.target.value)}
               />
             </div>
@@ -202,7 +223,7 @@ export const ResumeSettings = ({ resume, canCreate }: Props) => {
             >
               {isPending ? (
                 <span className="flex items-center justify-center gap-3">
-                  <Loader2 className="size-4ate-spin" />
+                  <Loader2 className="size-4 animate-spin" />
                   Analyzing...
                 </span>
               ) : (
