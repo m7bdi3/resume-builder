@@ -71,24 +71,20 @@ const DropMenu = ({ coverLetterId, onPrintClick, resumeId }: DropProps) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuItem className="text-muted-foreground" asChild>
+          <DropdownMenuItem asChild>
             <Link
               href={`/resumes/${resumeId}/coverletter/create?coverId=${coverLetterId}`}
-              className="inline-flex items-center text-sm text-primary hover:underline"
             >
               <Edit className="size-4 mr-2" />
               Edit
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            className="text-muted-foreground"
-            onClick={onPrintClick}
-          >
+          <DropdownMenuItem variant="default" onClick={onPrintClick}>
             <Printer className="size-4 mr-2" />
             Print
           </DropdownMenuItem>
           <DropdownMenuItem
-            className="text-destructive focus:text-destructive-foreground focus:bg-destructive/10"
+            variant="destructive"
             onClick={() => setShowDelete(true)}
           >
             <Trash2 className="size-4 mr-2" />

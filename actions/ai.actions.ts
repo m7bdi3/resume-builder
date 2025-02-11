@@ -590,13 +590,13 @@ Generate a professional cover letter body in styled HTML format. Follow these ru
 </div>
 
 2. Requirements:
-- Fill ALL [bracketed placeholders] with context-based content
+- Fill ALL [bracketed placeholders] with context-based content from Resume data 
 - Include 2-3 specific metrics/numbers in achievements
 - Use minimum 3 exact keywords/phrases from job description
 - Final output MUST be valid HTML that passes W3C validation
 - Return ONLY the HTML between <div class="cover-letter"> tags
 - No markdown, explanations, or non-HTML content
-- Don't add any imaginary data. Keep it consise
+- Don't add any imaginary data. Keep it consise 
 - Integrate user’s name and experience from context.
 - Do not include any headers, addresses, or signature blocks.
 - Maintain a professional, business-appropriate tone.
@@ -610,6 +610,8 @@ Generate a professional cover letter body in styled HTML format. Follow these ru
   font-family, line-height, margin, padding, max-width
 - Paragraph styling must include: margin-bottom: 15px
 - Web-safe typography (size: 14-16px equivalent)
+- Strict W3C validation compliance
+- No external resources, classes, or IDs
 - Clean spacing between paragraphs (no <br> tags)
 - Absolute prohibition of: 
   • External CSS • Classes/IDs • Images • Tables
@@ -617,10 +619,10 @@ Generate a professional cover letter body in styled HTML format. Follow these ru
 
 
 Job Description:
-${jobDescription}
+${JSON.stringify(jobDescription)}
 
 Resume Data :
-${resumeData}
+${JSON.stringify(resumeData)}
 
 Respond ONLY with the styled HTML content between <div class="cover-letter"> tags. Do not include any other elements or explanations.
 `;

@@ -113,8 +113,10 @@ export const ResumeSettings = ({ resume, canCreate }: Props) => {
       <Card className="bg-muted">
         <CardContent className="flex flex-col md:flex-row justify-between items-start md:items-center p-6 space-y-4 md:space-y-0">
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold">{resume.title}</h1>
-            <p className="text-muted-foreground">{resume.description}</p>
+            <h1 className="text-3xl font-bold capitalize">{resume.title}</h1>
+            <p className="text-muted-foreground line-clamp-2">
+              {resume.description}
+            </p>
             <p className="text-sm text-muted-foreground">
               {wasUpdated ? "Updated" : "Created"} •{" "}
               {formatDate(resume.updatedAt, "MMM d, yyyy")}
@@ -123,11 +125,11 @@ export const ResumeSettings = ({ resume, canCreate }: Props) => {
           <div className="flex flex-wrap gap-3">
             <Button variant="outline" asChild>
               <Link href={`/editor?resumeId=${resume.id}`}>
-                <Edit className="h-4 w-4 mr-2" /> Edit Resume
+                <Edit className="size-4" /> Edit
               </Link>
             </Button>
             <Button variant="default" onClick={() => reactToPrintFn()}>
-              <FileText className="h-4 w-4 mr-2" /> Export PDF
+              <FileText className="size-4" /> Export
             </Button>
             <DeleteDialog id={resume.id} isResume />
           </div>
@@ -136,7 +138,7 @@ export const ResumeSettings = ({ resume, canCreate }: Props) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1 space-y-6">
-          <Card className="sticky top-8">
+          <Card>
             <CardHeader>
               <CardTitle>Resume Preview</CardTitle>
             </CardHeader>
@@ -175,7 +177,7 @@ export const ResumeSettings = ({ resume, canCreate }: Props) => {
           </Card>
         </div>
 
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 h-fit">
           <CardHeader>
             <CardTitle>ATS Score Analysis</CardTitle>
           </CardHeader>
@@ -200,7 +202,7 @@ export const ResumeSettings = ({ resume, canCreate }: Props) => {
             >
               {isPending ? (
                 <span className="flex items-center justify-center gap-3">
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="size-4ate-spin" />
                   Analyzing...
                 </span>
               ) : (
@@ -262,7 +264,7 @@ export const ResumeSettings = ({ resume, canCreate }: Props) => {
                 >
                   {isPending ? (
                     <span className="flex items-center justify-center gap-3">
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 className="size-4ate-spin" />
                       Improving...
                     </span>
                   ) : (
@@ -313,7 +315,7 @@ const CategorySection = ({
         </div>
       ) : (
         <div className="flex items-center text-muted-foreground text-sm">
-          <AlertCircle className="h-4 w-4 mr-2" />
+          <AlertCircle className="size-4" />
           No {title.toLowerCase()} found
         </div>
       )}

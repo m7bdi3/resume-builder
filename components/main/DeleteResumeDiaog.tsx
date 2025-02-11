@@ -60,7 +60,7 @@ export const DeleteDialog = ({
       {!open && !onOpenChange && (
         <DialogTrigger asChild>
           <Button variant={"destructive"}>
-            <Trash2 className="size-5" /> Delete
+            <Trash2 className="size-4" /> Delete
           </Button>
         </DialogTrigger>
       )}
