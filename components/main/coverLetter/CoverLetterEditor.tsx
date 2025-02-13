@@ -6,9 +6,9 @@ import { steps } from "@/lib/steps";
 
 import { CoverLetterValues } from "@/lib/validation";
 import { PreviewSection } from "@/components/main/PreviewSection";
-import { cn, mapToCoverLetterValues, mapToResumeValues } from "@/lib/utils";
+import { cn, mapToCoverLetterValues } from "@/lib/utils";
 import { useUnloadWarning } from "@/hooks/useUnloadWarning";
-import { CoverLetterServerData, ResumeServerData } from "@/lib/types";
+import { CoverLetterServerData } from "@/lib/types";
 import { Coversteps } from "@/lib/Coversteps";
 import { useAutoSaveCover } from "@/hooks/useAutoSaveCover";
 import { Breadcrumbs } from "@/components/main/Breadcrumbs";
@@ -16,13 +16,10 @@ import { Footer } from "@/components/main/Footer";
 
 interface Props {
   coverLetterToEdit: CoverLetterServerData | null;
-  resume: ResumeServerData | null;
 }
 
-export const CoverLetterEditor = ({ coverLetterToEdit, resume }: Props) => {
+export const CoverLetterEditor = ({ coverLetterToEdit }: Props) => {
   const searchParams = useSearchParams();
-
-  const resumeData = resume ? mapToResumeValues(resume) : { coverLetters: [] };
 
   const [coverLetterData, setCoverLetterData] = useState(
     coverLetterToEdit
@@ -32,10 +29,7 @@ export const CoverLetterEditor = ({ coverLetterToEdit, resume }: Props) => {
 
   const [showSmResumePreview, setShowResumePreview] = useState(false);
 
-  const { isSaving, hasUnsavedChanges } = useAutoSaveCover(
-    coverLetterData,
-    resumeData.id!
-  );
+  const { isSaving, hasUnsavedChanges } = useAutoSaveCover(coverLetterData);
   useUnloadWarning(hasUnsavedChanges);
 
   const currentStep = searchParams.get("step") || steps[0].key;
@@ -77,7 +71,6 @@ export const CoverLetterEditor = ({ coverLetterToEdit, resume }: Props) => {
               <FormComponent
                 coverData={coverLetterData}
                 setCoverData={setCoverLetterData}
-                resumeData={resumeData}
               />
             )}
           </div>
@@ -96,7 +89,6 @@ export const CoverLetterEditor = ({ coverLetterToEdit, resume }: Props) => {
         setShowResumePreview={setShowResumePreview}
         isSaving={isSaving}
         isResume={false}
-        resumeId={resumeData.id!}
       />
     </div>
   );

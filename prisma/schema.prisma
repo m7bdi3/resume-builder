@@ -44,10 +44,9 @@ model Resume {
   projects        Project[]
   certifications  Certification[]
   references      Reference[]
-  CoverLetter     CoverLetter[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 
   @@map("resumes")
 }
@@ -62,7 +61,7 @@ model WorkExperience {
   description String?
 
   resumeId String
-  resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  resume   Resume? @relation(fields: [resumeId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -165,8 +164,7 @@ model CoverLetter {
   phone     String?
   email     String?
 
-  resumeId String
-  resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  resumeId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

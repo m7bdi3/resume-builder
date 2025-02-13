@@ -14,12 +14,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { GenerateCoverButton } from "../ai/GenerateCoverButton";
 
 export const PersonalInfoForm = ({
   coverData,
   setCoverData,
-  resumeData,
 }: CoverEditorFormProps) => {
   const form = useCoverForm<CoverPersonalInfoValues>(
     coverPersonalInfoSchema,
@@ -29,9 +27,8 @@ export const PersonalInfoForm = ({
       jobTitle: coverData.jobTitle ?? "",
       phone: coverData.phone ?? "",
       email: coverData.email ?? "",
-      body: coverData.body ?? "",
     },
-    { coverData, setCoverData, resumeData }
+    { coverData, setCoverData }
   );
 
   return (
@@ -109,11 +106,6 @@ export const PersonalInfoForm = ({
                 <FormMessage />
               </FormItem>
             )}
-          />
-          <GenerateCoverButton
-            coverData={coverData}
-            resumeData={resumeData}
-            onGenerated={(body) => form.setValue("body", body)}
           />
         </form>
       </Form>

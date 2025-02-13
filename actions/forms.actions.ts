@@ -186,10 +186,8 @@ export const saveResume = async (values: ResumeValues) => {
     });
   }
 };
-export const saveCover = async (
-  values: CoverLetterValues,
-  resumeId: string
-) => {
+
+export const saveCover = async (values: CoverLetterValues) => {
   const { id } = values;
 
   const coverValues = coverLetterSchema.parse(values);
@@ -216,7 +214,6 @@ export const saveCover = async (
         where: {
           id,
           userId,
-          resumeId,
         },
       })
     : null;
@@ -230,7 +227,6 @@ export const saveCover = async (
       where: {
         id,
         userId,
-        resumeId,
       },
       data: {
         ...coverValues,
@@ -242,7 +238,6 @@ export const saveCover = async (
       data: {
         ...coverValues,
         userId,
-        resumeId,
         updatedAt: new Date(),
       },
     });

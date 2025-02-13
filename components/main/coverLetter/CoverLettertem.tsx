@@ -74,7 +74,7 @@ const DropMenu = ({ coverLetterId, onPrintClick, resumeId }: DropProps) => {
         <DropdownMenuContent align="end" className="w-48">
           <DropdownMenuItem asChild>
             <Link
-              href={`/resumes/${resumeId}/coverletter/create?coverId=${coverLetterId}`}
+              href={`/dashboard/resumes/${resumeId}/coverletter/create?coverId=${coverLetterId}`}
             >
               <Edit className="size-4 mr-2" />
               Edit

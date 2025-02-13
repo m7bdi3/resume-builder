@@ -8,13 +8,13 @@ export const Coversteps: {
   key: string;
 }[] = [
   {
-    title: "General info",
-    component: GeneralInfoForm,
-    key: "general-info",
-  },
-  {
     title: "Personal info",
     component: PersonalInfoForm,
     key: "personal-info",
+  },
+  {
+    title: "General info",
+    component: GeneralInfoForm,
+    key: "general-info",
   },
 ];

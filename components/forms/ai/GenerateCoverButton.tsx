@@ -10,7 +10,7 @@ import { useState } from "react";
 
 interface Props {
   coverData: CoverLetterValues;
-  resumeData: ResumeValues;
+  resumeData?: ResumeValues;
   onGenerated: (body: string) => void;
 }
 
@@ -32,7 +32,10 @@ export const GenerateCoverButton = ({
     }
     try {
       setLoading(true);
-      const aiResponse = await generateCover(coverData, resumeData);
+      const aiResponse = await generateCover(
+        coverData,
+        resumeData ?? undefined
+      );
       onGenerated(aiResponse);
     } catch (error) {
       console.error(error);

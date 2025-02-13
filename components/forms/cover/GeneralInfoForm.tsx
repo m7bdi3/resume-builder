@@ -14,19 +14,20 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { GenerateCoverButton } from "../ai/GenerateCoverButton";
 
 export const GeneralInfoForm = ({
   coverData,
   setCoverData,
-  resumeData,
 }: CoverEditorFormProps) => {
   const form = useCoverForm<CoverGeneralInfoValues>(
     coverGeneralInfoSchema,
     {
       title: coverData.title ?? "",
       jobDescription: coverData.jobDescription ?? "",
+      body: coverData.body ?? "",
     },
-    { coverData, setCoverData, resumeData }
+    { coverData, setCoverData }
   );
 
   return (
@@ -68,6 +69,11 @@ export const GeneralInfoForm = ({
               </FormItem>
             )}
           />
+          {/* <GenerateCoverButton
+            coverData={coverData}
+            resumeData={resumeData}
+            onGenerated={(body) => form.setValue("body", body)}
+          /> */}
         </form>
       </Form>
     </div>

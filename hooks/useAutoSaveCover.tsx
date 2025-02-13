@@ -7,10 +7,7 @@ import { saveCover } from "@/actions/forms.actions";
 import { Button } from "@/components/ui/button";
 import { fileReplacer } from "@/lib/utils";
 
-export const useAutoSaveCover = (
-  coverData: CoverLetterValues,
-  resumeId: string
-) => {
+export const useAutoSaveCover = (coverData: CoverLetterValues) => {
   const searchParams = useSearchParams();
 
   const { toast } = useToast();
@@ -37,13 +34,10 @@ export const useAutoSaveCover = (
 
         const newData = structuredClone(debouncedResumeData);
 
-        const updatedCover = await saveCover(
-          {
-            ...newData,
-            id: coverId,
-          },
-          resumeId
-        );
+        const updatedCover = await saveCover({
+          ...newData,
+          id: coverId,
+        });
         setCoverId(updatedCover.id);
         setLastSavedData(newData);
 
@@ -95,7 +89,6 @@ export const useAutoSaveCover = (
     coverId,
     searchParams,
     toast,
-    resumeId,
   ]);
 
   return {

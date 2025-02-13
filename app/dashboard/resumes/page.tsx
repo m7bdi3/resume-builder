@@ -5,7 +5,6 @@ import { Card } from "@/components/ui/card";
 import { getUserSubscriptionLevel } from "@/lib/subscription";
 import { canCreateResume } from "@/lib/permissions";
 import prisma from "@/lib/prisma";
-import { Header } from "@/components/main/Resume/ResumeHeader";
 import { ResumeList } from "@/components/main/Resume/ResumeList";
 
 export const metadata: Metadata = {
@@ -32,17 +31,10 @@ export default async function ResumesPage() {
   const canCreate = canCreateResume(subLevel, totalCount);
 
   return (
-    <main className="relative overflow-hidden w-full min-h-screen pb-16">
-      <div className="max-w-7xl mx-auto p-4 space-y-6 relative">
-        <Header
-          totalCount={totalCount}
-          canCreate={canCreate}
-          title="My Resumes"
-        />
-        <Suspense fallback={<ResumeListSkeleton />}>
-          <ResumeList userId={userId} canCreate={canCreate} />
-        </Suspense>
-      </div>
+    <main className="relative w-full max-w-7xl mx-auto p-4 space-y-6">
+      <Suspense fallback={<ResumeListSkeleton />}>
+        <ResumeList userId={userId} canCreate={canCreate} />
+      </Suspense>
     </main>
   );
 }

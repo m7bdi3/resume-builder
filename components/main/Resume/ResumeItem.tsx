@@ -29,6 +29,8 @@ export const ResumeItem = ({ resume }: Props) => {
     documentTitle: resume.title || "Resume",
   });
 
+  const resumeData = mapToResumeValues(resume);
+  console.log(resume);
   const wasUpdated = resume.updatedAt !== resume.createdAt;
 
   return (
@@ -54,10 +56,13 @@ export const ResumeItem = ({ resume }: Props) => {
       </CardHeader>
 
       <CardContent className="p-4 pt-0 overflow-hidden">
-        <Link href={`/resumes/${resume.id}`} className="inline-block w-full">
+        <Link
+          href={`/dashboard/resumes/${resume.id}`}
+          className="inline-block w-full"
+        >
           <ResumePreview
             contentRef={contentRef}
-            resumeData={mapToResumeValues(resume)}
+            resumeData={resumeData}
             className="overflow-hidden rounded-lg border"
           />
         </Link>

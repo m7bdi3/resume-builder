@@ -183,7 +183,6 @@ export const resumeSchema = z.object({
   ...projectsSchema.shape,
   ...referencesSchema.shape,
   ...certificationsSchema.shape,
-  coverLetters: z.array(coverLetterSchema),
   colorHex: optionalString,
   borderStyle: optionalString,
 });
@@ -226,9 +225,16 @@ export const generateSKillsSchema = z.object({
 
 export type GenerateSkillsInput = z.infer<typeof generateSKillsSchema>;
 
+export const coverStep1Schema = z.object({
+  choice: z.enum(["new", "existing"]).default("new"),
+});
+
+export type CoverStep1Values = z.infer<typeof coverStep1Schema>;
+
 export const coverGeneralInfoSchema = z.object({
   jobDescription: optionalString,
   title: optionalString,
+  body: optionalString,
 });
 
 export type CoverGeneralInfoValues = z.infer<typeof coverGeneralInfoSchema>;
@@ -239,7 +245,6 @@ export const coverPersonalInfoSchema = z.object({
   jobTitle: optionalString,
   phone: optionalString,
   email: optionalString,
-  body: optionalString,
 });
 
 export type CoverPersonalInfoValues = z.infer<typeof coverPersonalInfoSchema>;

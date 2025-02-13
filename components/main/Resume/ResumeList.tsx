@@ -1,20 +1,16 @@
+"use client";
 import { ResumeItem } from "@/components/main/Resume/ResumeItem";
 import { CreateResumeButton } from "@/components/premium/CreateResumeButton";
-import prisma from "@/lib/prisma";
-import { resumeDataInclude } from "@/lib/types";
+import { useResumeStore } from "@/hooks/store/useResumeStore";
+
 import { FilePen } from "lucide-react";
 
 interface ResumeListProps {
-  userId: string;
   canCreate: boolean;
 }
 
-export async function ResumeList({ userId, canCreate }: ResumeListProps) {
-  const resumes = await prisma.resume.findMany({
-    where: { userId },
-    orderBy: { updatedAt: "desc" },
-    include: resumeDataInclude,
-  });
+export function ResumeList({ canCreate }: ResumeListProps) {
+  const { resumes } = useResumeStore();
 
   if (resumes.length === 0) {
     <div className="flex flex-col items-center justify-center gap-4 h-[50vh] text-center">

@@ -3,9 +3,11 @@ import { useRef, useState, useTransition } from "react";
 
 import Link from "next/link";
 import type { CoverLetterServerData, ResumeServerData } from "@/lib/types";
+
 import { mapToResumeValues } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+
 import {
   Card,
   CardContent,
@@ -14,18 +16,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+
 import { Textarea } from "@/components/ui/textarea";
 import { ResumePreview } from "@/components/main/Resume/ResumePreview/ResumePreview";
-
-import {
-  Edit,
-  FileText,
-  AlertCircle,
-  Loader2,
-  ChevronLeft,
-} from "lucide-react";
 import { formatDate } from "date-fns";
-
+import { Edit, FileText, AlertCircle, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useReactToPrint } from "react-to-print";
 import type { ResumeValues } from "@/lib/validation";
@@ -108,16 +103,8 @@ export const ResumeSettings = ({ resume, canCreate }: Props) => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-8">
-      <Link
-        href="/resumes"
-        className="inline-flex items-center text-lg font-semibold hover:underline"
-      >
-        <ChevronLeft className="h-5 w-5 mr-2" />
-        All Resumes
-      </Link>
-
-      <Card className="bg-accent/20 hover:bg-accent/30 transition-colors duration-200">
+    <div className="container mx-auto px-4  space-y-8">
+      <Card className="bg-primary/40 hover:bg-primary/50 transition-colors duration-200">
         <CardHeader>
           <CardTitle className="text-xl sm:text-2xl font-bold capitalize">
             {resume.title}
@@ -128,7 +115,7 @@ export const ResumeSettings = ({ resume, canCreate }: Props) => {
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            {wasUpdated ? "Updated" : "Created"} •{" "}
+            {wasUpdated ? "Updated" : "Created"} at {" "}
             {formatDate(resume.updatedAt, "MMM d, yyyy")}
           </p>
         </CardContent>
@@ -171,7 +158,7 @@ export const ResumeSettings = ({ resume, canCreate }: Props) => {
               />
             </CardContent>
           </Card>
-          <Card>
+          {/* <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="flex-1">Cover Letters</CardTitle>
               <CreateCoverLetterButton
@@ -195,10 +182,10 @@ export const ResumeSettings = ({ resume, canCreate }: Props) => {
                 <p className="text-muted-foreground">No Cover Letters found</p>
               )}
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
 
-        <Card className="lg:col-span-2 h-fit">
+        {/* <Card className="lg:col-span-2 h-fit">
           <CardHeader>
             <CardTitle>ATS Score Analysis</CardTitle>
           </CardHeader>
@@ -295,7 +282,7 @@ export const ResumeSettings = ({ resume, canCreate }: Props) => {
               </div>
             )}
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
     </div>
   );

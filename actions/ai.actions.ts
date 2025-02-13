@@ -564,7 +564,7 @@ Current Resume: {${JSON.stringify(resumeData)}}
 
 export async function generateCover(
   input: GenerateCoverInput,
-  resumeData: ResumeValues
+  resumeData?: ResumeValues
 ) {
   const { userId } = await auth();
 
@@ -620,9 +620,13 @@ Generate a professional cover letter body in styled HTML format. Follow these ru
 
 Job Description:
 ${JSON.stringify(jobDescription)}
-
-Resume Data :
-${JSON.stringify(resumeData)}
+${
+  resumeData &&
+  `
+  Resume Data :
+  ${JSON.stringify(resumeData)}
+`
+}
 
 Respond ONLY with the styled HTML content between <div class="cover-letter"> tags. Do not include any other elements or explanations.
 `;

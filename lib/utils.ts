@@ -38,15 +38,23 @@ export function mapToResumeValues(data: ResumeServerData): ResumeValues {
       id: exp.id,
       position: exp.position || undefined,
       company: exp.company || undefined,
-      startDate: exp.startDate?.toISOString().split("T")[0],
-      endDate: exp.endDate?.toISOString().split("T")[0],
+      startDate: exp.startDate
+        ? new Date(exp.startDate).toISOString().split("T")[0]
+        : "",
+      endDate: exp.endDate
+        ? new Date(exp.endDate).toISOString().split("T")[0]
+        : "",
       description: exp.description || undefined,
     })),
     educations: data.educations.map((edu) => ({
       degree: edu.degree || undefined,
       school: edu.school || undefined,
-      startDate: edu.startDate?.toISOString().split("T")[0],
-      endDate: edu.endDate?.toISOString().split("T")[0],
+      startDate: edu.startDate
+        ? new Date(edu.startDate).toISOString().split("T")[0]
+        : "",
+      endDate: edu.endDate
+        ? new Date(edu.endDate).toISOString().split("T")[0]
+        : "",
     })),
     softSkills: data.softSkills,
     technicalSkills: data.technicalSkills,
@@ -58,8 +66,12 @@ export function mapToResumeValues(data: ResumeServerData): ResumeValues {
       title: pro.title || undefined,
       link: pro.link || undefined,
       description: pro.description || undefined,
-      startDate: pro.startDate?.toISOString().split("T")[0],
-      endDate: pro.endDate?.toISOString().split("T")[0],
+      startDate: pro.startDate
+        ? new Date(pro.startDate).toISOString().split("T")[0]
+        : "",
+      endDate: pro.endDate
+        ? new Date(pro.endDate).toISOString().split("T")[0]
+        : "",
     })),
 
     references: data.references.map((ref) => ({
@@ -72,22 +84,10 @@ export function mapToResumeValues(data: ResumeServerData): ResumeValues {
       name: cert.name || undefined,
       issuer: cert.issuer || undefined,
       credentialId: cert.credentialId || undefined,
-      dateObtained: cert.dateObtained?.toISOString().split("T")[0],
+      dateObtained: cert.dateObtained
+        ? new Date(cert.dateObtained).toISOString().split("T")[0]
+        : "",
     })),
-
-    coverLetters: data.CoverLetter.map((data) => ({
-      id: data.id,
-      firstName: data.firstName || undefined,
-      lastName: data.lastName || undefined,
-      jobTitle: data.jobTitle || undefined,
-      phone: data.phone || undefined,
-      email: data.email || undefined,
-      title: data.title || undefined,
-      jobDescription: data.jobDescription || undefined,
-      body: data.body || undefined,
-      resumeId: data.resumeId,
-    })),
-
     borderStyle: data.borderStyle,
     colorHex: data.colorHex,
     summary: data.summary || undefined,
