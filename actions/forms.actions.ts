@@ -13,6 +13,7 @@ import path from "path";
 import { revalidatePath } from "next/cache";
 import { getUserSubscriptionLevel } from "@/lib/subscription";
 import { canCreateResume, canUseCustom } from "@/lib/permissions";
+import { resumeDataInclude } from "@/lib/types";
 
 export const saveResume = async (values: ResumeValues) => {
   const { id } = values;
@@ -83,8 +84,15 @@ export const saveResume = async (values: ResumeValues) => {
     newImgUrl = null;
   }
 
+  const getFullResume = async (resumeId: string) => {
+    return await prisma.resume.findUniqueOrThrow({
+      where: { id: resumeId },
+      include: resumeDataInclude,
+    });
+  };
+
   if (id) {
-    return prisma.resume.update({
+    prisma.resume.update({
       where: {
         id,
       },
@@ -137,8 +145,9 @@ export const saveResume = async (values: ResumeValues) => {
         updatedAt: new Date(),
       },
     });
+    return await getFullResume(id);
   } else {
-    return prisma.resume.create({
+    const newResume = await prisma.resume.create({
       data: {
         ...resumevalues,
         userId,
@@ -184,6 +193,7 @@ export const saveResume = async (values: ResumeValues) => {
         updatedAt: new Date(),
       },
     });
+    return await getFullResume(newResume.id);
   }
 };
 

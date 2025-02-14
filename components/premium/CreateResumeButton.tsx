@@ -14,7 +14,7 @@ export const CreateResumeButton = ({ canCreate }: Props) => {
 
   if (canCreate) {
     return (
-      <Button asChild className="mx-auto flex w-fit gap-2">
+      <Button asChild className="flex w-fit gap-2">
         <Link href={"/dashboard/resumes/editor"}>
           <PlusSquare className="size-5" />
           Create

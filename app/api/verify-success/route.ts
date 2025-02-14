@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   const token = searchParams.get("token");
 
   if (!sessionId || !token) {
-    return NextResponse.redirect(new URL("/billing", request.url));
+    return NextResponse.redirect(new URL("/dashboard/billing", request.url));
   }
 
   try {
@@ -25,10 +25,10 @@ export async function GET(request: NextRequest) {
     await redis.set(`payment_success:${token}`, "true", { ex: 3600 });
 
     return NextResponse.redirect(
-      new URL(`/billing/success?token=${token}`, request.url)
+      new URL(`/dashboard/billing/success?token=${token}`, request.url)
     );
   } catch (error) {
     console.error("Error verifying payment success:", error);
-    return NextResponse.redirect(new URL("/billing", request.url));
+    return NextResponse.redirect(new URL("/dashboard/billing", request.url));
   }
 }

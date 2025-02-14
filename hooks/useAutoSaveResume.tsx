@@ -6,6 +6,7 @@ import { useToast } from "./use-toast";
 import { saveResume } from "@/actions/forms.actions";
 import { Button } from "@/components/ui/button";
 import { fileReplacer } from "@/lib/utils";
+import { useResumeStore } from "./store/useResumeStore";
 
 export const useAutoSaveResume = (resumeData: ResumeValues) => {
   const searchParams = useSearchParams();
@@ -21,7 +22,7 @@ export const useAutoSaveResume = (resumeData: ResumeValues) => {
 
   const [isSaving, setIsSaving] = useState(false);
   const [isError, setIsError] = useState(false);
-
+  const { addResume } = useResumeStore();
   useEffect(() => {
     setIsError(false);
   }, [debouncedResumeData]);
@@ -42,9 +43,10 @@ export const useAutoSaveResume = (resumeData: ResumeValues) => {
           }),
           id: resumeId,
         });
+
         setResumeId(updatedResume.id);
         setLastSavedData(newData);
-
+        addResume(updatedResume);
         if (searchParams.get("resumeId") !== updatedResume.id) {
           const newSearchParams = new URLSearchParams(searchParams);
           newSearchParams.set("resumeId", updatedResume.id);
@@ -93,6 +95,7 @@ export const useAutoSaveResume = (resumeData: ResumeValues) => {
     resumeId,
     searchParams,
     toast,
+    addResume,
   ]);
 
   return {

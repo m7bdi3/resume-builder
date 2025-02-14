@@ -15,6 +15,9 @@ export async function getAllResumes() {
     const resumes = await prisma.resume.findMany({
       where: { userId },
       include: resumeDataInclude,
+      orderBy: {
+        updatedAt: "desc",
+      },
     });
     return resumes;
   } catch (error) {
