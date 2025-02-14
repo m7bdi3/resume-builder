@@ -24,7 +24,7 @@ export function ThemeToggle() {
 
   return (
     <SidebarMenu>
-      <SidebarMenuItem>
+      <SidebarMenuItem className="self-end">
         <Toggle
           aria-label="Toggle theme"
           pressed={theme === "dark"}

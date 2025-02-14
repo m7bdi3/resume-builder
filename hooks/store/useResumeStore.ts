@@ -2,17 +2,22 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { ResumeServerData } from "@/lib/types";
+import { SubscriptionLevel } from "@/lib/subscription";
 
 export type ResumeStore = {
   resumes: ResumeServerData[];
   addResume: (values: ResumeServerData) => void;
   deleteResume: (id: string) => void;
+  subLevel: SubscriptionLevel;
+  canCreate: boolean;
 };
 
 export const useResumeStore = create(
   persist<ResumeStore>(
     (set) => ({
       resumes: [],
+      subLevel: "free",
+      canCreate: false,
       addResume: (values) => {
         set((state) => {
           if (!values.id) {

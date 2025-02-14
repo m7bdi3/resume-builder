@@ -92,7 +92,7 @@ export const saveResume = async (values: ResumeValues) => {
   };
 
   if (id) {
-    prisma.resume.update({
+    await prisma.resume.update({
       where: {
         id,
       },
@@ -119,7 +119,6 @@ export const saveResume = async (values: ResumeValues) => {
           deleteMany: {},
           create: projects?.map((pro) => ({
             ...pro,
-            title: pro.title || "",
             startDate: pro.startDate ? new Date(pro.startDate) : undefined,
             endDate: pro.endDate ? new Date(pro.endDate) : undefined,
           })),
@@ -128,18 +127,15 @@ export const saveResume = async (values: ResumeValues) => {
           deleteMany: {},
           create: certifications?.map((cert) => ({
             ...cert,
-            name: cert.name ?? "",
             dateObtained: cert.dateObtained
               ? new Date(cert.dateObtained)
               : undefined,
           })),
         },
-
         references: {
           deleteMany: {},
           create: resumevalues.references?.map((ref) => ({
             ...ref,
-            name: ref.name ?? "",
           })),
         },
         updatedAt: new Date(),

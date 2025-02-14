@@ -53,3 +53,7 @@ export async function deleteResume(id: string) {
     throw new Error("Failed to delete resume. Please try again later.");
   }
 }
+
+export async function getResumesCount(userId: string): Promise<number> {
+  return prisma.resume.count({ where: { userId } });
+}

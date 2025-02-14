@@ -1,17 +1,22 @@
-import { PremiumModal } from "@/components/premium/PremiumModal";
-import { getUserSubscriptionLevel } from "@/lib/subscription";
+import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import { SubsProvider } from "../../components/SubsProvider";
 import {
-  SidebarInset,
   SidebarProvider,
+  SidebarInset,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/ui/app-sidebar";
 import { Separator } from "@/components/ui/separator";
+
+import { AppSidebar } from "@/components/ui/app-sidebar";
 import { MainBreadcrumbs } from "@/components/main/main-breadcrumbs";
+import { PremiumModal } from "@/components/premium/PremiumModal";
+import { SubsProvider } from "../../components/SubsProvider";
+import { ThemeToggle } from "@/components/theme-toggle";
+
+import { getUserSubscriptionLevel } from "@/lib/subscription";
+import { getAllResumes, getResumesCount } from "@/actions/prisma.actions";
 import InitResumesStore from "@/hooks/store/storeProvider";
-import { getAllResumes } from "@/actions/prisma.actions";
+import { canCreateResume } from "@/lib/permissions";
 
 export default async function ResumesLayout({
   children,
@@ -21,31 +26,45 @@ export default async function ResumesLayout({
   const { userId } = await auth();
 
   if (!userId) {
-    return null;
+    redirect("/sign-in");
   }
 
-  const userSubsLevel = await getUserSubscriptionLevel(userId);
-  const resumes = await getAllResumes();
+  const [subLevel, resumes, totalCount] = await Promise.all([
+    getUserSubscriptionLevel(userId),
+    getAllResumes(),
+    getResumesCount(userId),
+  ]);
+
+  const canCreate = canCreateResume(subLevel, totalCount);
+
   return (
     <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <SubsProvider userSubsLevel={userSubsLevel}>
-          <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-            <div className="flex items-center gap-2 px-4">
-              <SidebarTrigger className="-ml-1" />
-              <Separator
-                orientation="vertical"
-                className="mr-2 h-4 bg-accent"
-              />
-              <MainBreadcrumbs />
-            </div>
-          </header>
-          {children}
-          <InitResumesStore resumes={resumes} />
-          <PremiumModal />
-        </SubsProvider>
-      </SidebarInset>
+      <div className="flex h-screen overflow-hidden  w-full">
+        <AppSidebar />
+        <SidebarInset>
+          <SubsProvider userSubsLevel={subLevel}>
+            <header className="fixed inset-0 z-10 flex h-12 items-center w-full gap-2 border-b bg-sidebar ease-linear ">
+              <div className="flex items-center justify-between px-4 w-full">
+                <div className="flex items-center gap-2 w-full">
+                  <SidebarTrigger className="-ml-1" />
+                  <Separator orientation="vertical" className="mr-2 h-4" />
+                  <MainBreadcrumbs />
+                </div>
+                <ThemeToggle />
+              </div>
+            </header>
+            <main className="flex-grow overflow-auto p-6 mt-[3rem] size-full">
+              {children}
+            </main>
+            <InitResumesStore
+              resumes={resumes}
+              subLevel={subLevel}
+              canCreate={canCreate}
+            />
+            <PremiumModal />
+          </SubsProvider>
+        </SidebarInset>
+      </div>
     </SidebarProvider>
   );
 }

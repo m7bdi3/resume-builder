@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/sidebar";
 import { NavMain } from "./nav-main";
 import { NavProjects } from "./nav-projects";
-import { ThemeToggle } from "../theme-toggle";
 import { UserNavButton } from "../user-button";
 import { LogoHeader } from "./logo-header";
 import Link from "next/link";
@@ -96,34 +95,39 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <LogoHeader />
-      </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton tooltip={"Dashboard"}>
-                <Link
-                  href={"/dashboard"}
-                  className="flex items-center group/collapsible gap-2"
-                >
-                  <LayoutDashboard className="size-4" />
-                  Dashboard
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarGroup>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.Latest} />
-      </SidebarContent>
-      <SidebarFooter>
-        <ThemeToggle />
-        <UserNavButton />
-      </SidebarFooter>
-      <SidebarRail />
-    </Sidebar>
+    <>
+      <Sidebar
+        collapsible="icon"
+        {...props}
+        className="top-12 h-[calc(100vh-3rem)]"
+      >
+        <SidebarHeader>
+          <LogoHeader />
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton tooltip={"Dashboard"}>
+                  <Link
+                    href={"/dashboard"}
+                    className="flex items-center group/collapsible gap-2"
+                  >
+                    <LayoutDashboard className="size-4" />
+                    Dashboard
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroup>
+          <NavMain items={data.navMain} />
+          <NavProjects projects={data.Latest} />
+        </SidebarContent>
+        <SidebarFooter>
+          <UserNavButton />
+        </SidebarFooter>
+        <SidebarRail />
+      </Sidebar>
+    </>
   );
 }

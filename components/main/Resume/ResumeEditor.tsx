@@ -43,7 +43,7 @@ export const ResumeEditor = ({ resumeToEdit }: Props) => {
   )?.component;
 
   return (
-    <div className="flex grow flex-col">
+    <div className="flex grow flex-col size-full">
       <header className="space-y-1.5 border-b px-3 py-5 text-center">
         <h1 className="text-2xl font-bold">Design your resume</h1>
         <p className="text-sm text-muted-foreground">
@@ -51,8 +51,8 @@ export const ResumeEditor = ({ resumeToEdit }: Props) => {
           saved automatically.
         </p>
       </header>
-      <main className="relative grow">
-        <div className="absolute bottom-0 top-0 flex w-full">
+      <main className="relative grow size-full">
+        <div className="absolute bottom-0 top-0 flex size-full">
           <div
             className={cn(
               "w-full space-y-6 overflow-y-auto p-3 md:block md:w-1/2",
