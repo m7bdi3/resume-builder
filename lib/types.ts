@@ -20,7 +20,6 @@ export interface FooterProps {
   showSmResumePreview: boolean;
   setShowResumePreview: (show: boolean) => void;
   isResume: boolean;
-  resumeId: string;
 }
 
 export const resumeDataInclude = {

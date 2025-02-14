@@ -167,6 +167,7 @@ export const coverLetterSchema = z.object({
   jobDescription: optionalString,
   title: optionalString,
   body: optionalString,
+  resumeId: optionalString,
 });
 
 export type CoverLetterValues = z.infer<typeof coverLetterSchema>;
@@ -235,6 +236,7 @@ export const coverGeneralInfoSchema = z.object({
   jobDescription: optionalString,
   title: optionalString,
   body: optionalString,
+  resumeId: optionalString,
 });
 
 export type CoverGeneralInfoValues = z.infer<typeof coverGeneralInfoSchema>;

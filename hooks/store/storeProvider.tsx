@@ -2,19 +2,20 @@
 
 import { useEffect, useRef } from "react";
 import { useResumeStore } from "./useResumeStore";
-import { ResumeServerData } from "@/lib/types";
+import { CoverLetterServerData, ResumeServerData } from "@/lib/types";
 import { SubscriptionLevel } from "@/lib/subscription";
+import { useCoverStore } from "./useCoverStore";
 
-interface Props {
+interface ResumeProps {
   resumes: ResumeServerData[];
   subLevel: SubscriptionLevel;
   canCreate: boolean;
 }
-export default function InitResumesStore({
+export function InitResumesStore({
   resumes,
   subLevel,
   canCreate,
-}: Props) {
+}: ResumeProps) {
   const initState = useRef(false);
 
   useEffect(() => {
@@ -27,6 +28,24 @@ export default function InitResumesStore({
       initState.current = true;
     }
   }, [resumes, subLevel, canCreate]);
+
+  return null;
+}
+
+interface CoverProps {
+  covers: CoverLetterServerData[];
+}
+export function InitCoverStore({ covers }: CoverProps) {
+  const initState = useRef(false);
+
+  useEffect(() => {
+    if (!initState.current) {
+      useCoverStore.setState({
+        covers,
+      });
+      initState.current = true;
+    }
+  }, [covers]);
 
   return null;
 }

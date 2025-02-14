@@ -26,6 +26,27 @@ export async function getAllResumes() {
   }
 }
 
+export async function getAllCovers() {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("user not authenticated.");
+  }
+
+  try {
+    const covers = await prisma.coverLetter.findMany({
+      where: { userId },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    });
+    return covers;
+  } catch (error) {
+    console.error("Error fetching covers:", error);
+    throw new Error("Failed to retrieve covers. Please try again later.");
+  }
+}
+
 export async function deleteResume(id: string) {
   const { userId } = await auth();
 

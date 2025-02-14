@@ -128,7 +128,7 @@ export function ResumeList() {
   );
 }
 
-export function EmptyState() {
+ function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center gap-4 h-[50vh] text-center">
       <FilePen className="h-12 w-12 text-muted-foreground" />
@@ -148,7 +148,7 @@ interface SearchInputProps {
   setSearchTerm: (term: string) => void;
 }
 
-export function SearchInput({ searchTerm, setSearchTerm }: SearchInputProps) {
+ function SearchInput({ searchTerm, setSearchTerm }: SearchInputProps) {
   return (
     <div className="relative w-[70%]">
       <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />

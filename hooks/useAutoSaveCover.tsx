@@ -6,6 +6,7 @@ import { useToast } from "./use-toast";
 import { saveCover } from "@/actions/forms.actions";
 import { Button } from "@/components/ui/button";
 import { fileReplacer } from "@/lib/utils";
+import { useCoverStore } from "./store/useCoverStore";
 
 export const useAutoSaveCover = (coverData: CoverLetterValues) => {
   const searchParams = useSearchParams();
@@ -21,6 +22,8 @@ export const useAutoSaveCover = (coverData: CoverLetterValues) => {
 
   const [isSaving, setIsSaving] = useState(false);
   const [isError, setIsError] = useState(false);
+
+  const { addCover } = useCoverStore();
 
   useEffect(() => {
     setIsError(false);
@@ -40,7 +43,7 @@ export const useAutoSaveCover = (coverData: CoverLetterValues) => {
         });
         setCoverId(updatedCover.id);
         setLastSavedData(newData);
-
+        addCover(updatedCover);
         if (searchParams.get("coverId") !== updatedCover.id) {
           const newSearchParams = new URLSearchParams(searchParams);
           newSearchParams.set("coverId", updatedCover.id);
@@ -89,6 +92,7 @@ export const useAutoSaveCover = (coverData: CoverLetterValues) => {
     coverId,
     searchParams,
     toast,
+    addCover,
   ]);
 
   return {

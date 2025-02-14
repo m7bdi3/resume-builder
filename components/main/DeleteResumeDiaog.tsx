@@ -15,6 +15,7 @@ import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { useResumeStore } from "@/hooks/store/useResumeStore";
+import { useCoverStore } from "@/hooks/store/useCoverStore";
 
 interface DeleteProps {
   id: string;
@@ -32,6 +33,8 @@ export const DeleteDialog = ({
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const { deleteResume } = useResumeStore();
+  const { deleteCover } = useCoverStore();
+
   async function handleDelete() {
     startTransition(async () => {
       try {
@@ -40,6 +43,7 @@ export const DeleteDialog = ({
           deleteResume(id);
         } else {
           await DeleteCoverLetter(id);
+          deleteCover(id);
         }
         if (onOpenChange) onOpenChange(false);
         if (isResume) {

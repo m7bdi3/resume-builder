@@ -2,19 +2,12 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { Card } from "@/components/ui/card";
-import { getUserSubscriptionLevel } from "@/lib/subscription";
-import { canCreateResume } from "@/lib/permissions";
-import prisma from "@/lib/prisma";
 import { CoverLetterList } from "@/components/main/coverLetter/CoverLetterList";
 
 export const metadata: Metadata = {
   title: "Your Cover Letters | D3",
   description: "Manage and create your AI-powered resumes",
 };
-
-export async function getResumesCount(userId: string): Promise<number> {
-  return prisma.resume.count({ where: { userId } });
-}
 
 export default async function CoverLetterPage() {
   const { userId } = await auth();
@@ -23,17 +16,10 @@ export default async function CoverLetterPage() {
     throw new Error("User not authenticated");
   }
 
-  const [totalCount, subLevel] = await Promise.all([
-    getResumesCount(userId),
-    getUserSubscriptionLevel(userId),
-  ]);
-
-  const canCreate = canCreateResume(subLevel, totalCount);
-
   return (
     <main className="relative w-full max-w-7xl mx-auto p-4 space-y-6">
       <Suspense fallback={<ResumeListSkeleton />}>
-        <CoverLetterList userId={userId} canCreate={canCreate} />
+        <CoverLetterList />
       </Suspense>
     </main>
   );

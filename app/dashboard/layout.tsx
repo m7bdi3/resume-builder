@@ -14,8 +14,12 @@ import { SubsProvider } from "../../components/SubsProvider";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 import { getUserSubscriptionLevel } from "@/lib/subscription";
-import { getAllResumes, getResumesCount } from "@/actions/prisma.actions";
-import InitResumesStore from "@/hooks/store/storeProvider";
+import {
+  getAllCovers,
+  getAllResumes,
+  getResumesCount,
+} from "@/actions/prisma.actions";
+import { InitResumesStore, InitCoverStore } from "@/hooks/store/storeProvider";
 import { canCreateResume } from "@/lib/permissions";
 
 export default async function ResumesLayout({
@@ -29,9 +33,10 @@ export default async function ResumesLayout({
     redirect("/sign-in");
   }
 
-  const [subLevel, resumes, totalCount] = await Promise.all([
+  const [subLevel, resumes, covers, totalCount] = await Promise.all([
     getUserSubscriptionLevel(userId),
     getAllResumes(),
+    getAllCovers(),
     getResumesCount(userId),
   ]);
 
@@ -61,6 +66,7 @@ export default async function ResumesLayout({
               subLevel={subLevel}
               canCreate={canCreate}
             />
+            <InitCoverStore covers={covers} />
             <PremiumModal />
           </SubsProvider>
         </SidebarInset>

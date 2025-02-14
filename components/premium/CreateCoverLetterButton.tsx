@@ -4,19 +4,17 @@ import Link from "next/link";
 import { PlusSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import usePremiumModal from "@/hooks/usePremiumModal";
+import { useResumeStore } from "@/hooks/store/useResumeStore";
 
-interface Props {
-  canCreate: boolean;
-  resumeId: string;
-}
-
-export const CreateCoverLetterButton = ({ canCreate, resumeId }: Props) => {
+export const CreateCoverLetterButton = () => {
   const { setOpen } = usePremiumModal();
+
+  const { canCreate } = useResumeStore();
 
   if (canCreate) {
     return (
       <Button asChild className="mx-auto flex w-fit gap-2">
-        <Link href={`/resumes/${resumeId}/coverletter/create`}>
+        <Link href={`/dashboard/coverletters/editor`}>
           <PlusSquare className="size-5" />
           Create
         </Link>
