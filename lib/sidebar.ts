@@ -33,7 +33,6 @@ export const data = {
       icon: Bot,
       items: [
         { title: "ATS Checker", url: "/dashboard/ats" },
-        { title: "Optimizer", url: "/dashboard/optimizer" },
         { title: "Gap Analysis", url: "/dashboard/gap" },
         { title: "Interview Q&A", url: "/dashboard/interview" },
       ],

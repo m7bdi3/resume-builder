@@ -16,6 +16,7 @@ import { canUseAiTools } from "@/lib/permissions";
 import { model } from "@/lib/gemini";
 import { saveResume } from "./forms.actions";
 import { revalidatePath } from "next/cache";
+import { ResumeServerData } from "@/lib/types";
 // import openai from "@/lib/openai";
 
 export async function generateSummary(input: GenerateSummaryInput) {
@@ -394,42 +395,47 @@ export async function analyzeJobDescription({
   }
 
   const prompt = `
-You are an expert resume writer and ATS checker. Your task is to compare the following Job Description with the provided resume data.
+**ATS Optimization Analysis Task**
 
-**Objectives**:
-1. From the job description, identify all relevant:
-   - Technical keywords
-   - Industry terms
-   - Tools/technologies
-   - Soft skills
-   - ATS priority terms (e.g., certifications, education, experience requirements).
+Analyze the following job description and resume data with these capabilities:
+1. Contextual term matching (recognize equivalent skills/tools)
+2. Experience validation (compare durations/levels)
+3. Skill hierarchy understanding (basic vs advanced)
+4. Semantic similarity scoring
+5. ATS priority detection
 
-2. From the resume, identify all existing:
-   - Technical keywords
-   - Industry terms
-   - Tools/technologies
-   - Soft skills
+**Job Description Analysis**:
+${jobDescription}
 
-3. Determine which items from the job description are *missing* in the resume. Then calculate the percentage of overall similarity or match (0–100).
+**Resume Analysis**:
+${JSON.stringify(resumeData)}
 
-4. Return **only** the missing data from the resume, along with the similarity score, in valid JSON format (no explanations or extra text).
+**Output Requirements**:
+- Generate JSON with match score and missing elements
+- Score calculation weights:
+  • ATS Priority Terms: 40%
+  • Technical Skills: 30%
+  • Technologies: 20%
+  • Soft Skills: 10%
+- Consider partial matches (e.g., "3 yrs" vs "5+ yrs" = 60% match)
+- Recognize equivalent terms (e.g., "ML" = "Machine Learning")
 
-Your output **must** follow this exact JSON structure:
-
+**JSON Structure**:
 {
-  "score": <number from 0 to 100>,
-  "technical": <string[] of missing technical keywords>,
-  "industry": <string[] of missing industry terms>,
-  "technologies": <string[] of missing tools/technologies>,
-  "softSkills": <string[] of missing soft skills>,
-  "atsPriorityTerms": <string[] of missing ATS priority terms>
+  "score": <0-100 weighted score>,
+  "technical": [<missing/exact terms from JD>],
+  "industry": [<missing industry jargon/terms>],
+  "technologies": [<missing tools/libs/frameworks>],
+  "softSkills": [<missing personality traits/abilities>],
+  "atsPriorityTerms": [<missing certs/education/exact requirements>]
 }
 
-**Job Description**:
-{${jobDescription}}
-
-**Resume**:
-{${JSON.stringify(resumeData)}}
+**Critical Instructions**:
+1. Validate experience durations match requirements
+2. Flag incomplete certification matches
+3. Identify missing keyword clusters
+4. Prioritize hard requirements over nice-to-haves
+5. Never invent or hallucinate missing terms
   `;
 
   try {
@@ -437,23 +443,39 @@ Your output **must** follow this exact JSON structure:
     const response = await result.response;
     const rawText = response.text().trim();
 
-    const jsonString = rawText
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
-    const parsedResponse = JSON.parse(jsonString);
+    // Improved JSON extraction with error handling
+    const jsonMatch = rawText.match(/{[\s\S]*}/);
+    if (!jsonMatch) throw new Error("Invalid response format");
+
+    const parsedResponse = JSON.parse(jsonMatch[0]);
+
+    // Validation layer
+    const requiredKeys = [
+      "score",
+      "technical",
+      "industry",
+      "technologies",
+      "softSkills",
+      "atsPriorityTerms",
+    ];
+    if (!requiredKeys.every((k) => k in parsedResponse)) {
+      throw new Error("Invalid response structure");
+    }
+
+    // Normalize score between 0-100
+    const finalScore = Math.min(Math.max(parsedResponse.score, 0), 100);
 
     return {
-      score: parsedResponse.score,
-      technical: parsedResponse.technical,
-      industry: parsedResponse.industry,
-      technologies: parsedResponse.technologies,
-      softSkills: parsedResponse.softSkills,
-      atsPriorityTerms: parsedResponse.atsPriorityTerms,
+      score: finalScore,
+      technical: parsedResponse.technical || [],
+      industry: parsedResponse.industry || [],
+      technologies: parsedResponse.technologies || [],
+      softSkills: parsedResponse.softSkills || [],
+      atsPriorityTerms: parsedResponse.atsPriorityTerms || [],
     };
   } catch (error) {
-    console.error("Error generating comparison:", error);
-    throw new Error("Failed to generate comparison. Please try again.");
+    console.error("ATS Analysis Error:", error);
+    throw new Error("Failed to generate analysis. Please try again.");
   }
 }
 
@@ -472,7 +494,7 @@ export async function improveResumeData({
 }: {
   resumeData: ResumeValues;
   analysisData: AnalyzedData | undefined;
-}): Promise<ResumeValues> {
+}): Promise<ResumeServerData> {
   const { userId } = await auth();
   if (!userId) {
     throw new Error("User not authenticated");
@@ -484,30 +506,61 @@ export async function improveResumeData({
   }
 
   const prompt = `
-You are an expert resume writer. Below is analysis data that identifies missing elements in the resume for a specific job application.
-
-**Objectives**:
-1. Incorporate all **missing** items from the analysis data into the existing resume.
-2. Return **only** valid JSON. Do not include additional text, commentary, or explanations.
-3. Preserve existing resume information; only modify or append what's needed to address the missing elements.
-4. Don't create any imaginary data. Make it realistic to the original resume data exprtise.
-
-**Required JSON structure**:
-{
-  "summary": string,
-  "softSkills": string[],
-  "technicalSkills": string[],
-  "workExperiences": [
-    {
-      "id": string,
-      "description": string
-    }
-  ]
-}
-Analysis Data: {${JSON.stringify(analysisData)}}
-
-Current Resume: {${JSON.stringify(resumeData)}}
-`;
+  **Resume Optimization Task**
+  
+  You are an expert ATS resume writer. Enhance the following resume by strategically incorporating missing elements from the analysis while preserving the candidate's authentic voice and experience.
+  
+  **Guidelines**:
+  1. **Natural Integration**:
+  - Embed missing keywords in contextually appropriate sections
+  - Maintain original writing style and verb tense consistency
+  - Avoid keyword stuffing - add value, not just keywords
+  
+  2. **Section-Specific Strategies**:
+  - Summary: Blend missing ATS priority terms with existing narrative
+  - Skills: Add missing technical/industry terms using original phrasing patterns
+  - Experience: 
+    • Insert missing technologies/tools into relevant position descriptions
+    • Enhance achievements with missing soft skills using CAR (Context-Action-Result) format
+    • Add industry terms to project descriptions naturally
+  
+  3. **Prohibited Actions**:
+  - Never invent companies/positions/certifications
+  - Don't change existing metrics/achievements
+  - Avoid first-person pronouns and passive voice
+  
+  4. **Formatting Rules**:
+  - Keep bullet points under 2 lines
+  - Maintain consistent date formats
+  - Preserve original section order
+  
+  **Required Output Structure**:
+  {
+    "summary": "<enhanced 3-4 line paragraph>",
+    "softSkills": ["<array maintaining original+new skills>"],
+    "technicalSkills": ["<array preserving original order+new items>"],
+    "workExperiences": [
+      {
+        "id": "<same_id>",
+        "description": "<enhanced description with 1-2 new keywords>"
+      }
+    ]
+  }
+  
+  **Analysis Data**:
+  ${JSON.stringify(analysisData)}
+  
+  **Original Resume**:
+  ${JSON.stringify(resumeData)}
+  
+  **Critical Instructions**:
+  1. Prioritize missing ATS priority terms in summary and recent positions
+  2. Add missing technical skills to both skills section AND relevant experience bullets
+  3. Blend soft skills into achievement statements ("Led team" → "Led cross-functional team using Agile methodology")
+  4. Maintain 80% original content - maximum 20% new material
+  5. Keep language achievement-oriented and quantifiable
+  6. Preserve specialized jargon from original resume
+  `;
 
   try {
     const result = await model.generateContent(prompt);
@@ -537,6 +590,7 @@ Current Resume: {${JSON.stringify(resumeData)}}
 
     const updatedResume: ResumeValues = {
       ...resumeData,
+      img: resumeData.img,
       summary:
         parsedResponse.summary !== undefined
           ? parsedResponse.summary
@@ -550,12 +604,14 @@ Current Resume: {${JSON.stringify(resumeData)}}
       workExperience: updatedWorkExperience,
     };
 
-    await saveResume(updatedResume);
+    const res = await saveResume({
+      ...updatedResume,
+      img: resumeData.img instanceof File ? resumeData.img : undefined,
+    });
+    revalidatePath(`/dashboard/resumes`);
+    revalidatePath(`/dashboard/ats`);
 
-    revalidatePath(`/resumes/${resumeData.id}`);
-    revalidatePath(`/resumes`);
-
-    return updatedResume;
+    return res;
   } catch (error) {
     console.error("Error improving resume:", error);
     throw new Error("Failed to improve the resume. Please try again.");
