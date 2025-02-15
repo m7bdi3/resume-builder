@@ -22,6 +22,7 @@ import Link from "next/link";
 
 export function NavMain({
   items,
+  pathname,
 }: {
   items: {
     title: string;
@@ -33,6 +34,7 @@ export function NavMain({
       url: string;
     }[];
   }[];
+  pathname: string;
 }) {
   const { setOpen, open } = useSidebar();
   return (
@@ -52,7 +54,14 @@ export function NavMain({
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title}>
+                <SidebarMenuButton
+                  isActive={
+                    item.items
+                      ? item.items.some((subItem) => subItem.url === pathname)
+                      : item.url === pathname
+                  }
+                  tooltip={item.title}
+                >
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
                   <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />

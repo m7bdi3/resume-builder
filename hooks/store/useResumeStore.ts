@@ -6,16 +6,20 @@ import { SubscriptionLevel } from "@/lib/subscription";
 
 export type ResumeStore = {
   resumes: ResumeServerData[];
+  error: Error | null;
   addResume: (values: ResumeServerData) => void;
   deleteResume: (id: string) => void;
   subLevel: SubscriptionLevel;
   canCreate: boolean;
+  clearError: () => void;
 };
 
 export const useResumeStore = create(
   persist<ResumeStore>(
     (set) => ({
       resumes: [],
+      error: null,
+
       subLevel: "free",
       canCreate: false,
       addResume: (values) => {
@@ -39,6 +43,7 @@ export const useResumeStore = create(
           resumes: state.resumes.filter((r) => r.id !== id),
         }));
       },
+      clearError: () => set({ error: null }),
     }),
     {
       name: "resume-storage",
