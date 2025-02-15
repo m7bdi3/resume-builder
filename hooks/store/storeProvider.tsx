@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useResumeStore } from "./useResumeStore";
-import { CoverLetterServerData } from "@/lib/types";
 import { SubscriptionLevel } from "@/lib/subscription";
 import { useCoverStore } from "./useCoverStore";
 import { useResilientQuery } from "../useOfflineQuery";
-import { getAllResumes } from "@/actions/prisma.actions";
+import { getAllCovers, getAllResumes } from "@/actions/prisma.actions";
 
 interface ResumeProps {
   subLevel: SubscriptionLevel;
@@ -30,20 +29,16 @@ export function InitResumesStore({ subLevel, canCreate }: ResumeProps) {
   return null;
 }
 
-interface CoverProps {
-  covers: CoverLetterServerData[];
-}
-export function InitCoverStore({ covers }: CoverProps) {
-  const initState = useRef(false);
+export function InitCoverStore() {
+  const { data, error, isError } = useResilientQuery(["covers"], getAllCovers);
 
   useEffect(() => {
-    if (!initState.current) {
-      useCoverStore.setState({
-        covers,
-      });
-      initState.current = true;
-    }
-  }, [covers]);
+    useCoverStore.setState({
+      covers: data || [],
+
+      error: isError ? error : null,
+    });
+  }, [data, isError, error]);
 
   return null;
 }

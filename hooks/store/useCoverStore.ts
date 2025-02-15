@@ -7,13 +7,15 @@ type CoverStore = {
   covers: CoverLetterServerData[];
   addCover: (values: CoverLetterServerData) => void;
   deleteCover: (id: string) => void;
+  error: Error | null;
+  clearError: () => void;
 };
 
 export const useCoverStore = create(
   persist<CoverStore>(
     (set) => ({
       covers: [],
-
+      error: null,
       addCover: (values) => {
         set((state) => {
           if (!values.id) {
@@ -35,7 +37,9 @@ export const useCoverStore = create(
           covers: state.covers.filter((r) => r.id !== id),
         }));
       },
+      clearError: () => set({ error: null }),
     }),
+
     {
       name: "cover-storage",
       storage: createJSONStorage(() => localStorage),
