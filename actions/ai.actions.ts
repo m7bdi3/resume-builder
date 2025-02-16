@@ -17,6 +17,7 @@ import { model } from "@/lib/gemini";
 import { saveResume } from "./forms.actions";
 import { revalidatePath } from "next/cache";
 import { ResumeServerData } from "@/lib/types";
+import prisma from "@/lib/prisma";
 // import openai from "@/lib/openai";
 
 export async function generateSummary(input: GenerateSummaryInput) {
@@ -375,12 +376,25 @@ export async function generateWorkExperience(
   }
 }
 
+export type AnalyzedData = {
+  score: number;
+  technical: string[];
+  industry: string[];
+  technologies: string[];
+  softSkills: string[];
+  atsPriorityTerms: string[];
+};
+
 export async function analyzeJobDescription({
   resumeData,
   jobDescription,
+  title,
+  id,
 }: {
   resumeData: ResumeValues;
   jobDescription: string;
+  title: string;
+  id?: string;
 }) {
   const { userId } = await auth();
 
@@ -443,57 +457,45 @@ ${JSON.stringify(resumeData)}
     const response = await result.response;
     const rawText = response.text().trim();
 
-    // Improved JSON extraction with error handling
     const jsonMatch = rawText.match(/{[\s\S]*}/);
     if (!jsonMatch) throw new Error("Invalid response format");
 
     const parsedResponse = JSON.parse(jsonMatch[0]);
 
-    // Validation layer
-    const requiredKeys = [
-      "score",
-      "technical",
-      "industry",
-      "technologies",
-      "softSkills",
-      "atsPriorityTerms",
-    ];
-    if (!requiredKeys.every((k) => k in parsedResponse)) {
-      throw new Error("Invalid response structure");
-    }
+    const resultOperation = id
+      ? prisma.atsResult.update({
+          where: { id, userId }, // Ensure the record belongs to the user
+          data: {
+            title,
+            jobDescription,
+            response: parsedResponse,
+            resumeId: resumeData.id!,
+          },
+        })
+      : prisma.atsResult.create({
+          data: {
+            title,
+            jobDescription,
+            response: parsedResponse,
+            userId,
+            resumeId: resumeData.id!,
+          },
+        });
 
-    // Normalize score between 0-100
-    const finalScore = Math.min(Math.max(parsedResponse.score, 0), 100);
-
-    return {
-      score: finalScore,
-      technical: parsedResponse.technical || [],
-      industry: parsedResponse.industry || [],
-      technologies: parsedResponse.technologies || [],
-      softSkills: parsedResponse.softSkills || [],
-      atsPriorityTerms: parsedResponse.atsPriorityTerms || [],
-    };
+    const res = await resultOperation;
+    return { ...res, response: res.response as AnalyzedData };
   } catch (error) {
     console.error("ATS Analysis Error:", error);
     throw new Error("Failed to generate analysis. Please try again.");
   }
 }
 
-export type AnalyzedData = {
-  score: number;
-  technical: string[];
-  industry: string[];
-  technologies: string[];
-  softSkills: string[];
-  atsPriorityTerms: string[];
-};
-
 export async function improveResumeData({
   resumeData,
   analysisData,
 }: {
   resumeData: ResumeValues;
-  analysisData: AnalyzedData | undefined;
+  analysisData: AnalyzedData;
 }): Promise<ResumeServerData> {
   const { userId } = await auth();
   if (!userId) {
@@ -714,12 +716,46 @@ Respond ONLY with the styled HTML content between <div class="cover-letter"> tag
   }
 }
 
+export type GapAnalysisResult = {
+  skillsAndExperienceGaps: Array<{
+    gapName: string;
+    type: string;
+    severity: string;
+    jobDescriptionExcerpt: string;
+    resumeComparison: string;
+    mitigationStrategy: string;
+  }>;
+  resumeImprovementSuggestions: Array<{
+    section: string;
+    action: string;
+    example: {
+      before: string;
+      after: string;
+      rationale: string;
+    };
+  }>;
+  longTermActionPlan: Array<{
+    category: string;
+    recommendation: string;
+    resources: string[];
+    timeframe: string;
+  }>;
+  prioritizedRoadmap: Array<{
+    priority: number;
+    task: string;
+    expectedImpact: string;
+    estimatedEffort: string;
+  }>;
+};
+
 export async function gapAnalysis({
   resumeData,
   jobDescription,
+  title,
 }: {
   resumeData: ResumeValues;
   jobDescription: string;
+  title: string;
 }) {
   const { userId } = await auth();
 
@@ -868,26 +904,17 @@ export async function gapAnalysis({
       }
     }
 
-    const gapItemStructure = [
-      "gapName",
-      "type",
-      "severity",
-      "jobDescriptionExcerpt",
-    ];
-    parsedResponse.skillsAndExperienceGaps.forEach((gap: any) => {
-      if (!gapItemStructure.every((prop) => prop in gap)) {
-        throw new Error(
-          `Missing properties in skillsAndExperienceGaps item: ${JSON.stringify(gap)}`
-        );
-      }
+    const res = await prisma.gapResult.create({
+      data: {
+        title,
+        jobDescription,
+        response: parsedResponse,
+        userId,
+        resumeId: resumeData.id!,
+      },
     });
 
-    return {
-      skillsAndExperienceGaps: parsedResponse.skillsAndExperienceGaps,
-      resumeImprovementSuggestions: parsedResponse.resumeImprovementSuggestions,
-      longTermActionPlan: parsedResponse.longTermActionPlan,
-      prioritizedRoadmap: parsedResponse.prioritizedRoadmap,
-    };
+    return res.response as GapAnalysisResult;
   } catch (error) {
     console.error("GAP Analysis Error:", error);
     throw new Error(
@@ -896,10 +923,20 @@ export async function gapAnalysis({
   }
 }
 
+export type Question = {
+  category: string;
+  question: string;
+  answer: string;
+  context: string;
+  complexity: "basic" | "intermediate" | "advanced";
+};
+
 export async function intreviewQS({
   jobDescription,
+  title,
 }: {
   jobDescription: string;
+  title: string;
 }) {
   const { userId } = await auth();
 
@@ -1007,13 +1044,20 @@ STRICT RULES:
     const parsedResponse = JSON.parse(jsonString);
 
     // Validation
-    if (!Array.isArray(parsedResponse) || parsedResponse.length !== 40) {
-      throw new Error(
-        "Invalid question count - received " + parsedResponse.length
-      );
+    if (!Array.isArray(parsedResponse)) {
+      throw new Error("Invalid response " + parsedResponse.length);
     }
 
-    return parsedResponse;
+    const res = await prisma.interviewResult.create({
+      data: {
+        title,
+        jobDescription,
+        response: parsedResponse,
+        userId,
+      },
+    });
+
+    return res.response as Question[];
   } catch (error) {
     console.error("JSON Parse Error:", error);
     throw new Error(

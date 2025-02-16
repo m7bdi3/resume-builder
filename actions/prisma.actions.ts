@@ -71,6 +71,116 @@ export async function getAllCovers() {
   }
 }
 
+export async function getAllAts() {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("user not authenticated.");
+  }
+
+  try {
+    return withRetry(async () => {
+      const ats = await prisma.atsResult.findMany({
+        where: { userId },
+        orderBy: {
+          updatedAt: "desc",
+        },
+      });
+      return ats;
+    });
+  } catch (error) {
+    console.error("Error fetching ats:", error);
+    throw new Error("Failed to retrieve ats. Please try again later.");
+  }
+}
+
+export async function getAllGaps() {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("user not authenticated.");
+  }
+
+  try {
+    return withRetry(async () => {
+      const gap = await prisma.gapResult.findMany({
+        where: { userId },
+        orderBy: {
+          updatedAt: "desc",
+        },
+      });
+      return gap;
+    });
+  } catch (error) {
+    console.error("Error fetching gaps:", error);
+    throw new Error("Failed to retrieve gaps. Please try again later.");
+  }
+}
+
+export async function DeleteAts(id: string) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("user not authenticated.");
+  }
+  const ats = withRetry(async () => {
+    return await prisma.atsResult.findUnique({
+      where: {
+        userId,
+        id,
+      },
+    });
+  });
+
+  if (!ats) {
+    throw new Error("No ats found for the given ID and user.");
+  }
+
+  try {
+    return withRetry(async () => {
+      const deletedAts = await prisma.atsResult.delete({
+        where: { userId, id },
+      });
+      return deletedAts;
+    });
+  } catch (error) {
+    console.error("Error deleting ats:", error);
+    throw new Error("Failed to delete ats. Please try again later.");
+  }
+}
+
+export async function DeleteGap(id: string) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("user not authenticated.");
+  }
+  const ats = withRetry(async () => {
+    return await prisma.gapResult.findUnique({
+      where: {
+        userId,
+        id,
+      },
+    });
+  });
+
+  if (!ats) {
+    throw new Error("No ats found for the given ID and user.");
+  }
+
+  try {
+    return withRetry(async () => {
+      const deletedGap = await prisma.gapResult.delete({
+        where: { userId, id },
+      });
+      return deletedGap;
+    });
+  } catch (error) {
+    console.error("Error deleting gap:", error);
+    throw new Error("Failed to delete gap. Please try again later.");
+  }
+}
+
 export async function deleteResume(id: string) {
   const { userId } = await auth();
 

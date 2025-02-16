@@ -5,7 +5,14 @@ import { useResumeStore } from "./useResumeStore";
 import { SubscriptionLevel } from "@/lib/subscription";
 import { useCoverStore } from "./useCoverStore";
 import { useResilientQuery } from "../useOfflineQuery";
-import { getAllCovers, getAllResumes } from "@/actions/prisma.actions";
+import {
+  getAllAts,
+  getAllCovers,
+  getAllGaps,
+  getAllResumes,
+} from "@/actions/prisma.actions";
+import { useAtsStore } from "./useAtsStore";
+import { useGapStore } from "./useGapStore";
 
 interface ResumeProps {
   subLevel: SubscriptionLevel;
@@ -35,6 +42,34 @@ export function InitCoverStore() {
   useEffect(() => {
     useCoverStore.setState({
       covers: data || [],
+
+      error: isError ? error : null,
+    });
+  }, [data, isError, error]);
+
+  return null;
+}
+
+export function InitAtsStore() {
+  const { data, error, isError } = useResilientQuery(["ats"], getAllAts);
+
+  useEffect(() => {
+    useAtsStore.setState({
+      ats: data || [],
+
+      error: isError ? error : null,
+    });
+  }, [data, isError, error]);
+
+  return null;
+}
+
+export function InitGapStore() {
+  const { data, error, isError } = useResilientQuery(["gap"], getAllGaps);
+
+  useEffect(() => {
+    useGapStore.setState({
+      gaps: data || [],
 
       error: isError ? error : null,
     });

@@ -176,14 +176,9 @@ model atsResult {
   id     String @id @default(cuid())
   userId String
 
-  jobDescription   String
-  title            String
-  score            Int
-  technical        String[]
-  industry         String[]
-  technologies     String[]
-  softSkills       String[]
-  atsPriorityTerms String[]
+  jobDescription String
+  title          String
+  response       Json
 
   resumeId String
 
@@ -191,4 +186,34 @@ model atsResult {
   updatedAt DateTime @updatedAt
 
   @@map("ats_result")
+}
+
+model GapResult {
+  id     String @id @default(cuid())
+  userId String
+
+  jobDescription String
+  title          String
+  response       Json
+
+  resumeId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("gap_result")
+}
+
+model InterviewResult {
+  id     String @id @default(cuid())
+  userId String
+
+  jobDescription String
+  title          String
+  response       Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("interview_result")
 }

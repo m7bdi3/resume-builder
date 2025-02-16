@@ -11,7 +11,7 @@ import {
   Info,
 } from "lucide-react";
 import {
-  type AnalyzedData,
+  AnalyzedData,
   analyzeJobDescription,
   improveResumeData,
 } from "@/actions/ai.actions";
@@ -39,17 +39,32 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Input } from "@/components/ui/input";
+import { useSearchParams } from "next/navigation";
+import { useAtsStore } from "@/hooks/store/useAtsStore";
 
 export const AtsSettings = () => {
-  const [analysisResult, setAnalysisResult] = useState<AnalyzedData>();
-  const [jobDescription, setJobDescription] = useState<string>("");
+  const searchParams = useSearchParams();
+  const existingId = searchParams.get("id");
+  const { ats, addAts } = useAtsStore();
+
+  const foundAts = ats.find((a) => a.id === existingId);
+
+  const [analysisResult, setAnalysisResult] = useState<AnalyzedData>(
+    (foundAts?.response as AnalyzedData) || {}
+  );
+  const [jobDescription, setJobDescription] = useState<string>(
+    foundAts?.jobDescription || ""
+  );
+  const [title, setTitle] = useState<string>(foundAts?.title || "");
   const [isPending, startTransition] = useTransition();
-  const [selectedResume, setSelectedResume] = useState<string>();
+  const [selectedResume, setSelectedResume] = useState<string>(
+    foundAts?.resumeId || ""
+  );
   const [error, setError] = useState<string | null>(null);
 
   const { toast } = useToast();
   const { resumes, addResume } = useResumeStore();
-
   const foundResume = resumes.find((r) => r.id === selectedResume);
 
   const handleAnalyzeResume = async () => {
@@ -65,8 +80,21 @@ export const AtsSettings = () => {
         const res = await analyzeJobDescription({
           resumeData: resume,
           jobDescription,
+          title,
+          id: existingId || undefined,
         });
-        setAnalysisResult(res);
+        setAnalysisResult(res.response);
+        addAts(res);
+
+        if (!existingId) {
+          const newSearchParams = new URLSearchParams(searchParams);
+          newSearchParams.set("id", res.id);
+          window.history.replaceState(
+            null,
+            "",
+            `?${newSearchParams.toString()}`
+          );
+        }
         toast({
           title: "Analysis Complete",
           description:
@@ -97,7 +125,7 @@ export const AtsSettings = () => {
       try {
         const improved = await improveResumeData({
           resumeData: resume,
-          analysisData: analysisResult,
+          analysisData: analysisResult as AnalyzedData,
         });
         addResume(improved);
         toast({
@@ -108,8 +136,9 @@ export const AtsSettings = () => {
         const res = await analyzeJobDescription({
           resumeData: resume,
           jobDescription,
+          title,
         });
-        setAnalysisResult(res);
+        setAnalysisResult(res.response);
       } catch (error) {
         console.error(error);
         setError("Update failed. Please try again.");
@@ -122,6 +151,12 @@ export const AtsSettings = () => {
       }
     });
   };
+  const finalScore =
+    analysisResult &&
+    typeof analysisResult === "object" &&
+    "score" in analysisResult
+      ? Math.min(Math.max(analysisResult.score, 0), 100)
+      : 0;
 
   return (
     <Card className="lg:col-span-2 h-fit">
@@ -133,6 +168,30 @@ export const AtsSettings = () => {
       </CardHeader>
       <CardContent className="space-y-8">
         <div className="grid  gap-6">
+          <div className="space-y-2">
+            <Label
+              htmlFor="title"
+              className="text-sm font-medium flex items-center gap-2"
+            >
+              Title
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Info className="h-4 w-4 text-muted-foreground" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>The title for the document</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </Label>
+            <Input
+              id="title"
+              placeholder="e.g. Ats for job"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </div>
           <div className="space-y-2">
             <Label
               htmlFor="jobDescription"
@@ -228,26 +287,26 @@ export const AtsSettings = () => {
                   <CardTitle>Overall Match Score</CardTitle>
                   <Badge
                     variant={
-                      analysisResult.score >= 75
+                      finalScore >= 75
                         ? "default"
-                        : analysisResult.score >= 50
+                        : finalScore >= 50
                           ? "warning"
                           : "destructive"
                     }
                     className="text-lg font-bold px-4 py-2"
                   >
-                    {analysisResult.score}%
+                    {finalScore}%
                   </Badge>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   <Progress
-                    value={analysisResult.score}
+                    value={finalScore}
                     className={cn(
-                      analysisResult.score >= 75
+                      finalScore >= 75
                         ? "bg-green-500"
-                        : analysisResult.score >= 50
+                        : finalScore >= 50
                           ? "bg-yellow-500"
                           : "bg-red-500",
                       "h-3"
@@ -256,7 +315,7 @@ export const AtsSettings = () => {
                   <div className="flex justify-between text-sm">
                     <span className="font-medium">ATS Compatibility</span>
                     <span className="text-muted-foreground">
-                      {getScoreFeedback(analysisResult.score)}
+                      {getScoreFeedback(finalScore)}
                     </span>
                   </div>
                 </div>
@@ -349,7 +408,7 @@ const CategorySection = ({
           variant={highlightMissing ? "destructive" : "secondary"}
           className="ml-2"
         >
-          {items.length} Missing
+          {items?.length} Missing
         </Badge>
       </CardTitle>
       {description && (
@@ -357,9 +416,9 @@ const CategorySection = ({
       )}
     </CardHeader>
     <CardContent className="max-h-[200px] overflow-y-auto">
-      {items.length > 0 ? (
+      {items && items.length > 0 ? (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-2">
-          {items.map((item, index) => (
+          {items?.map((item, index) => (
             <Badge
               key={index}
               variant={highlightMissing ? "destructive" : "outline"}

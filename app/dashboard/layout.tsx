@@ -15,7 +15,11 @@ import { ThemeToggle } from "@/components/theme-toggle";
 
 import { getUserSubscriptionLevel } from "@/lib/subscription";
 import { getResumesCount } from "@/actions/prisma.actions";
-import { InitCoverStore, InitResumesStore } from "@/hooks/store/storeProvider";
+import {
+  InitAtsStore,
+  InitCoverStore,
+  InitResumesStore,
+} from "@/hooks/store/storeProvider";
 import { canCreateResume } from "@/lib/permissions";
 import { ConnectionStatus, NetworkStatus } from "@/components/NetworkStatus";
 import { QueryProviders } from "@/components/QueryProvider";
@@ -62,6 +66,7 @@ export default async function ResumesLayout({
               <ConnectionStatus />
               <InitResumesStore subLevel={subLevel} canCreate={canCreate} />
               <InitCoverStore />
+              <InitAtsStore />
               <PremiumModal />
             </SubsProvider>
           </SidebarInset>

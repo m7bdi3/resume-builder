@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useRef, useMemo, useTransition } from "react";
-import { useResumeStore } from "@/hooks/store/useResumeStore";
-import { CreateResumeButton } from "@/components/premium/CreateResumeButton";
+import { useState, useMemo, useTransition } from "react";
+import { useAtsStore } from "@/hooks/store/useAtsStore";
 import {
   Table,
   TableBody,
@@ -13,61 +12,58 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { DeleteResume } from "@/actions/forms.actions";
-import { ResumeRow } from "./ResumeRow";
+import { AtsRow } from "./AtsRow";
 import { FilePen, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-export function ResumeList() {
-  const resumes = useResumeStore((state) => state.resumes);
+import { DeleteAts } from "@/actions/prisma.actions";
+import { CreateAtsButton } from "@/components/premium/CreateAtsButton";
+export function AtsList() {
+  const atsResults = useAtsStore((state) => state.ats);
   const { toast } = useToast();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedResumes, setSelectedResumes] = useState<Set<string>>(
-    new Set()
-  );
+  const [selectedAts, setSelectedAts] = useState<Set<string>>(new Set());
 
   const [isPending, startTransition] = useTransition();
-  const { deleteResume } = useResumeStore();
+  const { deleteAts } = useAtsStore();
 
-  const contentRef = useRef<HTMLDivElement>(null!);
-
-  const filteredResumes = useMemo(
+  const filteredAtsResult = useMemo(
     () =>
-      resumes.filter((resume) =>
-        (resume.title || "").toLowerCase().includes(searchTerm.toLowerCase())
+      atsResults.filter((ats) =>
+        (ats.title || "").toLowerCase().includes(searchTerm.toLowerCase())
       ),
-    [resumes, searchTerm]
+    [atsResults, searchTerm]
   );
 
   const handleDelete = async () => {
     startTransition(async () => {
       try {
-        for (const id of selectedResumes) {
-          await DeleteResume(id);
-          deleteResume(id);
+        for (const id of selectedAts) {
+          await DeleteAts(id);
+          deleteAts(id);
         }
-        setSelectedResumes(new Set());
-        toast({ description: "Resumes deleted successfully" });
+        setSelectedAts(new Set());
+        toast({ description: "Ats deleted successfully" });
       } catch (error) {
         console.error(error);
         toast({
           variant: "destructive",
-          description: "Failed to delete resumes.",
+          description: "Failed to delete ats results.",
         });
       }
     });
   };
 
   const handleSelectAll = () => {
-    setSelectedResumes((prev) =>
-      prev.size === filteredResumes.length
+    setSelectedAts((prev) =>
+      prev.size === filteredAtsResult.length
         ? new Set()
-        : new Set(filteredResumes.map((r) => r.id))
+        : new Set(filteredAtsResult.map((r) => r.id))
     );
   };
 
   const handleSelectResume = (id: string) => {
-    setSelectedResumes((prev) => {
+    setSelectedAts((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(id)) {
         newSet.delete(id);
@@ -78,7 +74,7 @@ export function ResumeList() {
     });
   };
 
-  if (resumes.length === 0) {
+  if (atsResults.length === 0) {
     return <EmptyState />;
   }
 
@@ -87,11 +83,11 @@ export function ResumeList() {
       <div className="flex justify-between items-center w-full gap-4">
         <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         <div className="flex items-center gap-3">
-          <CreateResumeButton />
+          <CreateAtsButton />
           <Button
             variant="destructive"
             onClick={handleDelete}
-            disabled={selectedResumes.size === 0 || isPending}
+            disabled={selectedAts.size === 0 || isPending}
           >
             Delete
           </Button>
@@ -102,23 +98,22 @@ export function ResumeList() {
           <TableRow>
             <TableHead className="w-[50px]">
               <Checkbox
-                checked={selectedResumes.size === filteredResumes.length}
+                checked={selectedAts.size === filteredAtsResult.length}
                 onCheckedChange={handleSelectAll}
               />
             </TableHead>
-            <TableHead>Resume</TableHead>
+            <TableHead>Ats</TableHead>
             <TableHead>Last Updated</TableHead>
             <TableHead className="w-[100px]">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredResumes.map((resume) => (
-            <ResumeRow
-              key={resume.id}
-              resume={resume}
-              isSelected={selectedResumes.has(resume.id)}
-              onSelect={() => handleSelectResume(resume.id)}
-              contentRef={contentRef}
+          {filteredAtsResult.map((ats) => (
+            <AtsRow
+              key={ats.id}
+              ats={ats}
+              isSelected={selectedAts.has(ats.id)}
+              onSelect={() => handleSelectResume(ats.id)}
               isPending={isPending}
             />
           ))}
@@ -133,12 +128,12 @@ function EmptyState() {
     <div className="flex flex-col items-center justify-center gap-4 h-[50vh] text-center">
       <FilePen className="h-12 w-12 text-muted-foreground" />
       <div className="space-y-1.5">
-        <h3 className="text-lg font-semibold">No resumes found</h3>
+        <h3 className="text-lg font-semibold">No result found</h3>
         <p className="text-sm text-muted-foreground">
-          Get started by creating a new resume
+          Get started by creating a new Ats
         </p>
       </div>
-      <CreateResumeButton />
+      <CreateAtsButton />
     </div>
   );
 }
@@ -153,7 +148,7 @@ function SearchInput({ searchTerm, setSearchTerm }: SearchInputProps) {
     <div className="relative w-[70%]">
       <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
       <Input
-        placeholder="Search resumes..."
+        placeholder="Search..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className="pl-8"

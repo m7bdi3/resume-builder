@@ -1,70 +1,76 @@
-"use client"
+"use client";
 
-import { useState, useTransition } from "react"
-import { AlertCircle, Loader2, Zap, Info, CheckCircle, FileText, Search } from "lucide-react"
-import { intreviewQS } from "@/actions/ai.actions"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { useToast } from "@/hooks/use-toast"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { Progress } from "@/components/ui/progress"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Input } from "@/components/ui/input"
-
-type Question = {
-  category: string
-  question: string
-  answer: string
-  context: string
-  complexity: "basic" | "intermediate" | "advanced"
-}
-
-type AnalysisResult = Question[]
+import { useState, useTransition } from "react";
+import {
+  AlertCircle,
+  Loader2,
+  Zap,
+  Info,
+  CheckCircle,
+  FileText,
+  Search,
+} from "lucide-react";
+import { intreviewQS, Question } from "@/actions/ai.actions";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
 
 export const InterviewSettings = () => {
-  const [analysisResult, setAnalysisResult] = useState<AnalysisResult>()
-  const [jobDescription, setJobDescription] = useState<string>("")
-  const [isPending, startTransition] = useTransition()
-  const [error, setError] = useState<string | null>(null)
-  const [progress, setProgress] = useState(0)
+  const [analysisResult, setAnalysisResult] = useState<Question[]>();
+  const [jobDescription, setJobDescription] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+  const [progress, setProgress] = useState(0);
 
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   const handleAnalyze = async () => {
-    setError(null)
+    setError(null);
 
     startTransition(async () => {
       try {
-        setProgress(0)
+        setProgress(0);
         const intervalId = setInterval(() => {
-          setProgress((prev) => (prev < 90 ? prev + 10 : prev))
-        }, 500)
+          setProgress((prev) => (prev < 90 ? prev + 10 : prev));
+        }, 500);
 
         const res = await intreviewQS({
           jobDescription,
-        })
-        clearInterval(intervalId)
-        setProgress(100)
-        setAnalysisResult(res)
+          title,
+        });
+        clearInterval(intervalId);
+        setProgress(100);
+        setAnalysisResult(res);
         toast({
           title: "Analysis Complete",
           description: "The job description has been analyzed.",
-        })
+        });
       } catch (error) {
-        console.error(error)
-        setError("Analysis failed. Please try again.")
+        console.error(error);
+        setError("Analysis failed. Please try again.");
         toast({
           variant: "destructive",
           title: "Analysis Failed",
-          description: "There was an error analyzing the job description. Please try again.",
-        })
+          description:
+            "There was an error analyzing the job description. Please try again.",
+        });
       }
-    })
-  }
+    });
+  };
 
   return (
     <Card className="lg:col-span-2 h-fit">
@@ -85,7 +91,34 @@ export const InterviewSettings = () => {
           <TabsContent value="input">
             <div className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="jobDescription" className="text-sm font-medium flex items-center gap-2">
+                <Label
+                  htmlFor="title"
+                  className="text-sm font-medium flex items-center gap-2"
+                >
+                  Title
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="h-4 w-4 text-muted-foreground" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>The title for the document</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </Label>
+                <Input
+                  id="title"
+                  placeholder="e.g. Ats for job"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label
+                  htmlFor="jobDescription"
+                  className="text-sm font-medium flex items-center gap-2"
+                >
                   Job Description
                   <TooltipProvider>
                     <Tooltip>
@@ -115,7 +148,11 @@ export const InterviewSettings = () => {
                 </Alert>
               )}
 
-              <Button className="w-full" onClick={handleAnalyze} disabled={isPending || !jobDescription}>
+              <Button
+                className="w-full"
+                onClick={handleAnalyze}
+                disabled={isPending || !jobDescription}
+              >
                 {isPending ? (
                   <span className="flex items-center justify-center gap-3">
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -143,36 +180,44 @@ export const InterviewSettings = () => {
                   <CheckCircle className="h-4 w-4" />
                   <AlertTitle>Analysis Complete</AlertTitle>
                   <AlertDescription>
-                    Your job description has been analyzed. View the results in the Analysis Results tab.
+                    Your job description has been analyzed. View the results in
+                    the Analysis Results tab.
                   </AlertDescription>
                 </Alert>
               )}
             </div>
           </TabsContent>
           <TabsContent value="results">
-            {analysisResult && <InterviewAnalysisPreview analysisResult={analysisResult} />}
+            {analysisResult && (
+              <InterviewAnalysisPreview analysisResult={analysisResult} />
+            )}
           </TabsContent>
         </Tabs>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
 export const InterviewAnalysisPreview = ({
   analysisResult,
 }: {
-  analysisResult: AnalysisResult
+  analysisResult: Question[];
 }) => {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  const categories = ["Technical Expertise", "Problem Solving", "Team Collaboration", "Domain Knowledge"]
+  const categories = [
+    "Technical Expertise",
+    "Problem Solving",
+    "Team Collaboration",
+    "Domain Knowledge",
+  ];
 
   const complexityColor = {
     basic: "bg-green-100 text-green-800",
     intermediate: "bg-yellow-100 text-yellow-800",
     advanced: "bg-red-100 text-red-800",
-  }
+  };
 
   const filteredResults = analysisResult.filter(
     (question) =>
@@ -180,8 +225,8 @@ export const InterviewAnalysisPreview = ({
       (searchTerm
         ? question.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
           question.answer.toLowerCase().includes(searchTerm.toLowerCase())
-        : true),
-  )
+        : true)
+  );
 
   return (
     <div className="space-y-6">
@@ -191,7 +236,11 @@ export const InterviewAnalysisPreview = ({
           <Button
             key={category}
             variant={selectedCategory === category ? "default" : "outline"}
-            onClick={() => setSelectedCategory(selectedCategory === category ? null : category)}
+            onClick={() =>
+              setSelectedCategory(
+                selectedCategory === category ? null : category
+              )
+            }
             className="text-sm"
           >
             {category}
@@ -212,7 +261,9 @@ export const InterviewAnalysisPreview = ({
           <Card key={index} className="flex flex-col">
             <CardHeader>
               <CardTitle className="text-base">{question.question}</CardTitle>
-              <Badge className={`${complexityColor[question.complexity]} mt-2`}>{question.complexity}</Badge>
+              <Badge className={`${complexityColor[question.complexity]} mt-2`}>
+                {question.complexity}
+              </Badge>
             </CardHeader>
             <CardContent className="flex-grow">
               <h4 className="font-semibold mb-1">Answer:</h4>
@@ -223,8 +274,9 @@ export const InterviewAnalysisPreview = ({
           </Card>
         ))}
       </div>
-      {filteredResults.length === 0 && <p className="text-center text-muted-foreground">No results found.</p>}
+      {filteredResults.length === 0 && (
+        <p className="text-center text-muted-foreground">No results found.</p>
+      )}
     </div>
-  )
-}
-
+  );
+};
