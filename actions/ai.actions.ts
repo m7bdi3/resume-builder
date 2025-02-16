@@ -713,3 +713,311 @@ Respond ONLY with the styled HTML content between <div class="cover-letter"> tag
     throw new Error("Failed to generate cover letter. Please try again.");
   }
 }
+
+export async function gapAnalysis({
+  resumeData,
+  jobDescription,
+}: {
+  resumeData: ResumeValues;
+  jobDescription: string;
+}) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  const subLevel = await getUserSubscriptionLevel(userId);
+
+  if (!canUseAiTools(subLevel)) {
+    throw new Error("You need a premium subscription to use AI tools.");
+  }
+
+  const prompt = `
+  **Role**: Professional ATS Optimization Specialist, expert career coach and resume strategist.
+  
+  **Objective**:
+  Analyze the candidate's resume against the target job description to create a prioritized, actionable improvement plan. Focus on:
+  1 Conduct a Gap Analysis between the user’s current resume and the target job requirements.
+  2. Immediate ATS optimization opportunities
+  3. Strategic career development recommendations
+  4. Quantifiable impact enhancements
+  5. Identify missing or underrepresented skills, qualifications, and experiences.
+  6. Provide actionable recommendations on how to address these gaps (e.g., resume content improvements, skill-building resources, certifications, or side projects).
+
+  **Input Analysis Requirements**:
+  - Cross-reference 5 key areas: Technical Skills, Domain Expertise, Leadership Experience, Education/Certifications, Achievements
+  - Identify:
+    • Exact matches (strengths to emphasize)
+    • Partial matches (areas to enhance)
+    • Critical omissions (must-add elements)
+    • Keyword density gaps
+  
+  **Output Structure Requirements**:
+  {
+    "skillsAndExperienceGaps": [
+      {
+        "gapName": "...",
+        "type": "Hard Skill|Soft Skill|Certification|Experience",
+        "severity": "Critical|High|Medium|Low",
+        "jobDescriptionExcerpt": "...",
+        "resumeComparison": "...",
+        "mitigationStrategy": "..."
+      }
+    ],
+    "resumeImprovementSuggestions": [
+      {
+        "section": "Summary|Work Experience|Skills|Other",
+        "action": "Add|Emphasize|Rephrase|Reorganize",
+        "example": {
+          "before": "...",
+          "after": "...",
+          "rationale": "..."
+        }
+      }
+    ],
+    "longTermActionPlan": [
+      {
+        "category": "Skill Development|Networking|Certifications|Projects",
+        "recommendation": "...",
+        "resources": ["...", "..."],
+        "timeframe": "Immediate|1-3 months|3-6 months"
+      }
+    ],
+    "prioritizedRoadmap": [
+      {
+        "priority": 1-5,
+        "task": "...",
+        "expectedImpact": "ATS Score|First Impression|Hiring Manager Appeal",
+        "estimatedEffort": "Low|Medium|High"
+      }
+    ]
+  }
+  
+  **Critical Rules**:
+  1. ATS-Specific Recommendations:
+     - Suggest exact keyword placement locations
+     - Identify optimal section ordering
+     - Recommend measurable metrics integration
+     - Flag non-ATS friendly formatting
+  
+  2. Career Strategy Requirements:
+     - Connect gaps to industry trends
+     - Suggest transferrable skill highlighting
+     - Recommend verifiable achievement formulas
+  
+  3. Strict Prohibitions:
+     - No generic advice - all recommendations must be JD-specific
+     - No hypothetical/non-verifiable claims
+     - No first-person language
+  
+  **Input Data**:
+  {
+    "resumeData": ${JSON.stringify(resumeData, null, 2)},
+    "jobDescription": ${JSON.stringify(jobDescription)}
+  }
+  
+  **Response Requirements**:
+  - Return only valid JSON matching the specified structure
+  - Maximum 5 items per category
+  - Sort by priority/severity descending
+  - Use real companies/certifications from the candidate's region
+  - Include specific course names/platforms for skill development
+  `;
+  try {
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const rawText = response.text().trim();
+
+    const jsonString = rawText
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+
+    const parsedResponse = JSON.parse(jsonString);
+
+    const requiredKeys = [
+      "skillsAndExperienceGaps",
+      "resumeImprovementSuggestions",
+      "longTermActionPlan",
+      "prioritizedRoadmap",
+    ];
+
+    if (!requiredKeys.every((k) => k in parsedResponse)) {
+      const missingKeys = requiredKeys.filter((k) => !(k in parsedResponse));
+      throw new Error(
+        `Invalid response structure. Missing keys: ${missingKeys.join(", ")}`
+      );
+    }
+
+    const arrayKeys = [
+      { key: "skillsAndExperienceGaps", minLength: 1 },
+      { key: "resumeImprovementSuggestions", minLength: 0 },
+      { key: "longTermActionPlan", minLength: 0 },
+      { key: "prioritizedRoadmap", minLength: 0 },
+    ];
+
+    for (const { key, minLength } of arrayKeys) {
+      if (
+        !Array.isArray(parsedResponse[key]) ||
+        parsedResponse[key].length < minLength
+      ) {
+        throw new Error(
+          `Invalid format for ${key}. Expected array with minimum ${minLength} items`
+        );
+      }
+    }
+
+    const gapItemStructure = [
+      "gapName",
+      "type",
+      "severity",
+      "jobDescriptionExcerpt",
+    ];
+    parsedResponse.skillsAndExperienceGaps.forEach((gap: any) => {
+      if (!gapItemStructure.every((prop) => prop in gap)) {
+        throw new Error(
+          `Missing properties in skillsAndExperienceGaps item: ${JSON.stringify(gap)}`
+        );
+      }
+    });
+
+    return {
+      skillsAndExperienceGaps: parsedResponse.skillsAndExperienceGaps,
+      resumeImprovementSuggestions: parsedResponse.resumeImprovementSuggestions,
+      longTermActionPlan: parsedResponse.longTermActionPlan,
+      prioritizedRoadmap: parsedResponse.prioritizedRoadmap,
+    };
+  } catch (error) {
+    console.error("GAP Analysis Error:", error);
+    throw new Error(
+      `Analysis failed: ${error instanceof Error ? error.message : "Unknown error"}`
+    );
+  }
+}
+
+export async function intreviewQS({
+  jobDescription,
+}: {
+  jobDescription: string;
+}) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  const subLevel = await getUserSubscriptionLevel(userId);
+
+  if (!canUseAiTools(subLevel)) {
+    throw new Error("You need a premium subscription to use AI tools.");
+  }
+
+  const prompt = `
+You are an expert interview curator and an expert hiring manager with 20+ years experience in technical recruiting. 
+Generate a robust list of interview questions and model answers specifically tailored to this job description:
+
+${jobDescription}
+
+**Task**: 
+Generate a comprehensive list of in-depth, role-specific interview questions (at least 15) AND concise, well-structured answers. Each question should test a critical aspect of the role as described in the job description and include enough detail to avoid any generic or overly common interview questions. Reflect on responsibilities, required skills, domain-specific challenges, and any unique organizational context mentioned.
+
+Structure your response with:
+
+1. **Role-Specific Scenarios** (10 questions)
+   - Create situational questions about daily challenges in this role
+   - Ask for specific technical processes/workflows
+   - Require examples of past work
+
+2. **Technical Depth Assessment** (10 questions)
+   - Probe specific tools/technologies from the JD
+   - Include troubleshooting scenarios
+   - Ask for architecture/system design explanations
+
+3. **Behavioral Evaluation** (10 questions)
+   - Focus on team dynamics in technical contexts
+   - Ask for conflict resolution examples with technical teams
+   - Require STAR method responses
+
+4. **Company/Team Alignment** (10 questions)
+   - Questions about specific tech stack implementation
+   - Cultural alignment with engineering practices
+   - Process improvement suggestions
+
+For each question:
+- Make answers actionable with concrete examples
+- Include success metrics/outcomes
+- Reference specific technologies from the JD
+- Add "Why This Matters" explaining the question's purpose
+- Keep answers under 150 words
+- Use industry-specific terminology
+
+**Goal**:
+- Provide advanced interview questions that probe deeper into the candidate’s relevant experience, problem-solving capabilities, and situational judgment.
+- Keep answers concise yet insightful to demonstrate ideal responses a strong candidate might give.
+- Uphold any unique or specialized aspects of the role, reflecting the exact context given by the job description.
+
+Format requirements:
+- No markdown
+- Avoid generic questions about "strengths/weaknesses"
+- Include situational judgment problems for technical decision-making
+
+STRUCTURE REQUIREMENTS:
+1. Create 4 categories with exactly 10 questions each:
+   - Technical Expertise
+   - Problem Solving
+   - Team Collaboration
+   - Domain Knowledge
+
+2. For EACH question:
+   - Question: Must mention specific tools/technologies from JD
+   - Answer: Concrete example with metric/result
+   - Context: Brief rationale for asking (20 words)
+   - Complexity: "basic", "intermediate", or "advanced"
+
+JSON TEMPLATE:
+[{
+  "category": "Technical Expertise",
+  "question": "How would you implement [JD-specific technology] to solve [JD-specific challenge]?",
+  "answer": "In my previous role at [Company], I used [technology] to [specific action]... resulting in [metric] improvement",
+  "context": "Assesses practical implementation skills",
+  "complexity": "intermediate"
+}]
+
+STRICT RULES:
+- Never use markdown or special formatting
+- Include EXACTLY 40 questions (10 per category)
+- Answers must reference JD technologies explicitly
+- All numbers must be numeric (no spelled-out numbers)
+- Never use placeholders like [Company]
+- Validate JSON syntax before responding
+- Complexity levels must vary appropriately
+`;
+
+  try {
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const rawText = response.text().trim();
+
+    const jsonString = rawText
+      .replace(/(```json|```)/g, "")
+      .replace(/(\bNaN\b|\bundefined\b)/g, "null")
+      .trim();
+
+    const parsedResponse = JSON.parse(jsonString);
+
+    // Validation
+    if (!Array.isArray(parsedResponse) || parsedResponse.length !== 40) {
+      throw new Error(
+        "Invalid question count - received " + parsedResponse.length
+      );
+    }
+
+    return parsedResponse;
+  } catch (error) {
+    console.error("JSON Parse Error:", error);
+    throw new Error(
+      `AI response formatting failed: ${error instanceof Error ? error.message : "Unknown error"}`
+    );
+  }
+}

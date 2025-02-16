@@ -45,8 +45,8 @@ model Resume {
   certifications  Certification[]
   references      Reference[]
 
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("resumes")
 }
@@ -170,4 +170,25 @@ model CoverLetter {
   updatedAt DateTime @updatedAt
 
   @@map("cover_letter")
+}
+
+model atsResult {
+  id     String @id @default(cuid())
+  userId String
+
+  jobDescription   String
+  title            String
+  score            Int
+  technical        String[]
+  industry         String[]
+  technologies     String[]
+  softSkills       String[]
+  atsPriorityTerms String[]
+
+  resumeId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("ats_result")
 }
