@@ -117,6 +117,29 @@ export async function getAllGaps() {
   }
 }
 
+export async function getAllInterview() {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("user not authenticated.");
+  }
+
+  try {
+    return withRetry(async () => {
+      const interviews = await prisma.interviewResult.findMany({
+        where: { userId },
+        orderBy: {
+          updatedAt: "desc",
+        },
+      });
+      return interviews;
+    });
+  } catch (error) {
+    console.error("Error fetching interviews:", error);
+    throw new Error("Failed to retrieve interviews. Please try again later.");
+  }
+}
+
 export async function DeleteAts(id: string) {
   const { userId } = await auth();
 
@@ -178,6 +201,38 @@ export async function DeleteGap(id: string) {
   } catch (error) {
     console.error("Error deleting gap:", error);
     throw new Error("Failed to delete gap. Please try again later.");
+  }
+}
+
+export async function DeleteInterview(id: string) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("user not authenticated.");
+  }
+  const interview = withRetry(async () => {
+    return await prisma.interviewResult.findUnique({
+      where: {
+        userId,
+        id,
+      },
+    });
+  });
+
+  if (!interview) {
+    throw new Error("No interview found for the given ID and user.");
+  }
+
+  try {
+    return withRetry(async () => {
+      const deletedinterview = await prisma.interviewResult.delete({
+        where: { userId, id },
+      });
+      return deletedinterview;
+    });
+  } catch (error) {
+    console.error("Error deleting interview:", error);
+    throw new Error("Failed to delete interview. Please try again later.");
   }
 }
 

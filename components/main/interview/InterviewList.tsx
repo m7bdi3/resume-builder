@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo, useTransition } from "react";
-import { useGapStore } from "@/hooks/store/useGapStore";
 import {
   Table,
   TableBody,
@@ -12,45 +11,46 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { GapRow } from "./GapRow";
+import { InterviewRow } from "./InterviewRow";
 import { FilePen, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { DeleteGap } from "@/actions/prisma.actions";
+import { DeleteInterview } from "@/actions/prisma.actions";
 import { CreateAtsButton } from "@/components/premium/CreateAtsButton";
-import { CreateGapButton } from "@/components/premium/CreateGapButton";
+import { useInterviewStore } from "@/hooks/store/useInterviewStore";
+import { CreateInterviewButton } from "@/components/premium/CreateInterviewButton";
 
-export function GapList() {
-  const gapResults = useGapStore((state) => state.gaps);
+export function InterviewList() {
+  const interviews = useInterviewStore((state) => state.interviews);
   const { toast } = useToast();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGap, setSelectedGap] = useState<Set<string>>(new Set());
 
   const [isPending, startTransition] = useTransition();
-  const { deleteGap } = useGapStore();
+  const { deleteInterview } = useInterviewStore();
 
-  const filteredAtsResult = useMemo(
+  const filteredInterviewResult = useMemo(
     () =>
-      gapResults.filter((gap) =>
+      interviews.filter((gap) =>
         (gap.title || "").toLowerCase().includes(searchTerm.toLowerCase())
       ),
-    [gapResults, searchTerm]
+    [interviews, searchTerm]
   );
 
   const handleDelete = async () => {
     startTransition(async () => {
       try {
         for (const id of selectedGap) {
-          await DeleteGap(id);
-          deleteGap(id);
+          await DeleteInterview(id);
+          deleteInterview(id);
         }
         setSelectedGap(new Set());
-        toast({ description: "Gap deleted successfully" });
+        toast({ description: "Interview deleted successfully" });
       } catch (error) {
         console.error(error);
         toast({
           variant: "destructive",
-          description: "Failed to delete ats results.",
+          description: "Failed to delete interview results.",
         });
       }
     });
@@ -58,9 +58,9 @@ export function GapList() {
 
   const handleSelectAll = () => {
     setSelectedGap((prev) =>
-      prev.size === filteredAtsResult.length
+      prev.size === filteredInterviewResult.length
         ? new Set()
-        : new Set(filteredAtsResult.map((r) => r.id))
+        : new Set(filteredInterviewResult.map((r) => r.id))
     );
   };
 
@@ -76,7 +76,7 @@ export function GapList() {
     });
   };
 
-  if (gapResults.length === 0) {
+  if (interviews.length === 0) {
     return <EmptyState />;
   }
 
@@ -100,7 +100,7 @@ export function GapList() {
           <TableRow>
             <TableHead className="w-[50px]">
               <Checkbox
-                checked={selectedGap.size === filteredAtsResult.length}
+                checked={selectedGap.size === filteredInterviewResult.length}
                 onCheckedChange={handleSelectAll}
               />
             </TableHead>
@@ -110,12 +110,12 @@ export function GapList() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredAtsResult.map((gap) => (
-            <GapRow
-              key={gap.id}
-              gap={gap}
-              isSelected={selectedGap.has(gap.id)}
-              onSelect={() => handleSelectResume(gap.id)}
+          {filteredInterviewResult.map((interview) => (
+            <InterviewRow
+              key={interview.id}
+              interview={interview}
+              isSelected={selectedGap.has(interview.id)}
+              onSelect={() => handleSelectResume(interview.id)}
               isPending={isPending}
             />
           ))}
@@ -132,10 +132,10 @@ function EmptyState() {
       <div className="space-y-1.5">
         <h3 className="text-lg font-semibold">No result found</h3>
         <p className="text-sm text-muted-foreground">
-          Get started by creating a new Gap
+          Get started by creating a new Interview Q&A
         </p>
       </div>
-      <CreateGapButton />
+      <CreateInterviewButton />
     </div>
   );
 }

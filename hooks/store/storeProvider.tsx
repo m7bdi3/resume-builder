@@ -9,10 +9,12 @@ import {
   getAllAts,
   getAllCovers,
   getAllGaps,
+  getAllInterview,
   getAllResumes,
 } from "@/actions/prisma.actions";
 import { useAtsStore } from "./useAtsStore";
 import { useGapStore } from "./useGapStore";
+import { useInterviewStore } from "./useInterviewStore";
 
 interface ResumeProps {
   subLevel: SubscriptionLevel;
@@ -70,6 +72,23 @@ export function InitGapStore() {
   useEffect(() => {
     useGapStore.setState({
       gaps: data || [],
+
+      error: isError ? error : null,
+    });
+  }, [data, isError, error]);
+
+  return null;
+}
+
+export function InitInterviewStore() {
+  const { data, error, isError } = useResilientQuery(
+    ["interview"],
+    getAllInterview
+  );
+
+  useEffect(() => {
+    useInterviewStore.setState({
+      interviews: data || [],
 
       error: isError ? error : null,
     });

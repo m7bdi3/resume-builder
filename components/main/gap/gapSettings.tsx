@@ -7,19 +7,13 @@ import {
   Loader2,
   FileText,
   Zap,
-  Sparkles,
   Info,
+  CheckCircle,
 } from "lucide-react";
-import {
-  AnalyzedData,
-  analyzeJobDescription,
-  improveResumeData,
-} from "@/actions/ai.actions";
-import { Badge } from "@/components/ui/badge";
+import { gapAnalysis, GapAnalysisResult } from "@/actions/ai.actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -30,41 +24,58 @@ import {
 } from "@/components/ui/select";
 import { useResumeStore } from "@/hooks/store/useResumeStore";
 import { useToast } from "@/hooks/use-toast";
-import { cn, mapToResumeValues } from "@/lib/utils";
+import { mapToResumeValues } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ResumeServerData } from "@/lib/types";
+import type { ResumeServerData } from "@/lib/types";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Input } from "@/components/ui/input";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSearchParams } from "next/navigation";
-import { useAtsStore } from "@/hooks/store/useAtsStore";
+import { useGapStore } from "@/hooks/store/useGapStore";
+import { Input } from "@/components/ui/input";
 
 export const GapSettings = () => {
   const searchParams = useSearchParams();
   const existingId = searchParams.get("id");
-  const { ats, addAts } = useAtsStore();
+  const { gaps, addGap } = useGapStore();
 
-  const foundAts = ats.find((a) => a.id === existingId);
+  const foundGap = existingId
+    ? gaps.find((g) => g.id === existingId)
+    : undefined;
 
-  const [analysisResult, setAnalysisResult] = useState<AnalyzedData>(
-    (foundAts?.response as AnalyzedData) || {}
+  const [analysisResult, setAnalysisResult] = useState<GapAnalysisResult>(
+    (foundGap?.response as GapAnalysisResult) || undefined
   );
+
   const [jobDescription, setJobDescription] = useState<string>(
-    foundAts?.jobDescription || ""
+    foundGap?.jobDescription || ""
   );
-  const [title, setTitle] = useState<string>(foundAts?.title || "");
+
+  const [title, setTitle] = useState<string>(foundGap?.title || "");
+
   const [isPending, startTransition] = useTransition();
   const [selectedResume, setSelectedResume] = useState<string>(
-    foundAts?.resumeId || ""
+    foundGap?.resumeId || ""
   );
+
   const [error, setError] = useState<string | null>(null);
+  const [progress, setProgress] = useState(0);
 
   const { toast } = useToast();
-  const { resumes, addResume } = useResumeStore();
+  const { resumes } = useResumeStore();
+
   const foundResume = resumes.find((r) => r.id === selectedResume);
 
   const handleAnalyzeResume = async () => {
@@ -77,15 +88,21 @@ export const GapSettings = () => {
 
     startTransition(async () => {
       try {
-        const res = await analyzeJobDescription({
+        setProgress(0);
+        const intervalId = setInterval(() => {
+          setProgress((prev) => (prev < 90 ? prev + 10 : prev));
+        }, 500);
+
+        const res = await gapAnalysis({
           resumeData: resume,
           jobDescription,
           title,
           id: existingId || undefined,
         });
+        clearInterval(intervalId);
+        setProgress(100);
         setAnalysisResult(res.response);
-        addAts(res);
-
+        addGap(res);
         if (!existingId) {
           const newSearchParams = new URLSearchParams(searchParams);
           newSearchParams.set("id", res.id);
@@ -113,61 +130,168 @@ export const GapSettings = () => {
     });
   };
 
-  const handleUpdateResume = async () => {
-    if (!analysisResult) {
-      setError("Please analyze your resume first before improving it.");
-      return;
-    }
-    setError(null);
-    const resume = mapToResumeValues(foundResume || ({} as ResumeServerData));
+  const renderAnalysisResult = () => {
+    if (!analysisResult) return null;
 
-    startTransition(async () => {
-      try {
-        const improved = await improveResumeData({
-          resumeData: resume,
-          analysisData: analysisResult as AnalyzedData,
-        });
-        addResume(improved);
-        toast({
-          title: "Resume Updated",
-          description: "Your resume has been improved based on the analysis.",
-        });
-
-        const res = await analyzeJobDescription({
-          resumeData: resume,
-          jobDescription,
-          title,
-        });
-        setAnalysisResult(res.response);
-      } catch (error) {
-        console.error(error);
-        setError("Update failed. Please try again.");
-        toast({
-          variant: "destructive",
-          title: "Update Failed",
-          description:
-            "There was an error updating your resume. Please try again.",
-        });
-      }
-    });
+    return (
+      <Tabs defaultValue="skills-gaps" className="w-full mt-8">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="skills-gaps">Skills Gaps</TabsTrigger>
+          <TabsTrigger value="resume-improvements">Improvements</TabsTrigger>
+          <TabsTrigger value="action-plan">Action Plan</TabsTrigger>
+          <TabsTrigger value="roadmap">Roadmap</TabsTrigger>
+        </TabsList>
+        <TabsContent value="skills-gaps">
+          <Card>
+            <CardHeader>
+              <CardTitle>Skills and Experience Gaps</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {analysisResult.skillsAndExperienceGaps.map((gap, index) => (
+                <div key={index} className="mb-4 p-4 border rounded-md">
+                  <div className="flex justify-between items-center">
+                    <h4 className="font-semibold">{gap.gapName}</h4>
+                    <Badge
+                      variant={
+                        gap.severity === "Critical"
+                          ? "destructive"
+                          : gap.severity === "High"
+                            ? "default"
+                            : "secondary"
+                      }
+                    >
+                      {gap.severity}
+                    </Badge>
+                  </div>
+                  <p className="text-sm mt-2">
+                    <strong>Type:</strong> {gap.type}
+                  </p>
+                  <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value={`gap-${index}`}>
+                      <AccordionTrigger>View Details</AccordionTrigger>
+                      <AccordionContent>
+                        <p className="text-sm mt-1">
+                          <strong>Job Requirement:</strong>{" "}
+                          {gap.jobDescriptionExcerpt}
+                        </p>
+                        <p className="text-sm mt-1">
+                          <strong>Your Resume:</strong> {gap.resumeComparison}
+                        </p>
+                        <p className="text-sm mt-1">
+                          <strong>Suggestion:</strong> {gap.mitigationStrategy}
+                        </p>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="resume-improvements">
+          <Card>
+            <CardHeader>
+              <CardTitle>Resume Improvement Suggestions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {analysisResult.resumeImprovementSuggestions.map(
+                (suggestion, index) => (
+                  <div key={index} className="mb-4 p-4 border rounded-md">
+                    <h4 className="font-semibold">{suggestion.section}</h4>
+                    <p className="text-sm">
+                      <strong>Action:</strong> {suggestion.action}
+                    </p>
+                    <Accordion type="single" collapsible className="w-full">
+                      <AccordionItem value={`suggestion-${index}`}>
+                        <AccordionTrigger>View Example</AccordionTrigger>
+                        <AccordionContent>
+                          <div className="mt-2">
+                            <p className="text-sm">
+                              <strong>Before:</strong>{" "}
+                              {suggestion.example.before}
+                            </p>
+                            <p className="text-sm mt-1">
+                              <strong>After:</strong> {suggestion.example.after}
+                            </p>
+                            <p className="text-sm mt-1">
+                              <strong>Rationale:</strong>{" "}
+                              {suggestion.example.rationale}
+                            </p>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  </div>
+                )
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="action-plan">
+          <Card>
+            <CardHeader>
+              <CardTitle>Long-Term Action Plan</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {analysisResult.longTermActionPlan.map((action, index) => (
+                <div key={index} className="mb-4 p-4 border rounded-md">
+                  <h4 className="font-semibold">{action.category}</h4>
+                  <p className="text-sm">{action.recommendation}</p>
+                  <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value={`action-${index}`}>
+                      <AccordionTrigger>View Resources</AccordionTrigger>
+                      <AccordionContent>
+                        <ul className="list-disc list-inside text-sm">
+                          {action.resources.map((resource, idx) => (
+                            <li key={idx}>{resource}</li>
+                          ))}
+                        </ul>
+                        <p className="text-sm mt-1">
+                          <strong>Timeframe:</strong> {action.timeframe}
+                        </p>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="roadmap">
+          <Card>
+            <CardHeader>
+              <CardTitle>Prioritized Roadmap</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {analysisResult.prioritizedRoadmap.map((item, index) => (
+                <div key={index} className="mb-4 p-4 border rounded-md">
+                  <div className="flex justify-between items-center">
+                    <h4 className="font-semibold">Priority {item.priority}</h4>
+                    <Badge variant="outline">{item.estimatedEffort}</Badge>
+                  </div>
+                  <p className="text-sm mt-1">{item.task}</p>
+                  <p className="text-sm mt-1">
+                    <strong>Expected Impact:</strong> {item.expectedImpact}
+                  </p>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    );
   };
-  const finalScore =
-    analysisResult &&
-    typeof analysisResult === "object" &&
-    "score" in analysisResult
-      ? Math.min(Math.max(analysisResult.score, 0), 100)
-      : 0;
 
   return (
     <Card className="lg:col-span-2 h-fit">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-2xl">
           <Zap className="h-6 w-6" />
-          ATS Score Analysis
+          GAP Score Analysis
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-8">
-        <div className="grid  gap-6">
+        <div className="grid gap-6">
           <div className="space-y-2">
             <Label
               htmlFor="title"
@@ -187,7 +311,7 @@ export const GapSettings = () => {
             </Label>
             <Input
               id="title"
-              placeholder="e.g. Ats for job"
+              placeholder="e.g. title for job"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
@@ -275,173 +399,34 @@ export const GapSettings = () => {
               Analyzing...
             </span>
           ) : (
-            "Analyze Compatibility"
+            "Analyze"
           )}
         </Button>
 
-        {analysisResult && (
-          <div className="space-y-8">
-            <Card>
-              <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <CardTitle>Overall Match Score</CardTitle>
-                  <Badge
-                    variant={
-                      finalScore >= 75
-                        ? "default"
-                        : finalScore >= 50
-                          ? "warning"
-                          : "destructive"
-                    }
-                    className="text-lg font-bold px-4 py-2"
-                  >
-                    {finalScore}%
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <Progress
-                    value={finalScore}
-                    className={cn(
-                      finalScore >= 75
-                        ? "bg-green-500"
-                        : finalScore >= 50
-                          ? "bg-yellow-500"
-                          : "bg-red-500",
-                      "h-3"
-                    )}
-                  />
-                  <div className="flex justify-between text-sm">
-                    <span className="font-medium">ATS Compatibility</span>
-                    <span className="text-muted-foreground">
-                      {getScoreFeedback(finalScore)}
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <CategorySection
-                title="Missing Technical Skills"
-                items={analysisResult.technical}
-                icon="💻"
-                description="Key technical requirements from the job description"
-              />
-              <CategorySection
-                title="Missing Industry Terms"
-                items={analysisResult.industry}
-                icon="🏭"
-                description="Specialized jargon and domain-specific terminology"
-              />
-              <CategorySection
-                title="Missing Tools & Tech"
-                items={analysisResult.technologies}
-                icon="🛠️"
-                description="Required software, frameworks, and platforms"
-              />
-              <CategorySection
-                title="Missing Soft Skills"
-                items={analysisResult.softSkills}
-                icon="🤝"
-                description="Personality traits and interpersonal skills"
-              />
-              <CategorySection
-                title="Critical ATS Gaps"
-                items={analysisResult.atsPriorityTerms}
-                icon="❗"
-                description="Mandatory requirements that need immediate attention"
-                highlightMissing
-              />
-            </div>
-
-            <div className="space-y-4">
-              <Button
-                className="w-full"
-                onClick={handleUpdateResume}
-                disabled={isPending}
-              >
-                {isPending ? (
-                  <span className="flex items-center justify-center gap-3">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Improving...
-                  </span>
-                ) : (
-                  <>
-                    <Sparkles className="h-4 w-4 mr-2" />
-                    Auto-Optimize Resume
-                  </>
-                )}
-              </Button>
-              <p className="text-sm text-muted-foreground text-center">
-                Tip: We&apos;ll add missing keywords naturally throughout your
-                resume
-              </p>
-            </div>
+        {isPending && (
+          <div className="space-y-2">
+            <Progress value={progress} className="w-full" />
+            <p className="text-sm text-center text-muted-foreground">
+              {progress < 100
+                ? "Analyzing your resume..."
+                : "Analysis complete!"}
+            </p>
           </div>
         )}
+
+        {analysisResult && (
+          <Alert>
+            <CheckCircle className="h-4 w-4" />
+            <AlertTitle>Analysis Complete</AlertTitle>
+            <AlertDescription>
+              Your resume has been analyzed against the job description. View
+              the results below.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {renderAnalysisResult()}
       </CardContent>
     </Card>
   );
-};
-
-const CategorySection = ({
-  title,
-  items,
-  icon,
-  description,
-  highlightMissing = false,
-}: {
-  title: string;
-  items: string[];
-  icon: string;
-  description?: string;
-  highlightMissing?: boolean;
-}) => (
-  <Card className="overflow-hidden">
-    <CardHeader className="pb-2">
-      <CardTitle className="text-base flex items-center gap-2">
-        <span>{icon}</span>
-        {title}
-        <Badge
-          variant={highlightMissing ? "destructive" : "secondary"}
-          className="ml-2"
-        >
-          {items?.length} Missing
-        </Badge>
-      </CardTitle>
-      {description && (
-        <p className="text-sm text-muted-foreground">{description}</p>
-      )}
-    </CardHeader>
-    <CardContent className="max-h-[200px] overflow-y-auto">
-      {items && items.length > 0 ? (
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-2">
-          {items?.map((item, index) => (
-            <Badge
-              key={index}
-              variant={highlightMissing ? "destructive" : "outline"}
-              className="font-normal break-words whitespace-normal text-left h-auto min-h-[32px] hover:bg-opacity-80 transition-opacity px-2.5 py-1 max-w-full"
-            >
-              <span>{item}</span>
-            </Badge>
-          ))}
-        </div>
-      ) : (
-        <div className="flex items-center text-green-600 dark:text-green-400 text-sm">
-          <span className="mr-2">✅</span>
-          All requirements met in this category
-        </div>
-      )}
-    </CardContent>
-  </Card>
-);
-
-const getScoreFeedback = (score: number) => {
-  if (score >= 90) return "Excellent match!";
-  if (score >= 75) return "Good match";
-  if (score >= 60) return "Moderate match";
-  if (score >= 40) return "Needs significant improvement";
-  return "Poor match - Major revisions needed";
 };

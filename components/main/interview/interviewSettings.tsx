@@ -10,7 +10,7 @@ import {
   FileText,
   Search,
 } from "lucide-react";
-import { intreviewQS, Question } from "@/actions/ai.actions";
+import { IntreviewQS, intreviewQS } from "@/actions/ai.actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -27,12 +27,30 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
+import { useSearchParams } from "next/navigation";
+import { useInterviewStore } from "@/hooks/store/useInterviewStore";
 
 export const InterviewSettings = () => {
-  const [analysisResult, setAnalysisResult] = useState<Question[]>();
-  const [jobDescription, setJobDescription] = useState<string>("");
-  const [title, setTitle] = useState<string>("");
+  const searchParams = useSearchParams();
+  const existingId = searchParams.get("id");
+  const { interviews, addInterview } = useInterviewStore();
+
+  const foundInterview = existingId
+    ? interviews.find((g) => g.id === existingId)
+    : undefined;
+
+  const [analysisResult, setAnalysisResult] = useState<IntreviewQS[]>(
+    (foundInterview?.response as IntreviewQS[]) || undefined
+  );
+
+  const [jobDescription, setJobDescription] = useState<string>(
+    foundInterview?.jobDescription || ""
+  );
+
+  const [title, setTitle] = useState<string>(foundInterview?.title || "");
+
   const [isPending, startTransition] = useTransition();
+
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
 
@@ -40,7 +58,6 @@ export const InterviewSettings = () => {
 
   const handleAnalyze = async () => {
     setError(null);
-
     startTransition(async () => {
       try {
         setProgress(0);
@@ -51,13 +68,24 @@ export const InterviewSettings = () => {
         const res = await intreviewQS({
           jobDescription,
           title,
+          id: existingId || undefined,
         });
         clearInterval(intervalId);
         setProgress(100);
-        setAnalysisResult(res);
+        setAnalysisResult(res.response);
+        addInterview(res);
+        if (!existingId) {
+          const newSearchParams = new URLSearchParams(searchParams);
+          newSearchParams.set("id", res.id);
+          window.history.replaceState(
+            null,
+            "",
+            `?${newSearchParams.toString()}`
+          );
+        }
         toast({
           title: "Analysis Complete",
-          description: "The job description has been analyzed.",
+          description: "Your Interview Q&S has been created.",
         });
       } catch (error) {
         console.error(error);
@@ -66,7 +94,7 @@ export const InterviewSettings = () => {
           variant: "destructive",
           title: "Analysis Failed",
           description:
-            "There was an error analyzing the job description. Please try again.",
+            "There was an error analyzing your Job Description. Please try again.",
         });
       }
     });
@@ -201,7 +229,7 @@ export const InterviewSettings = () => {
 export const InterviewAnalysisPreview = ({
   analysisResult,
 }: {
-  analysisResult: Question[];
+  analysisResult: IntreviewQS[];
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);

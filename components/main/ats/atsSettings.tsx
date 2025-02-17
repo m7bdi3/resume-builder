@@ -51,12 +51,13 @@ export const AtsSettings = () => {
   const foundAts = ats.find((a) => a.id === existingId);
 
   const [analysisResult, setAnalysisResult] = useState<AnalyzedData>(
-    (foundAts?.response as AnalyzedData) || {}
+    (foundAts?.response as AnalyzedData) || undefined
   );
   const [jobDescription, setJobDescription] = useState<string>(
     foundAts?.jobDescription || ""
   );
   const [title, setTitle] = useState<string>(foundAts?.title || "");
+  
   const [isPending, startTransition] = useTransition();
   const [selectedResume, setSelectedResume] = useState<string>(
     foundAts?.resumeId || ""

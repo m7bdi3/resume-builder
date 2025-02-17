@@ -1,6 +1,5 @@
-import { InterviewSettings } from "@/components/main/interview/interviewSettings";
-import React from "react";
+import { InterviewList } from "@/components/main/interview/InterviewList";
 
-export default function Page() {
-  return <InterviewSettings />;
+export default function InterviewPage() {
+  return <InterviewList />;
 }

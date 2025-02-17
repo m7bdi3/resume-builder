@@ -752,10 +752,12 @@ export async function gapAnalysis({
   resumeData,
   jobDescription,
   title,
+  id,
 }: {
   resumeData: ResumeValues;
   jobDescription: string;
   title: string;
+  id?: string;
 }) {
   const { userId } = await auth();
 
@@ -904,17 +906,28 @@ export async function gapAnalysis({
       }
     }
 
-    const res = await prisma.gapResult.create({
-      data: {
-        title,
-        jobDescription,
-        response: parsedResponse,
-        userId,
-        resumeId: resumeData.id!,
-      },
-    });
+    const resultOperation = id
+      ? prisma.gapResult.update({
+          where: { id, userId },
+          data: {
+            title,
+            jobDescription,
+            response: parsedResponse,
+            resumeId: resumeData.id!,
+          },
+        })
+      : prisma.gapResult.create({
+          data: {
+            title,
+            jobDescription,
+            response: parsedResponse,
+            userId,
+            resumeId: resumeData.id!,
+          },
+        });
 
-    return res.response as GapAnalysisResult;
+    const res = await resultOperation;
+    return { ...res, response: res.response as GapAnalysisResult };
   } catch (error) {
     console.error("GAP Analysis Error:", error);
     throw new Error(
@@ -923,7 +936,7 @@ export async function gapAnalysis({
   }
 }
 
-export type Question = {
+export type IntreviewQS = {
   category: string;
   question: string;
   answer: string;
@@ -934,9 +947,11 @@ export type Question = {
 export async function intreviewQS({
   jobDescription,
   title,
+  id,
 }: {
   jobDescription: string;
   title: string;
+  id?: string;
 }) {
   const { userId } = await auth();
 
@@ -1048,16 +1063,26 @@ STRICT RULES:
       throw new Error("Invalid response " + parsedResponse.length);
     }
 
-    const res = await prisma.interviewResult.create({
-      data: {
-        title,
-        jobDescription,
-        response: parsedResponse,
-        userId,
-      },
-    });
+    const resultOperation = id
+      ? prisma.interviewResult.update({
+          where: { id, userId },
+          data: {
+            title,
+            jobDescription,
+            response: parsedResponse,
+          },
+        })
+      : prisma.interviewResult.create({
+          data: {
+            title,
+            jobDescription,
+            response: parsedResponse,
+            userId,
+          },
+        });
 
-    return res.response as Question[];
+    const res = await resultOperation;
+    return { ...res, response: res.response as IntreviewQS[] };
   } catch (error) {
     console.error("JSON Parse Error:", error);
     throw new Error(
