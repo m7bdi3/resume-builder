@@ -5,7 +5,6 @@ import Footer from "@/components/landing/footer";
 import Header from "@/components/landing/header";
 import HeroGeometric from "@/components/landing/heroWithShapes";
 import HowItWorks from "@/components/landing/how-it-works";
-import Pricing from "@/components/landing/pricing";
 import Testimonials from "@/components/landing/testimonials";
 
 export default function Home() {
@@ -16,7 +15,6 @@ export default function Home() {
       <Features />
       <HowItWorks />
       <Testimonials />
-      <Pricing />
       <FAQ />
       <CTA />
       <Footer />

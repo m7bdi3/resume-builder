@@ -1,8 +1,5 @@
 import { Circle, Square, Squircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useSubsLevel } from "@/components/SubsProvider";
-import usePremiumModal from "@/hooks/usePremiumModal";
-import { canUseCustom } from "@/lib/permissions";
 
 export const BorderStyles = {
   SQUARE: "square",
@@ -17,14 +14,7 @@ interface Props {
   onChange: (borderStyle: string) => void;
 }
 export const BorderStyleButton = ({ borderStyle, onChange }: Props) => {
-  const subLevel = useSubsLevel();
-  const { open, setOpen } = usePremiumModal();
-
   const handleClick = () => {
-    if (!canUseCustom(subLevel)) {
-      setOpen(!open);
-      return;
-    }
     const currentIndex = borderStyle ? borderStyles.indexOf(borderStyle) : 0;
     const nextIndex = (currentIndex + 1) % borderStyles.length;
     onChange(borderStyles[nextIndex]);

@@ -19,7 +19,6 @@ export interface FooterProps {
   setCurrentStep: (step: string) => void;
   showSmResumePreview: boolean;
   setShowResumePreview: (show: boolean) => void;
-  isResume: boolean;
 }
 
 export const resumeDataInclude = {

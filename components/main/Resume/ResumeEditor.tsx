@@ -10,7 +10,7 @@ import { cn, mapToResumeValues } from "@/lib/utils";
 import { useAutoSaveResume } from "@/hooks/useAutoSaveResume";
 import { useUnloadWarning } from "@/hooks/useUnloadWarning";
 import { ResumeServerData } from "@/lib/types";
-import { Footer } from "@/components/main/Footer";
+import { Footer } from "@/components/main/Resume/Footer";
 import { Breadcrumbs } from "@/components/main/Breadcrumbs";
 
 interface Props {
@@ -86,8 +86,6 @@ export const ResumeEditor = ({ resumeToEdit }: Props) => {
         showSmResumePreview={showSmResumePreview}
         setShowResumePreview={setShowResumePreview}
         isSaving={isSaving}
-        isResume
-        resumeId={resumeData.id!}
       />
     </div>
   );

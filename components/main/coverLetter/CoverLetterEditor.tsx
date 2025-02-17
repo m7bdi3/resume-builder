@@ -12,7 +12,7 @@ import { CoverLetterServerData } from "@/lib/types";
 import { Coversteps } from "@/lib/Coversteps";
 import { useAutoSaveCover } from "@/hooks/useAutoSaveCover";
 import { Breadcrumbs } from "@/components/main/Breadcrumbs";
-import { Footer } from "@/components/main/Footer";
+import { Footer } from "@/components/main/Resume/Footer";
 
 interface Props {
   coverLetterToEdit: CoverLetterServerData | null;
@@ -88,7 +88,6 @@ export const CoverLetterEditor = ({ coverLetterToEdit }: Props) => {
         showSmResumePreview={showSmResumePreview}
         setShowResumePreview={setShowResumePreview}
         isSaving={isSaving}
-        isResume={false}
       />
     </div>
   );

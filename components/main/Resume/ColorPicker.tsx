@@ -7,26 +7,17 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Palette } from "lucide-react";
-import { useSubsLevel } from "@/components/SubsProvider";
-import usePremiumModal from "@/hooks/usePremiumModal";
-import { canUseCustom } from "@/lib/permissions";
 
 interface Props {
   color: Color | undefined;
   onChange: ColorChangeHandler;
 }
 export const ColorPicker = ({ color, onChange }: Props) => {
-  const subLevel = useSubsLevel();
-  const { setOpen } = usePremiumModal();
   const [showPopOver, setShowPopOver] = useState(false);
   return (
     <Popover
       open={showPopOver}
       onOpenChange={() => {
-        if (!canUseCustom(subLevel)) {
-          setOpen(true);
-          return;
-        }
         setShowPopOver(!showPopOver);
       }}
     >

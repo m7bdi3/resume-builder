@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { useResumeStore } from "./useResumeStore";
-import { SubscriptionLevel } from "@/lib/subscription";
 import { useCoverStore } from "./useCoverStore";
 import { useResilientQuery } from "../useOfflineQuery";
 import {
@@ -16,11 +15,7 @@ import { useAtsStore } from "./useAtsStore";
 import { useGapStore } from "./useGapStore";
 import { useInterviewStore } from "./useInterviewStore";
 
-interface ResumeProps {
-  subLevel: SubscriptionLevel;
-  canCreate: boolean;
-}
-export function InitResumesStore({ subLevel, canCreate }: ResumeProps) {
+export function InitResumesStore() {
   const { data, error, isError } = useResilientQuery(
     ["resumes"],
     getAllResumes
@@ -29,11 +24,9 @@ export function InitResumesStore({ subLevel, canCreate }: ResumeProps) {
   useEffect(() => {
     useResumeStore.setState({
       resumes: data || [],
-      subLevel,
-      canCreate,
       error: isError ? error : null,
     });
-  }, [data, subLevel, canCreate, isError, error]);
+  }, [data, isError, error]);
 
   return null;
 }

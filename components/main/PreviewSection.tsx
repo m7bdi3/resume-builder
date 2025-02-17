@@ -34,7 +34,6 @@ export const PreviewSection = ({
                 setResumeData({
                   ...resumeData,
                   colorHex: color.hex,
-                  coverLetters: resumeData?.coverLetters || [],
                 });
             }}
           />
@@ -45,7 +44,6 @@ export const PreviewSection = ({
                 setResumeData({
                   ...resumeData,
                   borderStyle,
-                  coverLetters: resumeData?.coverLetters || [],
                 });
             }}
           />

@@ -1,5 +1,4 @@
 import { generateWorkExperience } from "@/actions/ai.actions";
-import { useSubsLevel } from "@/components/SubsProvider";
 import { LoadingButton } from "@/components/main/LoadingButton";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,8 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import usePremiumModal from "@/hooks/usePremiumModal";
-import { canUseAiTools } from "@/lib/permissions";
+
 import {
   GenerateWorkExperienceInput,
   generateWorkExperienceSchema,
@@ -39,8 +37,6 @@ export const GenerateWorkExperienceButton = ({
   onWorkExperienceGenerated,
 }: Props) => {
   const [showInputDialog, setShowInputDialog] = useState(false);
-  const subLevel = useSubsLevel();
-  const { open, setOpen } = usePremiumModal();
 
   return (
     <>
@@ -48,10 +44,6 @@ export const GenerateWorkExperienceButton = ({
         variant={"outline"}
         type="button"
         onClick={() => {
-          if (!canUseAiTools(subLevel)) {
-            setOpen(!open);
-            return;
-          }
           setShowInputDialog(!showInputDialog);
         }}
       >

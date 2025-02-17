@@ -43,7 +43,6 @@ export const CoverLetterItem = ({ coverLetter }: Props) => {
           <DropMenu
             coverLetterId={coverLetter.id}
             onPrintClick={reactToPrintFn}
-            resumeId={coverLetter.resumeId}
           />
         </div>
         <div className="space-y-2">
@@ -58,11 +57,10 @@ export const CoverLetterItem = ({ coverLetter }: Props) => {
 
 interface DropProps {
   coverLetterId: string;
-  resumeId: string;
   onPrintClick: () => void;
 }
 
-const DropMenu = ({ coverLetterId, onPrintClick, resumeId }: DropProps) => {
+const DropMenu = ({ coverLetterId, onPrintClick }: DropProps) => {
   const [showDelete, setShowDelete] = useState(false);
 
   return (
@@ -74,7 +72,7 @@ const DropMenu = ({ coverLetterId, onPrintClick, resumeId }: DropProps) => {
         <DropdownMenuContent align="end" className="w-48">
           <DropdownMenuItem asChild>
             <Link
-              href={`/dashboard/resumes/${resumeId}/coverletter/create?coverId=${coverLetterId}`}
+              href={`/dashboard/coverletters/editor?coverId=${coverLetterId}`}
             >
               <Edit className="size-4 mr-2" />
               Edit
