@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { Card } from "@/components/ui/card";
 import { GapList } from "@/components/main/gap/GapList";
+import { InitGapStore } from "@/hooks/store/storeProvider";
 
 export const metadata: Metadata = {
   title: "Your Gaps | ResumeAI",
@@ -18,6 +19,7 @@ export default async function AtsPage() {
 
   return (
     <main className="relative size-full">
+      <InitGapStore />
       <Suspense fallback={<ResumeListSkeleton />}>
         <GapList />
       </Suspense>

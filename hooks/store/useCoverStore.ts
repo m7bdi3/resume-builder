@@ -5,6 +5,7 @@ import { CoverLetterServerData } from "@/lib/types";
 
 type CoverStore = {
   covers: CoverLetterServerData[];
+  isLoading: boolean;
   addCover: (values: CoverLetterServerData) => void;
   deleteCover: (id: string) => void;
   error: Error | null;
@@ -16,6 +17,7 @@ export const useCoverStore = create(
     (set) => ({
       covers: [],
       error: null,
+      isLoading: false,
       addCover: (values) => {
         set((state) => {
           if (!values.id) {

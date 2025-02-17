@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { Card } from "@/components/ui/card";
 import { ResumeList } from "@/components/main/Resume/ResumeList";
+import { InitResumesStore } from "@/hooks/store/storeProvider";
 
 export const metadata: Metadata = {
   title: "Your Resumes | ResumeAI",
@@ -19,13 +20,14 @@ export default async function ResumesPage() {
   return (
     <main className="relative size-full">
       <Suspense fallback={<ResumeListSkeleton />}>
+      <InitResumesStore />
         <ResumeList />
       </Suspense>
     </main>
   );
 }
 
-function ResumeListSkeleton() {
+ function ResumeListSkeleton() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {[...Array(6)].map((_, i) => (

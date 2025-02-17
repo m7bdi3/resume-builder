@@ -6,6 +6,7 @@ import { ResumeServerData } from "@/lib/types";
 export type ResumeStore = {
   resumes: ResumeServerData[];
   error: Error | null;
+  isLoading: boolean;
   addResume: (values: ResumeServerData) => void;
   deleteResume: (id: string) => void;
   clearError: () => void;
@@ -16,6 +17,7 @@ export const useResumeStore = create(
     (set) => ({
       resumes: [],
       error: null,
+      isLoading: false,
       addResume: (values) => {
         set((state) => {
           if (!values.id) {

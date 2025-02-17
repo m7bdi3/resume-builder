@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { Card } from "@/components/ui/card";
 import { CoverLetterList } from "@/components/main/coverLetter/CoverLetterList";
+import { InitCoverStore } from "@/hooks/store/storeProvider";
 
 export const metadata: Metadata = {
   title: "Your Cover Letters | D3",
@@ -18,6 +19,7 @@ export default async function CoverLetterPage() {
 
   return (
     <main className="relative w-full max-w-7xl mx-auto p-4 space-y-6">
+      <InitCoverStore />
       <Suspense fallback={<ResumeListSkeleton />}>
         <CoverLetterList />
       </Suspense>

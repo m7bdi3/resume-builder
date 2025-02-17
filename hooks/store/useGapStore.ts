@@ -7,6 +7,7 @@ import { GapResult } from "@prisma/client";
 export type GapStore = {
   gaps: GapResult[];
   error: Error | null;
+  isLoading: boolean;
   addGap: (values: GapResult) => void;
   deleteGap: (id: string) => void;
   clearError: () => void;
@@ -16,6 +17,7 @@ export const useGapStore = create(
   persist<GapStore>(
     (set) => ({
       gaps: [],
+      isLoading: false,
       error: null,
       addGap: (values) => {
         set((state) => {

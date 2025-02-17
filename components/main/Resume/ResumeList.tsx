@@ -17,19 +17,19 @@ import { DeleteResume } from "@/actions/forms.actions";
 import { ResumeRow } from "./ResumeRow";
 import { FilePen, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { TableSkeleton } from "@/components/LoadingSkeleton";
 export function ResumeList() {
-  const resumes = useResumeStore((state) => state.resumes);
-  const { toast } = useToast();
+  const { deleteResume, isLoading, resumes } = useResumeStore();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedResumes, setSelectedResumes] = useState<Set<string>>(
     new Set()
   );
+  const contentRef = useRef<HTMLDivElement>(null!);
 
   const [isPending, startTransition] = useTransition();
-  const { deleteResume } = useResumeStore();
 
-  const contentRef = useRef<HTMLDivElement>(null!);
+  const { toast } = useToast();
 
   const filteredResumes = useMemo(
     () =>
@@ -77,6 +77,10 @@ export function ResumeList() {
       return newSet;
     });
   };
+
+  if (isLoading) {
+    return <TableSkeleton />;
+  }
 
   if (resumes.length === 0) {
     return <EmptyState />;

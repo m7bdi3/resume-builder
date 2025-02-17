@@ -12,11 +12,6 @@ import { MainBreadcrumbs } from "@/components/main/main-breadcrumbs";
 
 import { ThemeToggle } from "@/components/theme-toggle";
 
-import {
-  InitAtsStore,
-  InitCoverStore,
-  InitResumesStore,
-} from "@/hooks/store/storeProvider";
 import { ConnectionStatus, NetworkStatus } from "@/components/NetworkStatus";
 import { QueryProviders } from "@/components/QueryProvider";
 
@@ -52,9 +47,6 @@ export default async function ResumesLayout({
             </main>
             <NetworkStatus />
             <ConnectionStatus />
-            <InitResumesStore />
-            <InitCoverStore />
-            <InitAtsStore />
           </SidebarInset>
         </div>
       </SidebarProvider>

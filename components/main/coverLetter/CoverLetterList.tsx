@@ -38,10 +38,10 @@ import { useCoverStore } from "@/hooks/store/useCoverStore";
 import { useToast } from "@/hooks/use-toast";
 import { DeleteCover } from "@/actions/forms.actions";
 import Link from "next/link";
+import { TableSkeleton } from "@/components/LoadingSkeleton";
 
 export function CoverLetterList() {
-  const covers = useCoverStore((state) => state.covers);
-  const { toast } = useToast();
+  const { deleteCover, covers, isLoading } = useCoverStore();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedResumes, setSelectedResumes] = useState<Set<string>>(
@@ -49,10 +49,10 @@ export function CoverLetterList() {
   );
 
   const [isPending, startTransition] = useTransition();
-  const { deleteCover } = useCoverStore();
 
   const contentRef = useRef<HTMLDivElement>(null!);
 
+  const { toast } = useToast();
   const filteredResumes = useMemo(
     () =>
       covers.filter((cover) =>
@@ -99,6 +99,10 @@ export function CoverLetterList() {
       return newSet;
     });
   };
+
+  if (isLoading) {
+    return <TableSkeleton />;
+  }
 
   if (covers.length === 0) {
     return <EmptyState />;

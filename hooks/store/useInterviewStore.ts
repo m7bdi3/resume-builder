@@ -7,6 +7,7 @@ import { InterviewResult } from "@prisma/client";
 export type InterviewStore = {
   interviews: InterviewResult[];
   error: Error | null;
+  isLoading: boolean;
   addInterview: (values: InterviewResult) => void;
   deleteInterview: (id: string) => void;
   clearError: () => void;
@@ -17,6 +18,7 @@ export const useInterviewStore = create(
     (set) => ({
       interviews: [],
       error: null,
+      isLoading: false,
       addInterview: (values) => {
         set((state) => {
           if (!values.id) {

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { Card } from "@/components/ui/card";
 import { AtsList } from "@/components/main/ats/AtsList";
+import { InitAtsStore } from "@/hooks/store/storeProvider";
 
 export const metadata: Metadata = {
   title: "Your Ats | ResumeAI",
@@ -18,6 +19,7 @@ export default async function AtsPage() {
 
   return (
     <main className="relative size-full">
+      <InitAtsStore />
       <Suspense fallback={<ResumeListSkeleton />}>
         <AtsList />
       </Suspense>

@@ -7,6 +7,7 @@ import { atsResult } from "@prisma/client";
 export type AtsStore = {
   ats: atsResult[];
   error: Error | null;
+  isLoading: boolean;
   addAts: (values: atsResult) => void;
   deleteAts: (id: string) => void;
   clearError: () => void;
@@ -17,6 +18,7 @@ export const useAtsStore = create(
     (set) => ({
       ats: [],
       error: null,
+      isLoading: false,
       addAts: (values) => {
         set((state) => {
           if (!values.id) {

@@ -17,15 +17,14 @@ import { FilePen, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { DeleteAts } from "@/actions/prisma.actions";
 import { CreateAtsButton } from "@/components/premium/CreateAtsButton";
+import { TableSkeleton } from "@/components/LoadingSkeleton";
 export function AtsList() {
-  const atsResults = useAtsStore((state) => state.ats);
-  const { toast } = useToast();
+  const { deleteAts, ats: atsResults, isLoading } = useAtsStore();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedAts, setSelectedAts] = useState<Set<string>>(new Set());
 
   const [isPending, startTransition] = useTransition();
-  const { deleteAts } = useAtsStore();
 
   const filteredAtsResult = useMemo(
     () =>
@@ -35,6 +34,7 @@ export function AtsList() {
     [atsResults, searchTerm]
   );
 
+  const { toast } = useToast();
   const handleDelete = async () => {
     startTransition(async () => {
       try {
@@ -73,6 +73,10 @@ export function AtsList() {
       return newSet;
     });
   };
+
+  if (isLoading) {
+    return <TableSkeleton />;
+  }
 
   if (atsResults.length === 0) {
     return <EmptyState />;

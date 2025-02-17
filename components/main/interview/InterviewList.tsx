@@ -18,16 +18,15 @@ import { DeleteInterview } from "@/actions/prisma.actions";
 import { CreateAtsButton } from "@/components/premium/CreateAtsButton";
 import { useInterviewStore } from "@/hooks/store/useInterviewStore";
 import { CreateInterviewButton } from "@/components/premium/CreateInterviewButton";
+import { TableSkeleton } from "@/components/LoadingSkeleton";
 
 export function InterviewList() {
-  const interviews = useInterviewStore((state) => state.interviews);
-  const { toast } = useToast();
-
+  const { deleteInterview, interviews, isLoading } = useInterviewStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGap, setSelectedGap] = useState<Set<string>>(new Set());
 
   const [isPending, startTransition] = useTransition();
-  const { deleteInterview } = useInterviewStore();
+  const { toast } = useToast();
 
   const filteredInterviewResult = useMemo(
     () =>
@@ -76,6 +75,10 @@ export function InterviewList() {
     });
   };
 
+  if (isLoading) {
+    return <TableSkeleton />;
+  }
+
   if (interviews.length === 0) {
     return <EmptyState />;
   }
@@ -104,7 +107,7 @@ export function InterviewList() {
                 onCheckedChange={handleSelectAll}
               />
             </TableHead>
-            <TableHead>Gap</TableHead>
+            <TableHead>Interview</TableHead>
             <TableHead>Last Updated</TableHead>
             <TableHead className="w-[100px]">Actions</TableHead>
           </TableRow>

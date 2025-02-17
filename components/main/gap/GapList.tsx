@@ -18,23 +18,23 @@ import { Input } from "@/components/ui/input";
 import { DeleteGap } from "@/actions/prisma.actions";
 import { CreateAtsButton } from "@/components/premium/CreateAtsButton";
 import { CreateGapButton } from "@/components/premium/CreateGapButton";
+import { TableSkeleton } from "@/components/LoadingSkeleton";
 
 export function GapList() {
-  const gapResults = useGapStore((state) => state.gaps);
+  const { deleteGap, gaps, isLoading } = useGapStore();
   const { toast } = useToast();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGap, setSelectedGap] = useState<Set<string>>(new Set());
 
   const [isPending, startTransition] = useTransition();
-  const { deleteGap } = useGapStore();
 
   const filteredAtsResult = useMemo(
     () =>
-      gapResults.filter((gap) =>
+      gaps.filter((gap) =>
         (gap.title || "").toLowerCase().includes(searchTerm.toLowerCase())
       ),
-    [gapResults, searchTerm]
+    [gaps, searchTerm]
   );
 
   const handleDelete = async () => {
@@ -76,7 +76,11 @@ export function GapList() {
     });
   };
 
-  if (gapResults.length === 0) {
+  if (isLoading) {
+    return <TableSkeleton />;
+  }
+
+  if (gaps.length === 0) {
     return <EmptyState />;
   }
 
