@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { ResumeList } from "@/components/main/Resume/ResumeList";
-import { InitResumesStore } from "@/hooks/store/storeProvider";
 import { TableSkeleton } from "@/components/LoadingSkeleton";
 
 export const metadata: Metadata = {
@@ -20,7 +19,6 @@ export default async function ResumesPage() {
   return (
     <main className="relative size-full">
       <Suspense fallback={<TableSkeleton />}>
-        <InitResumesStore />
         <ResumeList />
       </Suspense>
     </main>

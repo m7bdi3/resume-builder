@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { CoverLetterList } from "@/components/main/coverLetter/CoverLetterList";
-import { InitCoverStore } from "@/hooks/store/storeProvider";
 import { TableSkeleton } from "@/components/LoadingSkeleton";
 
 export const metadata: Metadata = {
@@ -20,7 +19,6 @@ export default async function CoverLetterPage() {
   return (
     <main className="relative w-full max-w-7xl mx-auto p-4 space-y-6">
       <Suspense fallback={<TableSkeleton />}>
-        <InitCoverStore />
         <CoverLetterList />
       </Suspense>
     </main>

@@ -14,6 +14,13 @@ import { ThemeToggle } from "@/components/theme-toggle";
 
 import { ConnectionStatus, NetworkStatus } from "@/components/NetworkStatus";
 import { QueryProviders } from "@/components/QueryProvider";
+import {
+  InitAtsStore,
+  InitCoverStore,
+  InitGapStore,
+  InitInterviewStore,
+  InitResumesStore,
+} from "@/hooks/store/storeProvider";
 
 export default async function ResumesLayout({
   children,
@@ -45,6 +52,11 @@ export default async function ResumesLayout({
             <main className="flex-grow overflow-auto p-6 mt-[3rem] size-full">
               {children}
             </main>
+            <InitResumesStore />
+            <InitCoverStore />
+            <InitAtsStore />
+            <InitGapStore />
+            <InitInterviewStore />
             <NetworkStatus />
             <ConnectionStatus />
           </SidebarInset>
