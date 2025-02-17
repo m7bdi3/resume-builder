@@ -1,15 +1,16 @@
 import CTA from "@/components/landing/cta";
 import FAQ from "@/components/landing/faq";
-import Features from "@/components/landing/features";
+import { Features } from "@/components/landing/features";
 import Footer from "@/components/landing/footer";
 import Header from "@/components/landing/header";
 import HeroGeometric from "@/components/landing/heroWithShapes";
 import HowItWorks from "@/components/landing/how-it-works";
+import ScrollToTopButton from "@/components/landing/scroll-to-top-button";
 import Testimonials from "@/components/landing/testimonials";
 
 export default function Home() {
   return (
-    <div className="min-h-screen h-full w-full relative mx-auto">
+    <div className="min-h-screen h-full w-full relative mx-auto bg-gradient-to-b from-background via-background to-muted/30">
       <Header />
       <HeroGeometric />
       <Features />
@@ -18,6 +19,7 @@ export default function Home() {
       <FAQ />
       <CTA />
       <Footer />
+      <ScrollToTopButton />
     </div>
   );
 }

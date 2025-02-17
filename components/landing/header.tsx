@@ -45,7 +45,7 @@ export default function Header() {
             asChild
             className="hidden md:flex rounded-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-primary/20"
           >
-            <Link href="/resumes">Get Started</Link>
+            <Link href="/dashboard">Get Started</Link>
           </Button>
         </div>
       </div>
