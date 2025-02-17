@@ -72,7 +72,7 @@ export function DashboardComponent() {
             </p>
           </div>
           <Button asChild>
-            <Link href="/dashboard/new">
+            <Link href="/dashboard/resumes/editor">
               <PlusCircle className="mr-2 h-4 w-4" />
               New Resume
             </Link>

@@ -1,11 +1,11 @@
 import { Metadata } from "next";
-import { ResumeEditor } from "@/components/main/Resume/ResumeEditor";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { resumeDataInclude } from "@/lib/types";
 import { Suspense } from "react";
 
-export const metdata: Metadata = {
+import { ResumeEditor } from "@/components/main/Resume/ResumeEditor";
+export const metadata: Metadata = {
   title: "Design your resume",
 };
 
