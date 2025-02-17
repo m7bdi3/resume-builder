@@ -19,7 +19,7 @@ const TableRowSkeleton = () => (
 
 export function TableSkeleton() {
   return (
-    <div className="w-full overflow-hidden rounded-lg border  shadow-sm ">
+    <div className="size-full overflow-hidden rounded-lg border container mx-auto shadow-sm max-h-screen">
       <div className="overflow-x-auto">
         <table className="w-full table-auto">
           <thead className="">

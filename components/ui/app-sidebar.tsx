@@ -50,7 +50,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenu>
         </SidebarGroup>
         <NavMain pathname={pathname} items={data.navMain} />
-        <NavMain pathname={pathname} items={data.Latest} />
       </SidebarContent>
       <SidebarFooter>
         <UserNavButton />

@@ -1,6 +1,5 @@
 import {
   Bot,
-  CreditCard,
   FileText,
   Podcast,
   SquareTerminal,
@@ -10,22 +9,13 @@ export const data = {
   navMain: [
     {
       title: "Resumes",
-      url: "#",
+      url: "/dashboard/resumes",
       icon: SquareTerminal,
-      items: [
-        { title: "All Resumes", url: "/dashboard/resumes" },
-        { title: "Starred", url: "/dashboard/resumes/star" },
-        { title: "Generate New", url: "/dashboard/resumes/editor" },
-      ],
     },
     {
       title: "Cover Letters",
-      url: "#",
+      url: "/dashboard/coverletters",
       icon: FileText,
-      items: [
-        { title: "All Cover Letters", url: "/dashboard/coverletters" },
-        { title: "Generate New", url: "/dashboard/coverletters/editor" },
-      ],
     },
     {
       title: "AI Tools",
@@ -37,13 +27,7 @@ export const data = {
         { title: "Interview Q&A", url: "/dashboard/interview" },
       ],
     },
-  ],
-  Latest: [
-    {
-      title: "Billing",
-      url: "/dashboard/billing",
-      icon: CreditCard,
-    },
+    
     {
       title: "Blog",
       url: "/dashboard/blog",
