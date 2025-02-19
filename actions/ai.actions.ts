@@ -115,7 +115,7 @@ export async function generateSkills(input: GenerateSummaryInput) {
   const prompt = `
 You are an AI specializing in resume optimization. 
 Review the user's data below (including their current skills, work experience, education, and job description) 
-to generate a **concise, updated list of skills** that will best match the job requirements and the user’s background.
+to generate **separate lists of soft skills and technical skills** that will best match the job requirements and the user’s background.
 
 ### Data Provided:
 - **Job Title**: ${jobTitle || ""}
@@ -140,7 +140,8 @@ ${educations
   `
   )
   .join("\n")}
-- **Current Skills**: ${softSkills?.join(", ") || ""} ${technicalSkills?.join(", ") || ""}
+- **Current Soft Skills**: ${softSkills?.join(", ") || ""}
+- **Current Technical Skills**: ${technicalSkills?.join(", ") || ""}
 ${
   jobDescription && jobDescription.trim().length > 0
     ? `- **Job Description**: ${jobDescription}`
@@ -148,22 +149,27 @@ ${
 }
 
 ### Instructions:
-1. **Analyze** the user’s existing skills, experience, and (if available) the job description.
-2. **Refine** or **expand** the skill list to align with the job requirements:
-   - Focus on real skills evident from the user’s background.
-   - Add relevant keywords only if they are logically supported by the user’s data or typical to their role.
-3. **Output** must be a **JSON array** of strings (e.g., ["Skill One", "Skill Two"]) with:
-   - No duplicates
-   - No filler text or disclaimers
-   - No code fences (\`\`\`) or extra keys
+1. **Analyze** the user's existing skills, experience, and job description (if provided).
+2. **Categorize** skills into:
+   - Soft Skills: Interpersonal skills, leadership, communication, etc.
+   - Technical Skills: Tools, technologies, hard skills, etc.
+3. **Enhance** skills based on:
+   - Actual experience from work/education
+   - Job description requirements
+   - Industry-standard keywords for ATS optimization
+4. **Output Requirements**:
+   - Valid JSON object with two arrays: softSkills and technicalSkills
+   - No duplicates in either array
+   - No commentary or explanations
+   - No markdown formatting
 
-4. **No Additional Explanation**:
-   - Do not include any commentary or disclaimers in the response—**only** output the JSON array.
-   Return only a JSON array of strings—beginning immediately with [, with no prefix like json or code fences. Do not include backticks, the word ‘json’, or any other text.
+Example Output Format:
+{
+  "softSkills": ["Team Leadership", "Agile Methodologies"],
+  "technicalSkills": ["Python", "AWS", "React"]
+}
 
-Your goal: Return a curated list of resume skills, suitable for ATS scanning, strictly as a JSON array of strings without any additional text.
-
-
+Return ONLY the JSON object without any additional text or formatting. Begin with { and end with }.
 `;
 
   try {
@@ -171,24 +177,34 @@ Your goal: Return a curated list of resume skills, suitable for ATS scanning, st
     const response = await result.response;
     let aiResponse = response.text().trim();
 
-    aiResponse = aiResponse.replace(/^json\s*/i, "");
-
-    aiResponse = aiResponse.replace(/```/g, "").trim();
+    // Clean response
+    aiResponse = aiResponse
+      .replace(/^json\s*/i, "")
+      .replace(/```/g, "")
+      .trim();
 
     try {
       const parsed = JSON.parse(aiResponse);
-      return parsed;
+      
+      // Validate response structure
+      if (
+        !Array.isArray(parsed.softSkills) ||
+        !Array.isArray(parsed.technicalSkills)
+      ) {
+        throw new Error("Invalid skills structure from AI");
+      }
+
+      return {
+        softSkills: parsed.softSkills || [],
+        technicalSkills: parsed.technicalSkills || []
+      };
     } catch (error) {
-      console.error(
-        "Parsing AI response as JSON array failed:",
-        error,
-        aiResponse
-      );
-      throw new Error("Invalid JSON array response from AI.");
+      console.error("Failed to parse AI response:", error, aiResponse);
+      throw new Error("Invalid skills format from AI");
     }
   } catch (error) {
-    console.error("Gemini API Error:", error);
-    throw new Error("Failed to generate skills. Please try again.");
+    console.error("Generation error:", error);
+    throw new Error("Skills generation failed. Please try again.");
   }
 }
 

@@ -8,7 +8,10 @@ import { useState } from "react";
 
 interface Props {
   resumeData: ResumeValues;
-  onSkillsGenerated: (summary: string[]) => void;
+  onSkillsGenerated: (skills: {
+    softSkills: string[];
+    technicalSkills: string[];
+  }) => void;
 }
 
 export const GenerateSkillsButton = ({

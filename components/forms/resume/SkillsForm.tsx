@@ -76,7 +76,7 @@ export function SkillsForm({ resumeData, setResumeData }: EditorFormProps) {
                 <GenerateSkillsButton
                   resumeData={resumeData}
                   onSkillsGenerated={(skills) =>
-                    form.setValue("technicalSkills", skills)
+                    form.setValue("technicalSkills", skills.technicalSkills)
                   }
                 />
                 <FormMessage />
@@ -106,7 +106,7 @@ export function SkillsForm({ resumeData, setResumeData }: EditorFormProps) {
                 <GenerateSkillsButton
                   resumeData={resumeData}
                   onSkillsGenerated={(skills) =>
-                    form.setValue("softSkills", skills)
+                    form.setValue("softSkills", skills.softSkills)
                   }
                 />
                 <FormMessage />
