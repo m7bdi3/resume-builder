@@ -15,6 +15,8 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { ConnectionStatus, NetworkStatus } from "@/components/NetworkStatus";
 import { QueryProviders } from "@/components/QueryProvider";
 import { InitStores } from "@/hooks/store/storeProvider";
+import { dehydrate, QueryClient } from "@tanstack/react-query";
+import { getAllData } from "@/actions/prisma.actions";
 
 export default async function ResumesLayout({
   children,
@@ -27,8 +29,14 @@ export default async function ResumesLayout({
     redirect("/sign-in");
   }
 
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: ["allData"],
+    queryFn: getAllData,
+  });
+
   return (
-    <QueryProviders>
+    <QueryProviders dehydratedState={dehydrate(queryClient)}>
       <SidebarProvider>
         <div className="flex h-screen overflow-hidden  w-full">
           <AppSidebar />
