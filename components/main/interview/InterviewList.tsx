@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useTransition } from "react";
+import { useState, useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -10,23 +10,23 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useToast } from "@/hooks/use-toast";
 import { InterviewRow } from "./InterviewRow";
 import { FilePen, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { DeleteInterview } from "@/actions/prisma.actions";
 import { CreateAtsButton } from "@/components/premium/CreateAtsButton";
 import { useInterviewStore } from "@/hooks/store/useInterviewStore";
 import { CreateInterviewButton } from "@/components/premium/CreateInterviewButton";
 import { TableSkeleton } from "@/components/LoadingSkeleton";
+import { DeleteDialog } from "../DeleteDialog";
 
 export function InterviewList() {
-  const { deleteInterview, interviews, isLoading } = useInterviewStore();
+  const { interviews, isLoading } = useInterviewStore();
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedGap, setSelectedGap] = useState<Set<string>>(new Set());
-
-  const [isPending, startTransition] = useTransition();
-  const { toast } = useToast();
+  const [pending, setIsPending] = useState(false);
+  const [selectedInterview, setSelectedInterview] = useState<Set<string>>(
+    new Set()
+  );
+  const [showDelete, setShowDelete] = useState(false);
 
   const filteredInterviewResult = useMemo(
     () =>
@@ -36,35 +36,16 @@ export function InterviewList() {
     [interviews, searchTerm]
   );
 
-  const handleDelete = async () => {
-    startTransition(async () => {
-      try {
-        for (const id of selectedGap) {
-          await DeleteInterview(id);
-          deleteInterview(id);
-        }
-        setSelectedGap(new Set());
-        toast({ description: "Interview deleted successfully" });
-      } catch (error) {
-        console.error(error);
-        toast({
-          variant: "destructive",
-          description: "Failed to delete interview results.",
-        });
-      }
-    });
-  };
-
   const handleSelectAll = () => {
-    setSelectedGap((prev) =>
+    setSelectedInterview((prev) =>
       prev.size === filteredInterviewResult.length
         ? new Set()
         : new Set(filteredInterviewResult.map((r) => r.id))
     );
   };
 
-  const handleSelectResume = (id: string) => {
-    setSelectedGap((prev) => {
+  const handleSelect = (id: string) => {
+    setSelectedInterview((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(id)) {
         newSet.delete(id);
@@ -91,11 +72,19 @@ export function InterviewList() {
           <CreateAtsButton />
           <Button
             variant="destructive"
-            onClick={handleDelete}
-            disabled={selectedGap.size === 0 || isPending}
+            onClick={() => setShowDelete(true)}
+            disabled={selectedInterview.size === 0 || pending}
           >
             Delete
           </Button>
+          <DeleteDialog
+            ids={Array.from(selectedInterview)}
+            open={showDelete}
+            onOpenChange={setShowDelete}
+            type="interview"
+            onSelect={() => setSelectedInterview(new Set())}
+            onPending={setIsPending}
+          />
         </div>
       </div>
       <Table>
@@ -103,7 +92,9 @@ export function InterviewList() {
           <TableRow>
             <TableHead className="w-[50px]">
               <Checkbox
-                checked={selectedGap.size === filteredInterviewResult.length}
+                checked={
+                  selectedInterview.size === filteredInterviewResult.length
+                }
                 onCheckedChange={handleSelectAll}
               />
             </TableHead>
@@ -117,9 +108,9 @@ export function InterviewList() {
             <InterviewRow
               key={interview.id}
               interview={interview}
-              isSelected={selectedGap.has(interview.id)}
-              onSelect={() => handleSelectResume(interview.id)}
-              isPending={isPending}
+              isSelected={selectedInterview.has(interview.id)}
+              onSelect={() => handleSelect(interview.id)}
+              isPending={pending}
             />
           ))}
         </TableBody>

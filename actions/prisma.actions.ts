@@ -236,7 +236,7 @@ export async function DeleteInterview(id: string) {
   }
 }
 
-export async function deleteResume(id: string) {
+export async function DeleteResume(id: string) {
   const { userId } = await auth();
 
   if (!userId) {
@@ -265,6 +265,38 @@ export async function deleteResume(id: string) {
   } catch (error) {
     console.error("Error deleting resume:", error);
     throw new Error("Failed to delete resume. Please try again later.");
+  }
+}
+
+export async function DeleteCover(id: string) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("user not authenticated.");
+  }
+  const resume = withRetry(async () => {
+    return await prisma.coverLetter.findUnique({
+      where: {
+        userId,
+        id,
+      },
+    });
+  });
+
+  if (!resume) {
+    throw new Error("No Cover found for the given ID and user.");
+  }
+
+  try {
+    return withRetry(async () => {
+      const deletedCover = await prisma.coverLetter.delete({
+        where: { userId, id },
+      });
+      return deletedCover;
+    });
+  } catch (error) {
+    console.error("Error deleting cover:", error);
+    throw new Error("Failed to delete cover. Please try again later.");
   }
 }
 
