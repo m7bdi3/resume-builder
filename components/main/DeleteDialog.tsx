@@ -31,9 +31,9 @@ interface DeleteProps {
   ids?: string[];
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  onSelect: () => void;
+  onSelect?: () => void;
   type: "resume" | "letter" | "ats" | "gap" | "interview";
-  onPending: (isPending: boolean) => void;
+  onPending?: (isPending: boolean) => void;
 }
 
 const typeLabels = {
@@ -87,7 +87,7 @@ export const DeleteDialog = ({
     const { action, store } = getDeleteHandler();
     const isBulkDelete = selectedIds.length > 1;
 
-    onPending(true);
+    onPending?.(true);
     startTransition(async () => {
       try {
         // Handle both single and bulk delete
@@ -100,7 +100,7 @@ export const DeleteDialog = ({
         }
 
         onOpenChange?.(false);
-        onSelect();
+        onSelect?.();
         toast({
           description: isBulkDelete
             ? `${selectedIds.length} ${typeLabels[type]}s deleted successfully`
@@ -113,7 +113,7 @@ export const DeleteDialog = ({
           description: `Failed to delete ${isBulkDelete ? "items" : typeLabels[type].toLowerCase()}`,
         });
       } finally {
-        onPending(false);
+        onPending?.(false);
       }
     });
   }

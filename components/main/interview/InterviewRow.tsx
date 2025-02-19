@@ -12,7 +12,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { InterviewResult } from "@prisma/client";
-import { DeleteInterviewDialog } from "./DeleteInterviewDiaog";
+import { DeleteDialog } from "../DeleteDialog";
 
 interface InterviewRowProps {
   interview: InterviewResult;
@@ -76,10 +76,11 @@ export function InterviewRow({
           </DropdownMenuContent>
         </DropdownMenu>
       </TableCell>
-      <DeleteInterviewDialog
+      <DeleteDialog
         id={interview.id}
         open={showDelete}
         onOpenChange={setShowDelete}
+        type="interview"
       />
     </TableRow>
   );
