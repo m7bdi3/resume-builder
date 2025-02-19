@@ -27,11 +27,6 @@ export const steps: {
     key: "personal-info",
   },
   {
-    title: "Summary",
-    component: SummaryForm,
-    key: "summary",
-  },
-  {
     title: "Additional Info",
     component: AdditionalInfoForm,
     key: "additional-info",
@@ -65,5 +60,10 @@ export const steps: {
     title: "References",
     component: RefrencesForm,
     key: "references",
+  },
+  {
+    title: "Summary",
+    component: SummaryForm,
+    key: "summary",
   },
 ];

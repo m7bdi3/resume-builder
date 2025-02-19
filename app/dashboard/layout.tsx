@@ -17,6 +17,7 @@ import { QueryProviders } from "@/components/QueryProvider";
 import { InitStores } from "@/hooks/store/storeProvider";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { getAllData } from "@/actions/prisma.actions";
+import { cookies } from "next/headers";
 
 export default async function ResumesLayout({
   children,
@@ -35,9 +36,12 @@ export default async function ResumesLayout({
     queryFn: getAllData,
   });
 
+  const cookieStore = await cookies();
+  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+
   return (
     <QueryProviders dehydratedState={dehydrate(queryClient)}>
-      <SidebarProvider>
+      <SidebarProvider defaultOpen={defaultOpen}>
         <div className="flex h-screen overflow-hidden  w-full">
           <AppSidebar />
           <SidebarInset>

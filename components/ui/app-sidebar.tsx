@@ -20,7 +20,6 @@ import { data } from "@/lib/sidebar";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
-
   return (
     <Sidebar
       collapsible="icon"

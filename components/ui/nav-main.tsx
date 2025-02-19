@@ -75,7 +75,7 @@ export function NavMain({
                     tooltip={item.title}
                     asChild
                   >
-                    <Link href={item.url}>
+                    <Link href={item.url} onClick={() => setOpen(false)}>
                       {item.icon && <item.icon />}
                       <span>{item.title}</span>
                     </Link>
@@ -87,7 +87,7 @@ export function NavMain({
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
                       <SidebarMenuSubButton asChild>
-                        <Link href={subItem.url}>
+                        <Link href={subItem.url} onClick={() => setOpen(false)}>
                           <span>{subItem.title}</span>
                         </Link>
                       </SidebarMenuSubButton>
