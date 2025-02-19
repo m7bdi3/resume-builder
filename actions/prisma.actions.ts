@@ -273,3 +273,14 @@ export async function getResumesCount(userId: string): Promise<number> {
     return prisma.resume.count({ where: { userId } });
   });
 }
+
+export async function getAllData() {
+  const [resumes, covers, ats, gaps, interviews] = await Promise.all([
+    getAllResumes(),
+    getAllCovers(),
+    getAllAts(),
+    getAllGaps(),
+    getAllInterview(),
+  ]);
+  return { resumes, covers, ats, gaps, interviews };
+}
