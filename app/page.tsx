@@ -10,7 +10,7 @@ import Testimonials from "@/components/landing/testimonials";
 
 export default function Home() {
   return (
-    <div className="min-h-screen h-full w-full relative mx-auto bg-gradient-to-b from-background via-background to-muted/30">
+    <div className="min-h-screen h-full w-full relative mx-auto">
       <Header />
       <HeroGeometric />
       <Features />
