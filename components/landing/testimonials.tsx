@@ -1,7 +1,7 @@
 "use client";
+import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { motion } from "framer-motion";
 
 const testimonials = [
   {
@@ -42,8 +42,7 @@ export default function Testimonials() {
             Success Stories
           </h2>
           <p className="text-muted-foreground text-lg">
-            Join thousands of professionals who transformed their careers with
-            D3
+            Join thousands of professionals who transformed their careers with D3
           </p>
         </motion.div>
 
@@ -56,16 +55,16 @@ export default function Testimonials() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
             >
-              <Card className="relative border-2 hover:border-primary/20 transition-all duration-300 shadow-sm hover:shadow-md overflow-hidden group">
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-primary/50" />
+              <Card className="relative h-full border-2 hover:border-primary/20 transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-primary/5 overflow-hidden group">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-primary/50 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
                 <CardHeader>
                   <div className="flex items-center space-x-4">
-                    <Avatar className="w-14 h-14 border-2 border-primary/20">
+                    <Avatar className="w-14 h-14 border-2 border-primary/20 group-hover:border-primary/40 transition-colors duration-300">
                       <AvatarImage
                         src={testimonial.avatar}
                         alt={testimonial.name}
                       />
-                      <AvatarFallback className="bg-primary/10">
+                      <AvatarFallback className="bg-primary/10 text-primary/80">
                         {testimonial.name
                           .split(" ")
                           .map((n) => n[0])
@@ -76,7 +75,7 @@ export default function Testimonials() {
                       <CardTitle className="group-hover:text-primary transition-colors duration-300">
                         {testimonial.name}
                       </CardTitle>
-                      <p className="text-sm text-muted-foreground font-medium">
+                      <p className="text-sm text-muted-foreground font-medium group-hover:text-muted-foreground/80 transition-colors duration-300">
                         {testimonial.role}
                       </p>
                     </div>
@@ -84,10 +83,10 @@ export default function Testimonials() {
                 </CardHeader>
                 <CardContent>
                   <div className="relative pl-6">
-                    <span className="absolute left-0 top-0 text-3xl text-primary/30 font-serif">
-                      &qout;
+                    <span className="absolute left-0 top-0 text-3xl text-primary/30 font-serif group-hover:text-primary/40 transition-colors duration-300">
+                      &quot;
                     </span>
-                    <p className="text-muted-foreground leading-relaxed">
+                    <p className="text-muted-foreground leading-relaxed group-hover:text-muted-foreground/90 transition-colors duration-300">
                       {testimonial.content}
                     </p>
                   </div>

@@ -19,7 +19,7 @@ function ElegantShape({
   width = 400,
   height = 100,
   rotate = 0,
-  gradient = "from-primary/20",
+  gradient = "from-primary/30",
 }: {
   className?: string;
   delay?: number;
@@ -98,11 +98,11 @@ export default function HeroGeometric({
 
   return (
     <section
-      className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-background text-foreground"
+      className="relative min-h-[90vh] lg:min-h-screen w-full flex items-center justify-center overflow-hidden bg-background text-foreground"
       aria-label="Hero section"
     >
       <div
-        className="absolute inset-0 bg-gradient-to-t from-[var(--gradient-start)] via-transparent to-[var(--gradient-end)] blur-3xl"
+        className="absolute inset-0 bg-gradient-to-t from-[var(--gradient-start)] via-transparent to-[var(--gradient-end)] blur-3xl opacity-75"
         aria-hidden="true"
       />
 
@@ -113,7 +113,7 @@ export default function HeroGeometric({
           height={140}
           rotate={12}
           gradient="from-primary/20"
-          className="left-[-10%] md:left-[-5%] top-[15%] md:top-[20%]"
+          className="left-[-15%] sm:left-[-10%] md:left-[-5%] top-[15%] md:top-[20%] opacity-90"
         />
         <ElegantShape
           delay={0.5}
@@ -121,7 +121,7 @@ export default function HeroGeometric({
           height={120}
           rotate={-15}
           gradient="from-secondary/20"
-          className="right-[-5%] md:right-[0%] top-[70%] md:top-[75%]"
+          className="right-[-10%] sm:right-[-5%] md:right-[0%] top-[70%] md:top-[75%] opacity-85"
         />
         <ElegantShape
           delay={0.4}
@@ -129,7 +129,7 @@ export default function HeroGeometric({
           height={80}
           rotate={-8}
           gradient="from-accent/20"
-          className="left-[5%] md:left-[10%] bottom-[5%] md:bottom-[10%]"
+          className="left-[2%] sm:left-[5%] md:left-[10%] bottom-[5%] md:bottom-[10%] opacity-80"
         />
         <ElegantShape
           delay={0.6}
@@ -137,7 +137,7 @@ export default function HeroGeometric({
           height={60}
           rotate={20}
           gradient="from-primary/20"
-          className="right-[15%] md:right-[20%] top-[10%] md:top-[15%]"
+          className="right-[10%] sm:right-[15%] md:right-[20%] top-[10%] md:top-[15%] opacity-75"
         />
         <ElegantShape
           delay={0.7}
@@ -145,7 +145,7 @@ export default function HeroGeometric({
           height={40}
           rotate={-25}
           gradient="from-secondary/20"
-          className="left-[20%] md:left-[25%] top-[5%] md:top-[10%]"
+          className="left-[15%] sm:left-[20%] md:left-[25%] top-[5%] md:top-[10%] opacity-70"
         />
       </div>
 
@@ -192,25 +192,18 @@ export default function HeroGeometric({
             initial="hidden"
             animate="visible"
           >
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-8">
+            <div className="flex flex-col sm:flex-row items-center justify-center mt-8">
               <Button
                 size="lg"
-                className="px-8 py-7 rounded-full bg-gradient-to-r from-primary to-primary/90
+                className="px-12 py-8 rounded-full bg-gradient-to-r from-primary to-primary/90
                            hover:from-primary/90 hover:to-primary text-primary-foreground
-                           shadow-xl hover:shadow-primary/30 transition-all group"
+                           shadow-xl hover:shadow-primary/30 transition-all duration-300 transform hover:scale-105 group"
                 asChild
               >
                 <Link href="/resumes">
                   Start Free Now
                   <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Link>
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="px-8 py-7 rounded-full border-2 transition-all"
-              >
-                See Examples
               </Button>
             </div>
           </motion.div>

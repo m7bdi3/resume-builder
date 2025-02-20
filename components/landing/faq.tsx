@@ -1,37 +1,28 @@
 "use client";
+import { motion } from "framer-motion";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { motion } from "framer-motion";
 
 const faqs = [
   {
-    question: "How does D3 use AI to create resumes?",
-    answer:
-      "D3 uses advanced natural language processing to analyze your input and generate optimized content for your resume. It considers industry standards, job requirements, and best practices to create a tailored, professional resume that highlights your strengths and experiences.",
+    question: "How does the AI-powered resume builder work?",
+    answer: "Our AI analyzes your input and industry standards to create optimized, ATS-friendly resumes. It suggests improvements, formats content professionally, and provides real-time feedback.",
   },
   {
-    question: "Is my data safe with D3?",
-    answer:
-      "Absolutely. We take data privacy very seriously. All your information is encrypted and stored securely using industry-standard protocols. We never share your personal data with third parties without your explicit consent. Your privacy and security are our top priorities.",
+    question: "Is my data secure?",
+    answer: "Yes, we take data security seriously. All your information is encrypted and stored securely. We never share your personal data with third parties.",
   },
   {
-    question: "Can I use D3 for free?",
-    answer:
-      "Yes, we offer a free Basic plan that allows you to create one resume with access to our AI-powered suggestions and basic templates. This is a great way to try out our service and see how D3 can help you create a standout resume.",
+    question: "Can I export my resume in different formats?",
+    answer: "Yes, you can export your resume in PDF, DOCX, and other professional formats. Each format is optimized for both digital and print use.",
   },
   {
-    question: "How often can I update my resume?",
-    answer:
-      "You can update your resume as often as you like. We encourage users to keep their resumes up-to-date with their latest experiences and skills. Our AI-powered system makes it easy to make quick updates and improvements to your resume at any time.",
-  },
-  {
-    question: "Does D3 offer refunds?",
-    answer:
-      "Yes, we offer a 30-day money-back guarantee for our paid plans. If you're not satisfied with our service, you can request a full refund within 30 days of your purchase. We're confident in the value we provide, but we want you to feel secure in your decision to use D3.",
+    question: "What makes D3 different from other resume builders?",
+    answer: "D3 combines AI technology with real-time ATS scoring, providing instant feedback and optimization suggestions. Our platform ensures your resume stands out while meeting industry standards.",
   },
 ];
 
@@ -62,16 +53,16 @@ export default function FAQ() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           viewport={{ once: true }}
-          className="max-w-3xl mx-auto border-2 rounded-xl bg-background shadow-sm"
+          className="max-w-3xl mx-auto border-2 rounded-xl bg-background/50 backdrop-blur-sm shadow-lg"
         >
           <Accordion type="single" collapsible className="w-full">
             {faqs.map((faq, index) => (
               <AccordionItem
                 key={index}
                 value={`item-${index}`}
-                className="border-b-2 last:border-b-0"
+                className="group border-b-2 last:border-b-0 transition-colors duration-300 hover:bg-muted/5"
               >
-                <AccordionTrigger className="flex w-full items-center justify-between px-6 py-4 text-left hover:bg-muted/50 transition-colors">
+                <AccordionTrigger className="flex w-full items-center justify-between px-6 py-4 text-left transition-all duration-300 group-hover:text-primary">
                   <span className="font-medium text-base">{faq.question}</span>
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-4 pt-2 text-muted-foreground leading-relaxed">
@@ -90,7 +81,7 @@ export default function FAQ() {
           className="mt-8 text-center text-sm text-muted-foreground"
         >
           Still have questions?{" "}
-          <a href="#contact" className="text-primary hover:underline">
+          <a href="#contact" className="text-primary hover:underline transition-colors duration-300">
             Contact our support team
           </a>
         </motion.div>
