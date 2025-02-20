@@ -11,22 +11,21 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { InterviewRow } from "./InterviewRow";
-import { FilePen, Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { CreateAtsButton } from "@/components/premium/CreateAtsButton";
 import { useInterviewStore } from "@/hooks/store/useInterviewStore";
-import { CreateInterviewButton } from "@/components/premium/CreateInterviewButton";
 import { TableSkeleton } from "@/components/LoadingSkeleton";
 import { DeleteDialog } from "../DeleteDialog";
+import { SearchInput } from "../SearchInput";
+import { EmptyState } from "../EmptyState";
+import { CreateInterviewButton } from "@/components/premium/CreateInterviewButton";
 
 export function InterviewList() {
   const { interviews, isLoading } = useInterviewStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [pending, setIsPending] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
   const [selectedInterview, setSelectedInterview] = useState<Set<string>>(
     new Set()
   );
-  const [showDelete, setShowDelete] = useState(false);
 
   const filteredInterviewResult = useMemo(
     () =>
@@ -61,15 +60,19 @@ export function InterviewList() {
   }
 
   if (interviews.length === 0) {
-    return <EmptyState />;
+    return <EmptyState type="interview" />;
   }
 
   return (
     <div className="space-y-4 w-full">
       <div className="flex justify-between items-center w-full gap-4">
-        <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        <SearchInput
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          title="interviews"
+        />
         <div className="flex items-center gap-3">
-          <CreateAtsButton />
+          <CreateInterviewButton />
           <Button
             variant="destructive"
             onClick={() => setShowDelete(true)}
@@ -115,40 +118,6 @@ export function InterviewList() {
           ))}
         </TableBody>
       </Table>
-    </div>
-  );
-}
-
-function EmptyState() {
-  return (
-    <div className="flex flex-col items-center justify-center gap-4 h-[50vh] text-center">
-      <FilePen className="h-12 w-12 text-muted-foreground" />
-      <div className="space-y-1.5">
-        <h3 className="text-lg font-semibold">No result found</h3>
-        <p className="text-sm text-muted-foreground">
-          Get started by creating a new Interview Q&A
-        </p>
-      </div>
-      <CreateInterviewButton />
-    </div>
-  );
-}
-
-interface SearchInputProps {
-  searchTerm: string;
-  setSearchTerm: (term: string) => void;
-}
-
-function SearchInput({ searchTerm, setSearchTerm }: SearchInputProps) {
-  return (
-    <div className="relative w-[70%]">
-      <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-      <Input
-        placeholder="Search..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="pl-8"
-      />
     </div>
   );
 }

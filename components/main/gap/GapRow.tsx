@@ -12,7 +12,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { GapResult } from "@prisma/client";
-import { DeleteGapDialog } from "./DeleteGapDiaog";
+import { DeleteDialog } from "../DeleteDialog";
 
 interface AtsRowProps {
   gap: GapResult;
@@ -69,10 +69,11 @@ export function GapRow({ gap, isSelected, onSelect, isPending }: AtsRowProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </TableCell>
-      <DeleteGapDialog
+      <DeleteDialog
         id={gap.id}
         open={showDelete}
         onOpenChange={setShowDelete}
+        type="gap"
       />
     </TableRow>
   );

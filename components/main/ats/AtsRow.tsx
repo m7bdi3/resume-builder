@@ -12,7 +12,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { atsResult } from "@prisma/client";
-import { DeleteAtsDialog } from "./DeleteAtsDiaog";
+import { DeleteDialog } from "../DeleteDialog";
 
 interface AtsRowProps {
   ats: atsResult;
@@ -69,10 +69,11 @@ export function AtsRow({ ats, isSelected, onSelect, isPending }: AtsRowProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </TableCell>
-      <DeleteAtsDialog
+      <DeleteDialog
         id={ats.id}
         open={showDelete}
         onOpenChange={setShowDelete}
+        type="ats"
       />
     </TableRow>
   );

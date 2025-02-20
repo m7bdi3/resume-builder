@@ -13,9 +13,9 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { ResumePreview } from "@/components/main/Resume/ResumePreview/ResumePreview";
-import { DeleteDialog } from "@/components/main/DeleteResumeDiaog";
 import { mapToResumeValues } from "@/lib/utils";
 import type { ResumeServerData } from "@/lib/types";
+import { DeleteDialog } from "../DeleteDialog";
 
 interface ResumeRowProps {
   resume: ResumeServerData;
@@ -104,7 +104,7 @@ export function ResumeRow({
         id={resume.id}
         open={showDelete}
         onOpenChange={setShowDelete}
-        isResume
+        type="resume"
       />
     </TableRow>
   );

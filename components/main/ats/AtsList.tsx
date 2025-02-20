@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useTransition } from "react";
+import { useState, useMemo } from "react";
 import { useAtsStore } from "@/hooks/store/useAtsStore";
 import {
   Table,
@@ -11,20 +11,19 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useToast } from "@/hooks/use-toast";
 import { AtsRow } from "./AtsRow";
-import { FilePen, Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { DeleteAts } from "@/actions/prisma.actions";
 import { CreateAtsButton } from "@/components/premium/CreateAtsButton";
 import { TableSkeleton } from "@/components/LoadingSkeleton";
+import { DeleteDialog } from "../DeleteDialog";
+import { SearchInput } from "../SearchInput";
+import { EmptyState } from "../EmptyState";
 export function AtsList() {
-  const { deleteAts, ats: atsResults, isLoading } = useAtsStore();
+  const { ats: atsResults, isLoading } = useAtsStore();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedAts, setSelectedAts] = useState<Set<string>>(new Set());
-
-  const [isPending, startTransition] = useTransition();
+  const [pending, setIsPending] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
 
   const filteredAtsResult = useMemo(
     () =>
@@ -33,26 +32,6 @@ export function AtsList() {
       ),
     [atsResults, searchTerm]
   );
-
-  const { toast } = useToast();
-  const handleDelete = async () => {
-    startTransition(async () => {
-      try {
-        for (const id of selectedAts) {
-          await DeleteAts(id);
-          deleteAts(id);
-        }
-        setSelectedAts(new Set());
-        toast({ description: "Ats deleted successfully" });
-      } catch (error) {
-        console.error(error);
-        toast({
-          variant: "destructive",
-          description: "Failed to delete ats results.",
-        });
-      }
-    });
-  };
 
   const handleSelectAll = () => {
     setSelectedAts((prev) =>
@@ -79,22 +58,34 @@ export function AtsList() {
   }
 
   if (atsResults.length === 0) {
-    return <EmptyState />;
+    return <EmptyState type="ats" />;
   }
 
   return (
     <div className="space-y-4 w-full">
       <div className="flex justify-between items-center w-full gap-4">
-        <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        <SearchInput
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          title="ats documents"
+        />
         <div className="flex items-center gap-3">
           <CreateAtsButton />
           <Button
             variant="destructive"
-            onClick={handleDelete}
-            disabled={selectedAts.size === 0 || isPending}
+            onClick={() => setShowDelete(true)}
+            disabled={selectedAts.size === 0 || pending}
           >
             Delete
           </Button>
+          <DeleteDialog
+            ids={Array.from(selectedAts)}
+            open={showDelete}
+            onOpenChange={setShowDelete}
+            type="ats"
+            onSelect={() => setSelectedAts(new Set())}
+            onPending={setIsPending}
+          />
         </div>
       </div>
       <Table>
@@ -118,45 +109,11 @@ export function AtsList() {
               ats={ats}
               isSelected={selectedAts.has(ats.id)}
               onSelect={() => handleSelectResume(ats.id)}
-              isPending={isPending}
+              isPending={pending}
             />
           ))}
         </TableBody>
       </Table>
-    </div>
-  );
-}
-
-function EmptyState() {
-  return (
-    <div className="flex flex-col items-center justify-center gap-4 h-[50vh] text-center">
-      <FilePen className="h-12 w-12 text-muted-foreground" />
-      <div className="space-y-1.5">
-        <h3 className="text-lg font-semibold">No result found</h3>
-        <p className="text-sm text-muted-foreground">
-          Get started by creating a new Ats
-        </p>
-      </div>
-      <CreateAtsButton />
-    </div>
-  );
-}
-
-interface SearchInputProps {
-  searchTerm: string;
-  setSearchTerm: (term: string) => void;
-}
-
-function SearchInput({ searchTerm, setSearchTerm }: SearchInputProps) {
-  return (
-    <div className="relative w-[70%]">
-      <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-      <Input
-        placeholder="Search..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="pl-8"
-      />
     </div>
   );
 }

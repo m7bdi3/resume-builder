@@ -1,18 +1,9 @@
 "use client";
 
-import {
-  FilePen,
-  MoreVertical,
-  Printer,
-  Search,
-  Trash2,
-  View,
-} from "lucide-react";
-import { CreateResumeButton } from "@/components/premium/CreateResumeButton";
-import { Input } from "@/components/ui/input";
+import { MoreVertical, Printer, Trash2, View } from "lucide-react";
 import { CreateCoverLetterButton } from "@/components/premium/CreateCoverLetterButton";
 import { CoverLetterServerData } from "@/lib/types";
-import { useMemo, useRef, useState, useTransition } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import {
   Table,
@@ -33,27 +24,26 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { DeleteDialog } from "../DeleteResumeDiaog";
 import { useCoverStore } from "@/hooks/store/useCoverStore";
-import { useToast } from "@/hooks/use-toast";
-import { DeleteCover } from "@/actions/forms.actions";
+
 import Link from "next/link";
 import { TableSkeleton } from "@/components/LoadingSkeleton";
+import { DeleteDialog } from "../DeleteDialog";
+import { SearchInput } from "../SearchInput";
+import { EmptyState } from "../EmptyState";
 
 export function CoverLetterList() {
-  const { deleteCover, covers, isLoading } = useCoverStore();
+  const { covers, isLoading } = useCoverStore();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedResumes, setSelectedResumes] = useState<Set<string>>(
-    new Set()
-  );
+  const [selectedCovers, setSelectedCovers] = useState<Set<string>>(new Set());
 
-  const [isPending, startTransition] = useTransition();
+  const [pending, setIsPending] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
 
   const contentRef = useRef<HTMLDivElement>(null!);
 
-  const { toast } = useToast();
-  const filteredResumes = useMemo(
+  const filteredCovers = useMemo(
     () =>
       covers.filter((cover) =>
         (cover.title || "").toLowerCase().includes(searchTerm.toLowerCase())
@@ -61,35 +51,16 @@ export function CoverLetterList() {
     [covers, searchTerm]
   );
 
-  const handleDelete = async () => {
-    startTransition(async () => {
-      try {
-        for (const id of selectedResumes) {
-          await DeleteCover(id);
-          deleteCover(id);
-        }
-        setSelectedResumes(new Set());
-        toast({ description: "Resumes deleted successfully" });
-      } catch (error) {
-        console.error(error);
-        toast({
-          variant: "destructive",
-          description: "Failed to delete covers.",
-        });
-      }
-    });
-  };
-
   const handleSelectAll = () => {
-    setSelectedResumes((prev) =>
-      prev.size === filteredResumes.length
+    setSelectedCovers((prev) =>
+      prev.size === filteredCovers.length
         ? new Set()
-        : new Set(filteredResumes.map((r) => r.id))
+        : new Set(filteredCovers.map((r) => r.id))
     );
   };
 
   const handleSelectResume = (id: string) => {
-    setSelectedResumes((prev) => {
+    setSelectedCovers((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(id)) {
         newSet.delete(id);
@@ -105,22 +76,34 @@ export function CoverLetterList() {
   }
 
   if (covers.length === 0) {
-    return <EmptyState />;
+    return <EmptyState type="letter" />;
   }
 
   return (
     <div className="space-y-4 w-full">
       <div className="flex justify-between items-center w-full gap-4">
-        <SearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        <SearchInput
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          title="covers"
+        />
         <div className="flex items-center gap-3">
-          <CreateResumeButton />
+          <CreateCoverLetterButton />
           <Button
             variant="destructive"
-            onClick={handleDelete}
-            disabled={selectedResumes.size === 0 || isPending}
+            onClick={() => setShowDelete(true)}
+            disabled={selectedCovers.size === 0 || pending}
           >
             Delete
           </Button>
+          <DeleteDialog
+            ids={Array.from(selectedCovers)}
+            open={showDelete}
+            onOpenChange={setShowDelete}
+            type="interview"
+            onSelect={() => setSelectedCovers(new Set())}
+            onPending={setIsPending}
+          />
         </div>
       </div>
       <Table>
@@ -128,7 +111,7 @@ export function CoverLetterList() {
           <TableRow>
             <TableHead className="w-[50px]">
               <Checkbox
-                checked={selectedResumes.size === filteredResumes.length}
+                checked={selectedCovers.size === filteredCovers.length}
                 onCheckedChange={handleSelectAll}
               />
             </TableHead>
@@ -138,14 +121,14 @@ export function CoverLetterList() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredResumes.map((cover) => (
+          {filteredCovers.map((cover) => (
             <CoverRow
               key={cover.id}
               cover={cover}
-              isSelected={selectedResumes.has(cover.id)}
+              isSelected={selectedCovers.has(cover.id)}
               onSelect={() => handleSelectResume(cover.id)}
               contentRef={contentRef}
-              isPending={isPending}
+              isPending={pending}
             />
           ))}
         </TableBody>
@@ -154,7 +137,7 @@ export function CoverLetterList() {
   );
 }
 
-interface ResumeRowProps {
+interface Props {
   cover: CoverLetterServerData;
   isSelected: boolean;
   onSelect: () => void;
@@ -168,7 +151,7 @@ export function CoverRow({
   onSelect,
   contentRef,
   isPending,
-}: ResumeRowProps) {
+}: Props) {
   const [showDelete, setShowDelete] = useState(false);
 
   const printFn = useReactToPrint({
@@ -238,42 +221,8 @@ export function CoverRow({
         id={cover.id}
         open={showDelete}
         onOpenChange={setShowDelete}
-        isResume={false}
+        type="letter"
       />
     </TableRow>
-  );
-}
-
-function EmptyState() {
-  return (
-    <div className="flex flex-col items-center justify-center gap-4 h-[50vh] text-center">
-      <FilePen className="h-12 w-12 text-muted-foreground" />
-      <div className="space-y-1.5">
-        <h3 className="text-lg font-semibold">No cover letters found</h3>
-        <p className="text-sm text-muted-foreground">
-          Get started by creating a new cover letter
-        </p>
-      </div>
-      <CreateCoverLetterButton />
-    </div>
-  );
-}
-
-interface SearchInputProps {
-  searchTerm: string;
-  setSearchTerm: (term: string) => void;
-}
-
-function SearchInput({ searchTerm, setSearchTerm }: SearchInputProps) {
-  return (
-    <div className="relative w-[70%]">
-      <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-      <Input
-        placeholder="Search covers..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="pl-8"
-      />
-    </div>
   );
 }
