@@ -32,7 +32,7 @@ export const CoverLetterEditor = ({ coverLetterToEdit }: Props) => {
   const { isSaving, hasUnsavedChanges } = useAutoSaveCover(coverLetterData);
   useUnloadWarning(hasUnsavedChanges);
 
-  const currentStep = searchParams.get("step") || steps[0].key;
+  const currentStep = searchParams.get("step") || steps[1].key;
 
   function setStep(key: string) {
     const newSearchParams = new URLSearchParams(searchParams);
