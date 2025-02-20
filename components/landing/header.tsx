@@ -43,7 +43,7 @@ export default function Header() {
           <ThemeToggle />
           <Button
             asChild
-            className="hidden md:flex rounded-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-primary/20"
+            className="hidden md:flex rounded-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-primary/20 transition-all duration-300"
           >
             <Link href="/dashboard">Get Started</Link>
           </Button>

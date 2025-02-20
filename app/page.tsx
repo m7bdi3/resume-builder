@@ -10,7 +10,7 @@ import Testimonials from "@/components/landing/testimonials";
 
 export default function Home() {
   return (
-    <div className="min-h-screen h-full w-full relative mx-auto">
+    <div className="min-h-screen h-full w-full relative mx-auto scroll-smooth">
       <Header />
       <HeroGeometric />
       <Features />

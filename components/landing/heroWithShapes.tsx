@@ -158,14 +158,14 @@ export default function HeroGeometric({
             animate="visible"
           >
             <h1 className="font-bold tracking-tight mb-6 md:mb-8">
-              <span className="block text-lg sm:text-2xl md:text-3xl lg:text-5xl leading-tight text-foreground/90">
+              <span className="block text-lg sm:text-2xl md:text-3xl lg:text-5xl leading-tight text-accent">
                 {title1}
               </span>
 
               <span
                 className={cn(
                   "block bg-clip-text text-transparent",
-                  "bg-gradient-to-r from-primary via-foreground to-primary",
+                  "bg-gradient-to-r from-primary via-accent to-primary",
                   "text-4xl sm:text-5xl md:text-7xl leading-tight mt-2",
                   pacifico.className
                 )}
@@ -200,7 +200,7 @@ export default function HeroGeometric({
                            shadow-xl hover:shadow-primary/30 transition-all duration-300 transform hover:scale-105 group"
                 asChild
               >
-                <Link href="/resumes">
+                <Link href="/dashboard">
                   Start Free Now
                   <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Link>
