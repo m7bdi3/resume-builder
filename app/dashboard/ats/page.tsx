@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
-import { AtsList } from "@/components/main/ats/AtsList";
 import { TableSkeleton } from "@/components/LoadingSkeleton";
+import { ItemList } from "@/components/main/ItemList";
 
 export const metadata: Metadata = {
   title: "Your Ats | ResumeAI",
@@ -19,7 +19,7 @@ export default async function AtsPage() {
   return (
     <main className="relative size-full">
       <Suspense fallback={<TableSkeleton />}>
-        <AtsList />
+        <ItemList type="ats" />
       </Suspense>
     </main>
   );

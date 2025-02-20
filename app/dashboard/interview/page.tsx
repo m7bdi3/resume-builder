@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
-import { InterviewList } from "@/components/main/interview/InterviewList";
 import { TableSkeleton } from "@/components/LoadingSkeleton";
+import { ItemList } from "@/components/main/ItemList";
 
 export const metadata: Metadata = {
   title: "Your Interview Q&A | ResumeAI",
@@ -19,7 +19,7 @@ export default async function InterviewPage() {
   return (
     <main className="relative size-full">
       <Suspense fallback={<TableSkeleton />}>
-        <InterviewList />
+        <ItemList type="interview" />
       </Suspense>
     </main>
   );

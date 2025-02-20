@@ -39,7 +39,6 @@ export const CoverLetterPreview: React.FC<Props> = ({
         }}
         ref={contentRef}
         id="resumePreviewContent"
-
       >
         <div className="space-y-2">
           <h1 className="text-3xl font-bold">{`${firstName ?? ""} ${lastName ?? ""}`}</h1>
