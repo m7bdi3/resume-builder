@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
-import { DashboardComponent } from "@/components/main/DashboardComponent";
-import { DashboardSkeleton } from "@/components/main/DashboardSkeleton";
+import { DashboardSkeleton } from "@/components/main/dashboard/DashboardSkeleton";
+import { DashboardComponent } from "@/components/main/dashboard/DashboardComponent";
 
 export const metadata: Metadata = {
   title: "Your Dashboard | ResumeAI",
