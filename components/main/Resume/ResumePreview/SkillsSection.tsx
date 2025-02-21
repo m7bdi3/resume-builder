@@ -48,7 +48,7 @@ export const SkillsSection: React.FC<ResumeSectionProps> = ({ resumeData }) => {
               {softSkills?.map((skill, index) => (
                 <Badge
                   key={index}
-                  variant="outline"
+                 variant="secondary"
                   className="text-sm font-medium py-1 px-3"
                   style={{
                     borderColor: colorHex,

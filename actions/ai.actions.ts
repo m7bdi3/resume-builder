@@ -177,10 +177,13 @@ Return ONLY the JSON object without any additional text or formatting. Begin wit
     const response = await result.response;
     let aiResponse = response.text().trim();
 
-    // Clean response
+    // Enhanced response cleaning
     aiResponse = aiResponse
-      .replace(/^json\s*/i, "")
-      .replace(/```/g, "")
+      .replace(/^[\s\S]*?\{/m, '{')
+      .replace(/\}[\s\S]*$/m, '}') 
+      .replace(/^json\s*/i, '')
+      .replace(/```/g, '') 
+      .replace(/\n\s*/g, '')
       .trim();
 
     try {

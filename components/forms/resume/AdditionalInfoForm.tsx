@@ -1,23 +1,28 @@
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { EditorFormProps } from "@/lib/types";
 import { additionalInfoSchema, AdditionalInfoValues } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
+import { X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export function AdditionalInfoForm({
   resumeData,
   setResumeData,
 }: EditorFormProps) {
+  const [newAchievement, setNewAchievement] = useState("");
+  const [newLanguage, setNewLanguage] = useState("");
+  const [newHobby, setNewHobby] = useState("");
+
   const form = useForm<AdditionalInfoValues>({
     resolver: zodResolver(additionalInfoSchema),
     defaultValues: {
@@ -26,6 +31,51 @@ export function AdditionalInfoForm({
       languages: resumeData.languages ?? [],
     },
   });
+
+  const addAchievement = () => {
+    if (!newAchievement.trim()) return;
+    const current = form.getValues("achievements") || [];
+    form.setValue("achievements", [...current, newAchievement.trim()]);
+    setNewAchievement("");
+  };
+
+  const removeAchievement = (index: number) => {
+    const current = form.getValues("achievements") || [];
+    form.setValue(
+      "achievements",
+      current.filter((_, i) => i !== index)
+    );
+  };
+
+  const addLanguage = () => {
+    if (!newLanguage.trim()) return;
+    const current = form.getValues("languages") || [];
+    form.setValue("languages", [...current, newLanguage.trim()]);
+    setNewLanguage("");
+  };
+
+  const removeLanguage = (index: number) => {
+    const current = form.getValues("languages") || [];
+    form.setValue(
+      "languages",
+      current.filter((_, i) => i !== index)
+    );
+  };
+
+  const addHobby = () => {
+    if (!newHobby.trim()) return;
+    const current = form.getValues("hobbies") || [];
+    form.setValue("hobbies", [...current, newHobby.trim()]);
+    setNewHobby("");
+  };
+
+  const removeHobby = (index: number) => {
+    const current = form.getValues("hobbies") || [];
+    form.setValue(
+      "hobbies",
+      current.filter((_, i) => i !== index)
+    );
+  };
 
   useEffect(() => {
     const { unsubscribe } = form.watch(async (values) => {
@@ -62,49 +112,98 @@ export function AdditionalInfoForm({
         </p>
       </div>
       <Form {...form}>
-        <form className="space-y-3">
+        <form className="space-y-6">
           <FormField
             control={form.control}
             name="achievements"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Achievements</FormLabel>
-                <FormControl>
-                  <Textarea
-                    {...field}
-                    placeholder="e.g. Award 1 at place, Award 1 at place, Award 1 at place, ..."
-                    onChange={(e) => {
-                      const skills = e.target.value.split(",");
-                      field.onChange(skills);
-                    }}
-                    className="resize-none"
-                  />
-                </FormControl>
-                <FormDescription>Separate each with a comma.</FormDescription>
-
+                <div className="space-y-4">
+                  <div className="flex gap-2">
+                    <FormControl>
+                      <Input
+                        placeholder="e.g. First place in coding competition"
+                        value={newAchievement}
+                        onChange={(e) => setNewAchievement(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            addAchievement();
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <Button type="button" onClick={addAchievement}>
+                      Add
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {field.value?.map((achievement, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-sm"
+                      >
+                        {achievement}
+                        <button
+                          type="button"
+                          onClick={() => removeAchievement(index)}
+                          className="ml-1 text-muted-foreground hover:text-foreground"
+                        >
+                          <X className="size-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="languages"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Languages</FormLabel>
-                <FormControl>
-                  <Textarea
-                    {...field}
-                    placeholder="e.g. Arabic, English, Duetch, ..."
-                    onChange={(e) => {
-                      const skills = e.target.value.split(",");
-                      field.onChange(skills);
-                    }}
-                    className="resize-none"
-                  />
-                </FormControl>
-                <FormDescription>Separate each with a comma.</FormDescription>
-
+                <div className="space-y-4">
+                  <div className="flex gap-2">
+                    <FormControl>
+                      <Input
+                        placeholder="e.g. English"
+                        value={newLanguage}
+                        onChange={(e) => setNewLanguage(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            addLanguage();
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <Button type="button" onClick={addLanguage}>
+                      Add
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {field.value?.map((language, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-sm"
+                      >
+                        {language}
+                        <button
+                          type="button"
+                          onClick={() => removeLanguage(index)}
+                          className="ml-1 text-muted-foreground hover:text-foreground"
+                        >
+                          <X className="size-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -116,19 +215,43 @@ export function AdditionalInfoForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Hobbies</FormLabel>
-                <FormControl>
-                  <Textarea
-                    {...field}
-                    placeholder="e.g. Reading, Coding ..."
-                    onChange={(e) => {
-                      const skills = e.target.value.split(",");
-                      field.onChange(skills);
-                    }}
-                    className="resize-none"
-                  />
-                </FormControl>
-                <FormDescription>Separate each with a comma.</FormDescription>
-
+                <div className="space-y-4">
+                  <div className="flex gap-2">
+                    <FormControl>
+                      <Input
+                        placeholder="e.g. Reading"
+                        value={newHobby}
+                        onChange={(e) => setNewHobby(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            addHobby();
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <Button type="button" onClick={addHobby}>
+                      Add
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {field.value?.map((hobby, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-sm"
+                      >
+                        {hobby}
+                        <button
+                          type="button"
+                          onClick={() => removeHobby(index)}
+                          className="ml-1 text-muted-foreground hover:text-foreground"
+                        >
+                          <X className="size-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
                 <FormMessage />
               </FormItem>
             )}

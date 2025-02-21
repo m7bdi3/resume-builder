@@ -21,45 +21,35 @@ export const Breadcrumbs = ({
   setCurrentStep,
   resumeSteps,
 }: Props) => {
+  const stepsToRender = resumeSteps ? steps : Coversteps;
+
   return (
-    <div className="flex justify-center items-center w-full">
+    <div className="w-full py-4 px-2">
       <Breadcrumb>
-        <BreadcrumbList className="flex items-center justify-center">
-          {resumeSteps ? (
-            <>
-              {steps.map((step) => (
-                <Fragment key={step.key}>
-                  <BreadcrumbItem className="cursor-pointer">
-                    {step.key === currentStep ? (
-                      <BreadcrumbPage>{step.title}</BreadcrumbPage>
-                    ) : (
-                      <BreadcrumbLink onClick={() => setCurrentStep(step.key)}>
-                        {step.title}
-                      </BreadcrumbLink>
-                    )}
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator className="last:hidden" />
-                </Fragment>
-              ))}
-            </>
-          ) : (
-            <>
-              {Coversteps.map((step) => (
-                <Fragment key={step.key}>
-                  <BreadcrumbItem className="cursor-pointer">
-                    {step.key === currentStep ? (
-                      <BreadcrumbPage>{step.title}</BreadcrumbPage>
-                    ) : (
-                      <BreadcrumbLink onClick={() => setCurrentStep(step.key)}>
-                        {step.title}
-                      </BreadcrumbLink>
-                    )}
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator className="last:hidden" />
-                </Fragment>
-              ))}
-            </>
-          )}
+        <BreadcrumbList className="flex items-center justify-center gap-1 flex-wrap">
+          {stepsToRender.map((step, index) => (
+            <Fragment key={step.key}>
+              <BreadcrumbItem 
+                className={`cursor-pointer transition-all duration-200 hover:opacity-80 ${step.key === currentStep ? 'scale-105' : ''}`}
+              >
+                {step.key === currentStep ? (
+                  <BreadcrumbPage className="font-medium text-primary">
+                    {step.title}
+                  </BreadcrumbPage>
+                ) : (
+                  <BreadcrumbLink 
+                    onClick={() => setCurrentStep(step.key)}
+                    className="text-muted-foreground hover:text-primary"
+                  >
+                    {step.title}
+                  </BreadcrumbLink>
+                )}
+              </BreadcrumbItem>
+              {index < stepsToRender.length - 1 && (
+                <BreadcrumbSeparator className="text-muted-foreground/50" />
+              )}
+            </Fragment>
+          ))}
         </BreadcrumbList>
       </Breadcrumb>
     </div>
