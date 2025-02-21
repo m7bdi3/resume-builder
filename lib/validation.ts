@@ -29,9 +29,6 @@ export const personalInfoSchema = z.object({
   country: optionalString,
   phone: optionalString,
   email: optionalString,
-  linkedInUrl: optionalString,
-  githubUrl: optionalString,
-  websiteUrl: optionalString,
 });
 
 export type PersonalInfoValues = z.infer<typeof personalInfoSchema>;
@@ -40,6 +37,9 @@ export const additionalInfoSchema = z.object({
   hobbies: z.array(z.string().trim()).optional(),
   achievements: z.array(z.string().trim()).optional(),
   languages: z.array(z.string().trim()).optional(),
+  linkedInUrl: optionalString,
+  githubUrl: optionalString,
+  websiteUrl: optionalString,
 });
 
 export type AdditionalInfoValues = z.infer<typeof additionalInfoSchema>;
@@ -60,6 +60,22 @@ export const workExperienceSchema = z.object({
 });
 
 export type WorkExperienceValues = z.infer<typeof workExperienceSchema>;
+
+export const templateSchema = z.object({
+  template: z
+    .enum([
+      "CLASSIC",
+      "MODERN",
+      "MINIMAL",
+      "PROFESSIONAL",
+      "ELEGANT",
+      "BOLDHEADER",
+      "BLOCKS",
+    ])
+    .default("CLASSIC"),
+});
+
+export type TemplateValues = z.infer<typeof templateSchema>;
 
 export type WorkExperience = NonNullable<
   z.infer<typeof workExperienceSchema>["workExperience"]
@@ -184,6 +200,7 @@ export const resumeSchema = z.object({
   ...projectsSchema.shape,
   ...referencesSchema.shape,
   ...certificationsSchema.shape,
+  ...templateSchema.shape,
   colorHex: optionalString,
   borderStyle: optionalString,
 });

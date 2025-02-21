@@ -29,6 +29,9 @@ export function AdditionalInfoForm({
       hobbies: resumeData.hobbies ?? [],
       achievements: resumeData.achievements ?? [],
       languages: resumeData.languages ?? [],
+      githubUrl: resumeData.githubUrl || "",
+      linkedInUrl: resumeData.linkedInUrl || "",
+      websiteUrl: resumeData.websiteUrl || "",
     },
   });
 
@@ -98,6 +101,9 @@ export function AdditionalInfoForm({
             ?.filter((skill) => skill !== undefined)
             .map((skill) => skill.trim())
             .filter((skill) => skill !== "") || [],
+        linkedInUrl: values.linkedInUrl,
+        githubUrl: values.githubUrl,
+        websiteUrl: values.websiteUrl,
       });
     });
     return unsubscribe;
@@ -252,6 +258,45 @@ export function AdditionalInfoForm({
                     ))}
                   </div>
                 </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="linkedInUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Linkedin Url</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="githubUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Github Url</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="websiteUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Website Url</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

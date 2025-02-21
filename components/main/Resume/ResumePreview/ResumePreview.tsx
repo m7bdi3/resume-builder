@@ -1,36 +1,24 @@
 "use client";
 
-import { useRef } from "react";
-
+import { JSX, useRef } from "react";
 import { cn } from "@/lib/utils";
-
 import type { ResumeValues } from "@/lib/validation";
-
 import useDimensions from "@/hooks/useDimensions";
 
-import { PersonalInfoHeader } from "@/components/main/Resume/ResumePreview/PersonalInfoHeader";
-import { SummarySection } from "@/components/main/Resume/ResumePreview/SummarySection";
-import { WorkExperienceSection } from "@/components/main/Resume/ResumePreview/WorkExperienceSection";
-import { EducationSection } from "@/components/main/Resume/ResumePreview/EducationSection";
-import { SkillsSection } from "@/components/main/Resume/ResumePreview/SkillsSection";
-import { AdditionalSection } from "@/components/main/Resume/ResumePreview/AdditionalSection";
-import { ProjectsSection } from "@/components/main/Resume/ResumePreview/ProjectsSection";
-import { CertificationsSection } from "@/components/main/Resume/ResumePreview/CertificatesSection";
-import { ReferenceSection } from "@/components/main/Resume/ResumePreview/ReferenceSection";
 interface Props {
   resumeData?: ResumeValues;
   contentRef?: React.Ref<HTMLDivElement>;
   className?: string;
+  renderTemplate: () => JSX.Element;
 }
 
 export const ResumePreview: React.FC<Props> = ({
   resumeData,
-  contentRef,
+  renderTemplate,
   className,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useDimensions(containerRef as React.RefObject<HTMLElement>);
-
   return (
     <div
       className={cn(
@@ -40,26 +28,12 @@ export const ResumePreview: React.FC<Props> = ({
       ref={containerRef}
     >
       <div
-        className={cn("space-y-6 p-6", !width && "invisible")}
+        className={cn(!width && "invisible")}
         style={{
           zoom: width ? (1 / 794) * width : 1,
         }}
-        ref={contentRef}
-        id="resumePreviewContent"
       >
-        {resumeData && (
-          <>
-            <PersonalInfoHeader resumeData={resumeData} />
-            <SummarySection resumeData={resumeData} />
-            <WorkExperienceSection resumeData={resumeData} />
-            <EducationSection resumeData={resumeData} />
-            <ProjectsSection resumeData={resumeData} />
-            <SkillsSection resumeData={resumeData} />
-            <CertificationsSection resumeData={resumeData} />
-            <AdditionalSection resumeData={resumeData} />
-            <ReferenceSection resumeData={resumeData} />
-          </>
-        )}
+        {resumeData && renderTemplate()}
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-
 import type { ResumeValues } from "@/lib/validation";
 import { formatDate } from "date-fns";
 import { SectionHeader } from "@/components/main/Resume/ResumePreview/SectionHeader";
@@ -22,18 +21,18 @@ export const EducationSection: React.FC<Props> = ({ resumeData }) => {
       <div className="space-y-3">
         {educationsNotEmpty.map((edu, index) => (
           <div key={index} className="break-inside-avoid">
-            <div className="flex flex-col sm:flex-row justify-between items-start mb-2">
-              <div className="flex items-center gap-3">
-                <h3 className="font-bold text-lg" style={{ color: colorHex }}>
+            <div className="flex justify-between items-start mb-2">
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold" style={{ color: colorHex }}>
                   {edu.degree}
                 </h3>
-                <span className="hidden sm:inline text-gray-400">|</span>{" "}
-                <p className="text-base font-medium text-gray-700 mt-1 sm:mt-0">
+                <span className="text-gray-400">|</span>{" "}
+                <p className="text-sm font-medium text-gray-700 mt-1">
                   {edu.school}
                 </p>
               </div>
               {edu.startDate && (
-                <span className="text-sm font-medium text-gray-600 mt-1 sm:mt-0">
+                <span className="text-sm font-medium text-gray-600 mt-1">
                   {formatDate(new Date(edu.startDate), "MMM yyyy")}
                   {edu.endDate &&
                     ` - ${formatDate(new Date(edu.endDate), "MMM yyyy")}`}

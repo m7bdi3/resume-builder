@@ -10,6 +10,7 @@ import CertificationsForm from "@/components/forms/resume/CertificationsForm";
 import RefrencesForm from "@/components/forms/resume/RefrenceForm";
 import GeneralInfoForm from "@/components/forms/resume/GeneralInfoForm";
 import PersonalInfoForm from "@/components/forms/resume/PersonalInfoForm";
+import { TemplateForm } from "@/components/forms/resume/TemplateForm";
 
 export const steps: {
   title: string;
@@ -20,6 +21,11 @@ export const steps: {
     title: "General info",
     component: GeneralInfoForm,
     key: "general-info",
+  },
+  {
+    title: "Template",
+    component: TemplateForm,
+    key: "template",
   },
   {
     title: "Personal info",

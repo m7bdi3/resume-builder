@@ -68,8 +68,8 @@ export const PersonalInfoHeader: React.FC<Props> = ({ resumeData }) => {
           className="aspect-square object-cover shadow-md"
         />
       )}
-      <div className="flex flex-col items-center md:items-start space-y-3 flex-grow">
-        <div className="text-center md:text-left">
+      <div className="flex flex-col items-start space-y-3 flex-grow">
+        <div className="text-left">
           <h1
             className="text-4xl font-bold tracking-tight"
             style={{ color: colorHex }}
@@ -80,7 +80,7 @@ export const PersonalInfoHeader: React.FC<Props> = ({ resumeData }) => {
             {jobTitle}
           </h2>
         </div>
-        <div className="text-sm text-gray-600 flex flex-wrap justify-center md:justify-start gap-2">
+        <div className="text-sm text-gray-600 flex flex-wrap justify-start gap-2">
           {[city, country, phone, email].filter(Boolean).map((item, index) => (
             <span key={index} className="flex items-center">
               {item}
@@ -88,7 +88,7 @@ export const PersonalInfoHeader: React.FC<Props> = ({ resumeData }) => {
             </span>
           ))}
         </div>
-        <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-2">
+        <div className="flex flex-wrap justify-start gap-4 mt-2">
           {socialLinks.map((item, index) => (
             <Link
               key={index}

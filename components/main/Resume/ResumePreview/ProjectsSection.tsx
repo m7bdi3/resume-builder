@@ -22,9 +22,9 @@ export const ProjectsSection: React.FC<Props> = ({ resumeData }) => {
       <div className="space-y-6">
         {projectsNotEmpty.map((pro, index) => (
           <div key={index} className="break-inside-avoid">
-            <div className="flex flex-col sm:flex-row justify-between items-start mb-2">
-              <div className="flex-grow">
-                <h3 className="font-bold text-lg" style={{ color: colorHex }}>
+            <div className="flex justify-between items-start mb-2">
+              <div className="flex-grow flex items-center gap-2">
+                <h3 className="font-semibold " style={{ color: colorHex }}>
                   {pro.title}
                 </h3>
                 {pro.link && (
@@ -34,7 +34,7 @@ export const ProjectsSection: React.FC<Props> = ({ resumeData }) => {
                     rel="noopener noreferrer"
                     className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
                   >
-                    {pro.link}
+                    <span className="text-gray-400">|</span> Github
                   </Link>
                 )}
               </div>

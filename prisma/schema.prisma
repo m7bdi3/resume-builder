@@ -39,6 +39,8 @@ model Resume {
   githubUrl   String?
   websiteUrl  String?
 
+  template ResumeTemplate @default(CLASSIC)
+
   workExperiences WorkExperience[]
   educations      Education[]
   projects        Project[]
@@ -200,4 +202,14 @@ model InterviewResult {
   updatedAt DateTime @updatedAt
 
   @@map("interview_result")
+}
+
+enum ResumeTemplate {
+  CLASSIC
+  MODERN
+  MINIMAL
+  PROFESSIONAL
+  ELEGANT
+  BOLDHEADER
+  BLOCKS
 }

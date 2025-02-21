@@ -19,12 +19,11 @@ export const WorkExperienceSection = ({ resumeData }: ResumeSectionProps) => {
           <div key={index} className="break-inside-avoid">
             <div className="flex flex-col sm:flex-row justify-between items-start mb-2">
               <div className="flex flex-col sm:flex-row sm:items-center">
-                <h3 className="font-bold text-lg" style={{ color: colorHex }}>
+                <h3 className="font-semibold" style={{ color: colorHex }}>
                   {exp.position}
                 </h3>
-                <p className="text-base font-medium text-gray-700 sm:ml-2">
-                  <span className="hidden sm:inline text-gray-400">|</span>{" "}
-                  {exp.company}
+                <p className="text-sm font-medium text-gray-700 ml-2">
+                  <span className="text-gray-400">|</span> {exp.company}
                 </p>
               </div>
               {exp.startDate && (
@@ -36,7 +35,7 @@ export const WorkExperienceSection = ({ resumeData }: ResumeSectionProps) => {
                 </span>
               )}
             </div>
-            <p className="text-sm text-gray-700 whitespace-pre-line mt-2">
+            <p className="text-xs text-gray-700 whitespace-pre-line mt-2">
               {exp.description}
             </p>
           </div>
