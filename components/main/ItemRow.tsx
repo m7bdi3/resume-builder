@@ -79,6 +79,7 @@ export const ItemRow = ({
           resumeData={mapToResumeValues(recivedData as ResumeServerData)}
           className="transform scale-[0.2] origin-top-left w-[500%] h-[500%]"
           contentRef={contentRef}
+        
         />
       </div>
     ) : type === "letter" ? (

@@ -88,7 +88,7 @@ export const TemplateForm = ({
                     <FormControl>
                       <RadioGroupItem value="BLOCKS" />
                     </FormControl>
-                    <FormLabel className="font-normal">Bloacks</FormLabel>
+                    <FormLabel className="font-normal">Blocks</FormLabel>
                   </FormItem>
                 </RadioGroup>
               </FormControl>
