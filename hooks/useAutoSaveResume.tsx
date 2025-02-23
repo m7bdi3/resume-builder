@@ -15,7 +15,6 @@ export const useAutoSaveResume = (resumeData: ResumeValues) => {
   const debouncedResumeData = useDebounce(resumeData, 1500);
 
   const [resumeId, setResumeId] = useState(resumeData.id);
-
   const [lastSavedData, setLastSavedData] = useState(
     structuredClone(resumeData)
   );
@@ -44,10 +43,13 @@ export const useAutoSaveResume = (resumeData: ResumeValues) => {
           id: resumeId,
         });
 
-        setResumeId(updatedResume.id);
+        setResumeId(updatedResume?.id);
         setLastSavedData(newData);
-        addResume(updatedResume);
-        if (searchParams.get("resumeId") !== updatedResume.id) {
+        addResume(updatedResume!);
+        if (
+          updatedResume &&
+          searchParams.get("resumeId") !== updatedResume?.id
+        ) {
           const newSearchParams = new URLSearchParams(searchParams);
           newSearchParams.set("resumeId", updatedResume.id);
           window.history.replaceState(
