@@ -22,10 +22,9 @@ export const SkillsSection: React.FC<ResumeSectionProps> = ({ resumeData }) => {
                 <Badge
                   key={index}
                   variant="secondary"
-                  className="text-sm font-medium py-1 px-3"
+                  className="text-sm font-medium py-1 px-3 text-black"
                   style={{
                     backgroundColor: `${colorHex}20`,
-                    color: colorHex,
                     borderRadius:
                       borderStyle === BorderStyles.SQUARE
                         ? "0px"
@@ -43,16 +42,16 @@ export const SkillsSection: React.FC<ResumeSectionProps> = ({ resumeData }) => {
 
         {hasSoftSkills && (
           <div>
-            <SectionHeader title="Soft Skills" colorHex={colorHex} />
+            <SectionHeader title="Soft Skills" colorHex={colorHex} addHr />
             <div className="flex flex-wrap gap-2 mt-3">
               {softSkills?.map((skill, index) => (
                 <Badge
                   key={index}
-                 variant="secondary"
-                  className="text-sm font-medium py-1 px-3"
+                  variant="secondary"
+                  className="text-sm font-medium py-1 px-3 text-black"
                   style={{
-                    borderColor: colorHex,
-                    color: colorHex,
+                    backgroundColor: `${colorHex}20`,
+
                     borderRadius:
                       borderStyle === BorderStyles.SQUARE
                         ? "0px"

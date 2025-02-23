@@ -1,4 +1,3 @@
-import { Card } from "@/components/ui/card";
 import { ResumeValues } from "@/lib/validation";
 import { PersonalInfoHeader } from "../PersonalInfoHeader";
 import { SummarySection } from "../SummarySection";
@@ -16,12 +15,22 @@ interface Props {
 }
 export default function ModernAsymmetric({ resumeData }: Props) {
   return (
-    <div className="min-h-[297mm] w-[210mm] bg-white text-sm">
-      <div className="h-32 bg-primary"></div>
+    <div className=" text-sm">
+      <div
+        className="h-32"
+        style={{
+          backgroundColor: `${resumeData?.colorHex}45` || "var(--primary)",
+        }}
+      />
       <div className="px-8 -mt-16">
-        <Card className="p-6 mb-6">
+        <div
+          className="p-6 mb-6 rounded"
+          style={{
+            backgroundColor: `${resumeData?.colorHex}` || "var(--primary)",
+          }}
+        >
           <PersonalInfoHeader resumeData={resumeData} />
-        </Card>
+        </div>
         <div className="grid grid-cols-3 gap-6">
           <div className="col-span-2 space-y-6">
             <SummarySection resumeData={resumeData} />
@@ -30,18 +39,42 @@ export default function ModernAsymmetric({ resumeData }: Props) {
             <ProjectsSection resumeData={resumeData} />
           </div>
           <div className="space-y-6">
-            <Card className="p-4">
+            <div
+              className="p-4"
+              style={{
+                backgroundColor:
+                  `${resumeData?.colorHex}45` || "var(--primary)",
+              }}
+            >
               <SkillsSection resumeData={resumeData} />
-            </Card>
-            <Card className="p-4">
+            </div>
+            <div
+              className="p-4"
+              style={{
+                backgroundColor:
+                  `${resumeData?.colorHex}45` || "var(--primary)",
+              }}
+            >
               <CertificationsSection resumeData={resumeData} />
-            </Card>
-            <Card className="p-4">
+            </div>
+            <div
+              className="p-4"
+              style={{
+                backgroundColor:
+                  `${resumeData?.colorHex}45` || "var(--primary)",
+              }}
+            >
               <ReferenceSection resumeData={resumeData} />
-            </Card>
-            <Card className="p-4">
+            </div>
+            <div
+              className="p-4"
+              style={{
+                backgroundColor:
+                  `${resumeData?.colorHex}45` || "var(--primary)",
+              }}
+            >
               <AdditionalSection resumeData={resumeData} />
-            </Card>
+            </div>
           </div>
         </div>
       </div>

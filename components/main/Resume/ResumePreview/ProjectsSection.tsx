@@ -24,9 +24,7 @@ export const ProjectsSection: React.FC<Props> = ({ resumeData }) => {
           <div key={index} className="break-inside-avoid">
             <div className="flex justify-between items-start mb-2">
               <div className="flex-grow flex items-center gap-2">
-                <h3 className="font-semibold " style={{ color: colorHex }}>
-                  {pro.title}
-                </h3>
+                <h3 className="font-semibold ">{pro.title}</h3>
                 {pro.link && (
                   <Link
                     href={pro.link}

@@ -1,5 +1,4 @@
 import { ResumeValues } from "@/lib/validation";
-import { cn } from "@/lib/utils";
 import { PersonalInfoHeader } from "../PersonalInfoHeader";
 import { SummarySection } from "../SummarySection";
 import { WorkExperienceSection } from "../WorkExperienceSection";
@@ -13,20 +12,11 @@ import { ReferenceSection } from "../ReferenceSection";
 interface Props {
   resumeData: ResumeValues;
   contentRef?: React.Ref<HTMLDivElement>;
-  className?: string;
 }
 
-export const ClassicTemplate = ({
-  resumeData,
-  contentRef,
-  className,
-}: Props) => {
+export const ClassicTemplate = ({ resumeData, contentRef }: Props) => {
   return (
-    <div
-      className={cn("space-y-6 p-6", className)}
-      ref={contentRef}
-      id="resumePreviewContent"
-    >
+    <div className={"space-y-6 p-6"} ref={contentRef} id="resumePreviewContent">
       <PersonalInfoHeader resumeData={resumeData} />
       <SummarySection resumeData={resumeData} />
       <WorkExperienceSection resumeData={resumeData} />

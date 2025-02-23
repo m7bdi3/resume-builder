@@ -1,4 +1,3 @@
-import { Card } from "@/components/ui/card";
 import { ResumeValues } from "@/lib/validation";
 import { PersonalInfoHeader } from "../PersonalInfoHeader";
 import { SummarySection } from "../SummarySection";
@@ -12,28 +11,27 @@ import { AdditionalSection } from "../AdditionalSection";
 
 interface Props {
   resumeData: ResumeValues;
-  className?: string;
 }
 export default function BoldHeader({ resumeData }: Props) {
   return (
-    <div className=" text-sm">
+    <>
       <div
-        className="bg-primary p-8 text-primary-foreground"
+        className="p-6"
         style={{
-          backgroundColor: `${resumeData?.colorHex}25` || "#f8f9fa",
+          backgroundColor: `${resumeData?.colorHex}25` || "var(--primary)",
         }}
       >
         <PersonalInfoHeader resumeData={resumeData} />
       </div>
-      <div className="p-8 space-y-6">
-        <Card
-          className="p-4"
+      <div className="p-6 space-y-6">
+        <div
+          className="p-4 rounded border"
           style={{
             backgroundColor: `${resumeData?.colorHex}15` || "#f8f9fa",
           }}
         >
           <SummarySection resumeData={resumeData} />
-        </Card>
+        </div>
         <div className="grid grid-cols-3 gap-6">
           <div className="space-y-6 col-span-2">
             <WorkExperienceSection resumeData={resumeData} />
@@ -48,6 +46,6 @@ export default function BoldHeader({ resumeData }: Props) {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -23,9 +23,7 @@ export const EducationSection: React.FC<Props> = ({ resumeData }) => {
           <div key={index} className="break-inside-avoid">
             <div className="flex justify-between items-start mb-2">
               <div className="flex items-center gap-2">
-                <h3 className="font-semibold" style={{ color: colorHex }}>
-                  {edu.degree}
-                </h3>
+                <h3 className="font-semibold">{edu.degree}</h3>
                 <span className="text-gray-400">|</span>{" "}
                 <p className="text-sm font-medium text-gray-700 mt-1">
                   {edu.school}

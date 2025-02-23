@@ -18,8 +18,8 @@ export default function ElegantCentered({ resumeData }: Props) {
   return (
     <div className=" p-12 text-sm flex flex-col items-center">
       <PersonalInfoHeader resumeData={resumeData} />
-      <Separator className="my-6 w-1/2" />
-      <div className="w-full max-w-3xl space-y-8">
+      <Separator className="my-6 w-full" />
+      <div className="space-y-8">
         <SummarySection resumeData={resumeData} />
         <WorkExperienceSection resumeData={resumeData} />
         <EducationSection resumeData={resumeData} />

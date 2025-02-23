@@ -22,9 +22,9 @@ export const ModernTemplate = ({ resumeData, className }: Props) => {
       id="resumePreviewContent"
     >
       <div
-        className="col-span-1 space-y-6 p-4 h-screen rounded-lg"
+        className="col-span-1 space-y-6 p-4 h-fit rounded-lg"
         style={{
-          backgroundColor: `${resumeData.colorHex}20` || "#ffffff20",
+          backgroundColor: `${resumeData.colorHex}20` || "",
         }}
       >
         <PersonalInfoHeader resumeData={resumeData || {}} />

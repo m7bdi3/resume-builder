@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ResumeValues } from "@/lib/validation";
 import { BorderStyles } from "@/components/main/Resume/BorderStyleButton";
+import { cn } from "@/lib/utils";
 
 interface Props {
   resumeData: ResumeValues;
@@ -25,6 +26,7 @@ export const PersonalInfoHeader: React.FC<Props> = ({ resumeData }) => {
     linkedInUrl,
     githubUrl,
     websiteUrl,
+    template,
   } = resumeData;
 
   const [imgSrc, setImgSrc] = useState<string>(
@@ -48,7 +50,12 @@ export const PersonalInfoHeader: React.FC<Props> = ({ resumeData }) => {
   ].filter((link) => link.url);
 
   return (
-    <header className="flex items-start gap-6  py-2">
+    <header
+      className={cn(
+        template === "MINIMAL" ? "flex-col" : "felx-row",
+        "flex items-start gap-6 py-2"
+      )}
+    >
       {imgSrc && (
         <Image
           src={imgSrc || "/placeholder.svg"}
@@ -65,15 +72,12 @@ export const PersonalInfoHeader: React.FC<Props> = ({ resumeData }) => {
             borderColor: colorHex,
             borderWidth: "2px",
           }}
-          className="aspect-square object-cover shadow-md"
+          className="aspect-square object-cover object-center"
         />
       )}
       <div className="flex flex-col items-start space-y-3 flex-grow">
         <div className="text-left">
-          <h1
-            className="text-4xl font-bold tracking-tight"
-            style={{ color: colorHex }}
-          >
+          <h1 className="text-4xl font-bold tracking-tight">
             {firstName} {lastName}
           </h1>
           <h2 className="text-2xl font-semibold mt-1 text-gray-700">

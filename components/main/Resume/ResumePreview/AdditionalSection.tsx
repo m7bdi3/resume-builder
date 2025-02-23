@@ -36,16 +36,15 @@ export const AdditionalSection: React.FC<ResumeSectionProps> = ({
 
         {hasLanguages && (
           <div>
-            <SectionHeader title="Languages" colorHex={colorHex} />
+            <SectionHeader title="Languages" colorHex={colorHex} addHr />
             <div className="flex flex-wrap gap-2 mt-3">
               {languages?.map((language, index) => (
                 <Badge
                   key={index}
                   variant="secondary"
-                  className="text-sm font-medium py-1 px-3"
+                  className="text-sm font-medium py-1 px-3 text-black"
                   style={{
                     backgroundColor: `${colorHex}20`,
-                    color: colorHex,
                     borderRadius:
                       borderStyle === BorderStyles.SQUARE
                         ? "0px"
@@ -63,7 +62,7 @@ export const AdditionalSection: React.FC<ResumeSectionProps> = ({
 
         {hasHobbies && (
           <div>
-            <SectionHeader title="Hobbies" colorHex={colorHex} />
+            <SectionHeader title="Hobbies" colorHex={colorHex} addHr />
             <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
               {hobbies?.map((hobby, index) => (
                 <li
