@@ -12,7 +12,7 @@ export const useAutoSaveResume = (resumeData: ResumeValues) => {
   const searchParams = useSearchParams();
 
   const { toast } = useToast();
-  const debouncedResumeData = useDebounce(resumeData, 1500);
+  const debouncedResumeData = useDebounce(resumeData, 1000);
 
   const [resumeId, setResumeId] = useState(resumeData.id);
   const [lastSavedData, setLastSavedData] = useState(
@@ -46,10 +46,7 @@ export const useAutoSaveResume = (resumeData: ResumeValues) => {
         setResumeId(updatedResume?.id);
         setLastSavedData(newData);
         addResume(updatedResume);
-        if (
-          updatedResume &&
-          searchParams.get("resumeId") !== updatedResume?.id
-        ) {
+        if (searchParams.get("resumeId") !== updatedResume.id) {
           const newSearchParams = new URLSearchParams(searchParams);
           newSearchParams.set("resumeId", updatedResume.id);
           window.history.replaceState(
