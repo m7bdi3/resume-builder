@@ -45,7 +45,7 @@ export const useAutoSaveResume = (resumeData: ResumeValues) => {
 
         setResumeId(updatedResume?.id);
         setLastSavedData(newData);
-        addResume(updatedResume!);
+        addResume(updatedResume);
         if (
           updatedResume &&
           searchParams.get("resumeId") !== updatedResume?.id

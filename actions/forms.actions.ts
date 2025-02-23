@@ -64,16 +64,11 @@ export const saveResume = async (values: ResumeValues) => {
   }
 
   const getFullResume = async (resumeId: string) => {
-    return await prisma.resume.findUnique({
+    return await prisma.resume.findUniqueOrThrow({
       where: { id: resumeId },
       include: resumeDataInclude,
     });
   };
-
-  if (!getFullResume) {
-    throw new Error("Resume not found");
-  }
-
   if (id) {
     await prisma.resume.update({
       where: {
