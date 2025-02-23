@@ -32,7 +32,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider signInUrl="/dashboard" afterSignOutUrl={"/dashboard"}>
+    <ClerkProvider signInUrl="/dashboard" afterSignOutUrl={"/"}>
       <html lang="en" suppressHydrationWarning>
         <body
           className={`${inter.variable} ${rajdhani.variable} font-sans antialiased`}
